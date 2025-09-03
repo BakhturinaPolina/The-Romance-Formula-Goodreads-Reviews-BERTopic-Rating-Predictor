@@ -1,0 +1,9 @@
+# Core data processing
+pandas>=2.3.0
+numpy>=2.3.0  # pandas dependency
+
+# Progress tracking
+tqdm>=4.64.0
+
+# Jupyter for analysis (if needed)
+jupyter>=1.0.0

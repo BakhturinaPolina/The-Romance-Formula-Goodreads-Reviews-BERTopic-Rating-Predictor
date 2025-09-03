@@ -1,0 +1,349 @@
+# Data Processing Pipeline Configuration
+# Step-by-step process for creating analysis-ready dataset
+
+# Pipeline Overview
+pipeline_name: "romance_novel_data_processing"
+version: "2.0"
+description: "Process Goodreads romance data into analysis-ready CSV files"
+
+# Input Files
+input_files:
+  - name: "goodreads_books_romance.json.gz"
+    path: "data/raw/"
+    size_mb: 347.88
+    records: 335449
+    
+  - name: "goodreads_reviews_romance.json.gz"
+    path: "data/raw/"
+    size_mb: 1240.85
+    records: 3565378
+    
+  - name: "goodreads_book_authors.json.gz"
+    path: "data/raw/"
+    size_mb: 17.16
+    records: 829529
+    
+  - name: "goodreads_book_genres_initial.json.gz"
+    path: "data/raw/"
+    size_mb: 23.12
+    records: 2360655
+    
+  - name: "goodreads_book_series.json.gz"
+    path: "data/raw/"
+    size_mb: 27.04
+    records: 400390
+
+# Output Files
+output_files:
+  - name: "romance_books_cleaned.csv"
+    path: "data/processed/"
+    description: "Clean book metadata with subgenre classification"
+    
+  - name: "romance_reviews_cleaned.csv"
+    path: "data/processed/"
+    description: "Clean review data with book associations"
+    
+  - name: "subgenre_classification_details.csv"
+    path: "data/processed/"
+    description: "Detailed subgenre classification results"
+    
+  - name: "data_quality_report.csv"
+    path: "data/processed/"
+    description: "Quality metrics for final dataset"
+
+# Processing Steps (CURRENTLY IMPLEMENTED)
+steps:
+  - "load_books"
+  - "apply_quality_filters"
+  - "integrate_books_data"
+  - "load_reviews"
+  - "sample_reviews"
+  - "export_csv"
+
+implemented_steps:
+  1:
+    name: "quality_filtering"
+    description: "Apply quality filters to book data"
+    input: "goodreads_books_romance.json.gz"
+    output: "books_filtered.json"
+    status: "✅ IMPLEMENTED"
+    filters:
+      - publication_year >= 2000
+      - language_code == "eng"
+      - ratings_count >= 10
+      - description is not empty (80% threshold)
+    expected_output_records: "~200,000"
+    
+  2:
+    name: "author_balancing"
+    description: "Limit books per author for thematic diversity"
+    input: "books_filtered.json"
+    output: "books_author_balanced.json"
+    status: "✅ IMPLEMENTED"
+    parameters:
+      max_books_per_author: 1
+      random_seed: 42
+    expected_output_records: "~150,000"
+    
+  3:
+    name: "decade_stratification"
+    description: "Balance books across decades (2000-2009, 2010-2017)"
+    input: "books_author_balanced.json"
+    output: "books_decade_balanced.json"
+    status: "✅ IMPLEMENTED"
+    parameters:
+      target_books_per_decade: 1000
+      random_seed: 42
+    expected_output_records: "~2,000"
+    
+  4:
+    name: "books_data_integration"
+    description: "Integrate books data with edition aggregations"
+    input: "books_decade_balanced.json"
+    output: "books_integrated.json"
+    status: "✅ IMPLEMENTED"
+    features:
+      - edition aggregation (work_id grouping)
+      - edition-level aggregations (median pages, weighted ratings)
+      - derived fields (quality_score, decade)
+    expected_output_records: "~2,000"
+    
+  5:
+    name: "review_sampling"
+    description: "Sample reviews for selected books"
+    input:
+      - "books_integrated.json"
+      - "goodreads_reviews_romance.json.gz"
+    output: "reviews_sampled.json"
+    status: "✅ IMPLEMENTED"
+    parameters:
+      min_reviews_per_book: 1
+      max_reviews_per_book: 100
+      random_seed: 42
+    expected_output_records: "~50,000"
+    
+  6:
+    name: "subgenre_placeholder"
+    description: "Create placeholder subgenre classification"
+    input: "books_integrated.json"
+    output: "subgenre_placeholder.json"
+    status: "✅ IMPLEMENTED (PLACEHOLDER)"
+    note: "Subgenre classification not yet implemented - all fields empty"
+    
+  7:
+    name: "csv_export"
+    description: "Export final datasets to CSV"
+    input:
+      - "books_integrated.json"
+      - "reviews_sampled.json"
+      - "subgenre_placeholder.json"
+    output:
+      - "romance_books_cleaned.csv"
+      - "romance_reviews_cleaned.csv"
+      - "subgenre_classification_details.csv"
+    status: "✅ IMPLEMENTED"
+    format: "csv"
+    encoding: "utf-8"
+
+# MISSING STEPS (NEED TO BE IMPLEMENTED)
+missing_steps:
+  8:
+    name: "author_data_integration"
+    description: "Join author metadata"
+    input: 
+      - "books_integrated.json"
+      - "goodreads_book_authors.json.gz"
+    output: "books_with_authors.json"
+    status: "✅ IMPLEMENTED"
+    join_key: "author_id"
+    expected_output_records: "~2,000"
+    missing_fields:
+      - author_name
+      - author_average_rating
+      - author_ratings_count
+    implementation: "integrate_author_data method in data_integrator.py"
+    
+  9:
+    name: "series_data_integration"
+    description: "Join series metadata (optional)"
+    input:
+      - "books_with_authors.json"
+      - "goodreads_book_series.json.gz"
+    output: "books_with_series.json"
+    status: "❌ NOT IMPLEMENTED"
+    join_key: "series_id"
+    join_type: "left"
+    expected_output_records: "~2,000"
+    missing_fields:
+      - series_id
+      - series_title
+      - series_position
+    
+  10:
+    name: "subgenre_classification_primary"
+    description: "Classify books using popular_shelves as primary source"
+    input: "books_with_series.json"
+    output: "books_primary_classified.json"
+    status: "❌ NOT IMPLEMENTED"
+    method: "shelf_keyword_matching"
+    target_subgenres:
+      - contemporary_romance
+      - historical_romance
+      - paranormal_romance
+      - romantic_suspense
+      - romantic_fantasy
+      - science_fiction_romance
+    expected_output_records: "~1,800"
+    
+  11:
+    name: "subgenre_classification_keywords"
+    description: "Apply keyword-based classification for validation"
+    input: "books_primary_classified.json"
+    output: "books_keyword_classified.json"
+    status: "❌ NOT IMPLEMENTED"
+    method: "keyword_based_classifier"
+    parameters:
+      classifier_file: "config/subgenre_keywords.yml"
+      confidence_threshold: 0.7
+    expected_output_records: "~1,800"
+    
+  12:
+    name: "subgenre_validation"
+    description: "Validate classifications using book_genres_initial"
+    input: "books_keyword_classified.json"
+    output: "books_final_classified.json"
+    status: "❌ NOT IMPLEMENTED"
+    method: "cross_validation"
+    parameters:
+      validation_source: "goodreads_book_genres_initial.json.gz"
+      confidence_threshold: 0.8
+    expected_output_records: "~1,500"
+    
+  13:
+    name: "final_validation"
+    description: "Validate final dataset quality"
+    input:
+      - "books_final_classified.json"
+      - "reviews_sampled.json"
+    output: "data_quality_report.csv"
+    status: "❌ NOT IMPLEMENTED"
+    validation_checks:
+      - completeness_check
+      - consistency_check
+      - distribution_check
+      - relationship_check
+
+# Quality Thresholds (NOT ENFORCED IN CURRENT IMPLEMENTATION)
+quality_thresholds:
+  min_books: 1000
+  min_reviews: 5000
+  min_publication_year: 2000
+  max_publication_year: 2017
+  min_ratings_count: 10
+  min_description_completeness: 0.8
+
+# Output Files Configuration
+output_files:
+  books: "romance_books_cleaned.csv"
+  reviews: "romance_reviews_cleaned.csv"
+  subgenre: "subgenre_classification_details.csv"
+  quality_report: "data_quality_report.csv"
+
+# Quality Thresholds (NOT ENFORCED IN CURRENT IMPLEMENTATION)
+quality_thresholds_detailed:
+  completeness:
+    required_fields: 0.95  # 95% of required fields must be present
+    description_field: 0.8  # 80% of books must have descriptions
+    publication_year: 0.9   # 90% must have publication year
+    
+  consistency:
+    subgenre_classification: 0.8  # 80% confidence in subgenre classification
+    author_consistency: 0.95      # 95% author data consistency
+    
+  distribution:
+    subgenre_balance: 0.1         # No subgenre should have <10% of books
+    decade_balance: 0.3           # Each decade should have 30-70% of books
+    rating_distribution: "normal" # Ratings should follow normal distribution
+    
+  relationships:
+    book_review_ratio: 0.8        # 80% of books should have reviews
+    author_book_ratio: 0.9        # 90% of authors should have book data
+
+# Error Handling
+error_handling:
+  missing_files: "stop"
+  quality_threshold_failure: "log_and_continue"
+  join_failures: "log_and_continue"
+  data_type_errors: "fix_and_continue"
+  
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/data_processing_pipeline.log"
+  
+# Performance Settings
+performance:
+  chunk_size: 1000
+  max_memory_gb: 8
+  parallel_processing: true
+  num_workers: 4
+  
+# Validation Rules (PARTIALLY IMPLEMENTED)
+validation_rules:
+  - name: "book_id_uniqueness"
+    check: "unique"
+    field: "book_id"
+    severity: "error"
+    status: "✅ IMPLEMENTED"
+    
+  - name: "publication_year_range"
+    check: "range"
+    field: "publication_year"
+    min: 2000
+    max: 2017
+    severity: "warning"
+    status: "✅ IMPLEMENTED"
+    
+  - name: "rating_range"
+    check: "range"
+    field: "average_rating"
+    min: 0.0
+    max: 5.0
+    severity: "error"
+    status: "✅ IMPLEMENTED"
+    
+  - name: "subgenre_validity"
+    check: "in_list"
+    field: "subgenre_final"
+    valid_values:
+      - contemporary_romance
+      - historical_romance
+      - paranormal_romance
+      - romantic_suspense
+      - romantic_fantasy
+      - science_fiction_romance
+    severity: "error"
+    status: "❌ NOT IMPLEMENTED"
+
+# Implementation Status Summary
+implementation_status:
+  total_steps: 13
+  implemented_steps: 7
+  missing_steps: 6
+  completion_percentage: 54
+  
+  critical_missing_features:
+    - "Author data integration (author_name, author_id, author metrics)"
+    - "Series data integration (series_id, series_title, series_position)"
+    - "Subgenre classification (all subgenre fields currently empty)"
+    - "Genre validation (cross-validation with book_genres_initial)"
+    - "Quality threshold enforcement"
+    - "Final validation and quality reporting"
+  
+  next_priorities:
+    1: "Implement author data integration"
+    2: "Implement subgenre classification"
+    3: "Add series data integration"
+    4: "Implement quality threshold enforcement"
+    5: "Add final validation and reporting"

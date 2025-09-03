@@ -1,0 +1,104 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Data files (large files that shouldn't be in version control)
+data/raw/*.json.gz
+data/raw/*.csv
+data/raw/*.parquet
+data/processed/*.csv
+data/processed/*.parquet
+data/intermediate/
+
+# Archive directories - exclude large data files, keep only documentation
+archive/*/step*_processed/*.csv
+archive/*/step*_processed/*.pkl
+archive/*/step*_processed/*.pickle
+archive/*/step*_processed/*.parquet
+archive/*/intermediate_data/*.csv
+archive/*/intermediate_data/*.pkl
+archive/*/intermediate_data/*.pickle
+archive/*/step*_outputs/*.pkl
+archive/*/step*_outputs/*.pickle
+archive/*/step*_outputs/*.parquet
+
+# Output directories - exclude large data files, keep only reports
+outputs/*/step*_optimized_*.csv
+outputs/*/step*_optimized_*.pkl
+outputs/*/step*_optimized_*.pickle
+outputs/*/step*_optimized_*.parquet
+outputs/*/cleaned_*.csv
+outputs/*/cleaned_*.pkl
+outputs/*/cleaned_*.pickle
+outputs/*/cleaned_*.parquet
+
+# Large binary and data files
+*.pkl
+*.pickle
+*.parquet
+*.csv
+*.json.gz
+*.h5
+*.hdf5
+
+# Keep only documentation and reports (small files)
+!*.md
+!*.txt
+!*.json
+!*.yml
+!*.yaml
+!*.py
+!*.ipynb
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp

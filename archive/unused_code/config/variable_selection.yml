@@ -1,0 +1,328 @@
+# Variable Selection Configuration
+# Based on schema analysis and research objectives for romance novel NLP research
+# Updated to reflect actual implementation status
+
+# Research Question: How do thematic characteristics of romance novels relate to their popularity among readers?
+
+# Core Book Metadata (from goodreads_books_romance.json.gz) - IMPLEMENTED
+book_metadata:
+  essential_fields:
+    - name: book_id
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Primary key for joining across files"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: work_id
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Work-level grouping for deduplication"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: title
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Book title for identification and text analysis"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: description
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Rich thematic content for NLP analysis"
+      completeness: 90.1
+      status: "✅ IMPLEMENTED"
+      
+    - name: average_rating_weighted_mean
+      source: "computed"
+      purpose: "Work-level popularity metric for correlation analysis"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: ratings_count_sum
+      source: "computed"
+      purpose: "Work-level popularity metric for correlation analysis"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: text_reviews_count_sum
+      source: "computed"
+      purpose: "Work-level engagement metric"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: publication_year
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Temporal analysis and decade stratification"
+      completeness: 67.4
+      status: "✅ IMPLEMENTED"
+      
+    - name: language_code
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Language filtering (English only)"
+      completeness: 72.1
+      status: "✅ IMPLEMENTED"
+      
+    - name: popular_shelves
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Primary subgenre classification source"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: authors
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Author information for joining"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: series
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Series information for integration"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+
+  optional_fields:
+    - name: num_pages
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Book length analysis"
+      completeness: 58.5
+      status: "✅ IMPLEMENTED"
+      
+    - name: format
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Format analysis"
+      completeness: 65.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: publisher
+      source: "goodreads_books_romance.json.gz"
+      purpose: "Publisher analysis"
+      completeness: 60.7
+      status: "✅ IMPLEMENTED"
+      
+    # Edition-level aggregation fields (computed during processing) - IMPLEMENTED
+    - name: num_pages_median
+      source: "computed"
+      purpose: "Median page count across editions for work-level analysis"
+      completeness: "computed"
+      status: "✅ IMPLEMENTED"
+      
+    - name: average_rating_weighted_median
+      source: "computed"
+      purpose: "Weighted median of ratings across editions"
+      completeness: "computed"
+      status: "✅ IMPLEMENTED"
+
+# Author Information (from goodreads_book_authors.json.gz) - IMPLEMENTED
+author_metadata:
+  essential_fields:
+    - name: author_id
+      source: "goodreads_book_authors.json.gz"
+      purpose: "Author identification"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      impact: "High - needed for author analysis"
+      
+    - name: name
+      source: "goodreads_book_authors.json.gz"
+      purpose: "Author name for identification"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      impact: "High - needed for author identification"
+      
+    - name: average_rating
+      source: "goodreads_book_authors.json.gz"
+      purpose: "Author popularity metric"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      impact: "Medium - author popularity analysis"
+      
+    - name: ratings_count
+      source: "goodreads_book_authors.json.gz"
+      purpose: "Author reach metric"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      impact: "Medium - author reach analysis"
+
+# Review Content (from goodreads_reviews_romance.json.gz) - IMPLEMENTED
+review_metadata:
+  essential_fields:
+    - name: review_id
+      source: "goodreads_reviews_romance.json.gz"
+      purpose: "Unique review identifier"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: book_id
+      source: "goodreads_reviews_romance.json.gz"
+      purpose: "Join key to books"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: review_text
+      source: "goodreads_reviews_romance.json.gz"
+      purpose: "Rich thematic content for NLP analysis"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: rating
+      source: "goodreads_reviews_romance.json.gz"
+      purpose: "Reader satisfaction metric"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: n_votes
+      source: "goodreads_reviews_romance.json.gz"
+      purpose: "Review helpfulness metric"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+      
+    - name: date_added
+      source: "goodreads_reviews_romance.json.gz"
+      purpose: "Temporal context"
+      completeness: 100.0
+      status: "✅ IMPLEMENTED"
+
+# Genre Classification (from goodreads_book_genres_initial.json.gz) - NOT IMPLEMENTED
+genre_metadata:
+  essential_fields:
+    - name: book_id
+      source: "goodreads_book_genres_initial.json.gz"
+      purpose: "Join key to books"
+      completeness: 100.0
+      status: "❌ NOT IMPLEMENTED"
+      impact: "Medium - subgenre validation"
+      
+    - name: genres
+      source: "goodreads_book_genres_initial.json.gz"
+      purpose: "Secondary subgenre classification validation"
+      completeness: 100.0
+      status: "❌ NOT IMPLEMENTED"
+      impact: "Medium - subgenre validation"
+
+# Series Information (from goodreads_book_series.json.gz) - NOT IMPLEMENTED
+series_metadata:
+  optional_fields:
+    - name: series_id
+      source: "goodreads_book_series.json.gz"
+      purpose: "Series identification"
+      completeness: 100.0
+      status: "❌ NOT IMPLEMENTED"
+      impact: "Medium - series analysis"
+      
+    - name: title
+      source: "goodreads_book_series.json.gz"
+      purpose: "Series name"
+      completeness: 100.0
+      status: "❌ NOT IMPLEMENTED"
+      impact: "Medium - series identification"
+      
+    - name: series_works_count
+      source: "goodreads_book_series.json.gz"
+      purpose: "Series size metric"
+      completeness: 100.0
+      status: "❌ NOT IMPLEMENTED"
+      impact: "Low - series size analysis"
+
+# Excluded Fields (with rationale) - IMPLEMENTED
+excluded_fields:
+  high_missing_rate:
+    - name: isbn
+      reason: "61.8% missing rate"
+      status: "✅ EXCLUDED"
+    - name: isbn13
+      reason: "50.3% missing rate"
+      status: "✅ EXCLUDED"
+    - name: asin
+      reason: "63.5% missing rate"
+      status: "✅ EXCLUDED"
+    - name: kindle_asin
+      reason: "45.7% missing rate"
+      status: "✅ EXCLUDED"
+    - name: edition_information
+      reason: "90.2% missing rate"
+      status: "✅ EXCLUDED"
+    - name: publication_day
+      reason: "41.9% missing rate"
+      status: "✅ EXCLUDED"
+    - name: publication_month
+      reason: "36.8% missing rate"
+      status: "✅ EXCLUDED"
+      
+  redundant_or_low_value:
+    - name: url
+      reason: "Duplicate of link field"
+      status: "✅ EXCLUDED"
+    - name: link
+      reason: "Not relevant for analysis"
+      status: "✅ EXCLUDED"
+    - name: image_url
+      reason: "Not relevant for analysis"
+      status: "✅ EXCLUDED"
+    - name: country_code
+      reason: "All 'US' in sample"
+      status: "✅ EXCLUDED"
+    - name: is_ebook
+      reason: "Limited variation"
+      status: "✅ EXCLUDED"
+
+# Data Integration Strategy (PARTIALLY IMPLEMENTED)
+integration_strategy:
+  primary_join: "book_id"
+  join_order:
+    1: "books (central table) - ✅ IMPLEMENTED"
+    2: "authors (via author_id from books) - ✅ IMPLEMENTED"
+    3: "reviews (via book_id, one-to-many) - ✅ IMPLEMENTED"
+    4: "genres (via book_id) - ❌ NOT IMPLEMENTED"
+    5: "series (via series_id from books) - ❌ NOT IMPLEMENTED"
+    
+  quality_thresholds:
+    description_completeness: 0.8
+    min_ratings_count: 10
+    min_reviews_count: 1
+    publication_year_min: 2000
+    language_code: "eng"
+    status: "✅ IMPLEMENTED"
+
+# Expected Dataset Characteristics (UPDATED)
+expected_characteristics:
+  total_books: 335449
+  total_reviews: 3565378
+  total_authors: 829529
+  total_series: 400390
+  data_size_gb: 9.8
+  
+  # Current implementation status
+  implemented_features:
+    - "Book metadata loading and processing"
+    - "Quality filtering and author balancing"
+    - "Decade stratification"
+    - "Edition aggregation"
+    - "Review sampling"
+    - "CSV export"
+  
+  missing_features:
+    - "Author data integration"
+    - "Series data integration"
+    - "Genre data integration"
+    - "Subgenre classification"
+    - "Quality threshold enforcement"
+    - "Final validation and reporting"
+
+# Implementation Status Summary
+implementation_status:
+  total_variables: 45
+  implemented_variables: 29
+  missing_variables: 16
+  completion_percentage: 64
+  
+  critical_missing:
+    - "Subgenre classification (core research objective)"
+    - "Series information (series_id, series_title)"
+    - "Genre validation data"
+    
+  priority_order:
+    1: "Series data integration"
+    2: "Quality threshold enforcement"
+    3: "Final validation and reporting"
+    4: "Subgenre classification implementation"
+    5: "Genre validation data"
+

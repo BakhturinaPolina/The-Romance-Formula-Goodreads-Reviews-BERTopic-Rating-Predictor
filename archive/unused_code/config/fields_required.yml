@@ -1,0 +1,270 @@
+# Fields required for inclusion in the cleaned dataset
+# Each entry can include:
+#   - name: field/column name
+#   - dtype: expected datatype (string for now; refine later)
+#   - required: true/false (false = optional but preferred)
+#   - status: IMPLEMENTED/NOT_IMPLEMENTED/MISSING
+
+# CURRENTLY IMPLEMENTED FIELDS
+implemented_fields:
+  # Primary identifiers
+  - name: book_id
+    dtype: string
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  - name: work_id
+    dtype: string
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  - name: title
+    dtype: string
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  - name: description
+    dtype: string
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  # Publication and language
+  - name: publication_year
+    dtype: int
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  - name: language_code
+    dtype: string
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  # Popularity metrics (work-level aggregated)
+  - name: average_rating_weighted_mean
+    dtype: float
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "computed"
+
+  - name: ratings_count_sum
+    dtype: int
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "computed"
+
+  - name: text_reviews_count_sum
+    dtype: int
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "computed"
+
+  # Optional metadata
+  - name: num_pages
+    dtype: int
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  - name: format
+    dtype: string
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  - name: publisher
+    dtype: string
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  # Classification data
+  - name: popular_shelves
+    dtype: string
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_books_romance.json.gz"
+
+  # Edition-level aggregations (computed)
+  - name: num_pages_median
+    dtype: float
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "computed"
+
+  - name: average_rating_weighted_median
+    dtype: float
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "computed"
+
+  # Derived fields
+  - name: decade
+    dtype: string
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "derived"
+
+  - name: quality_score
+    dtype: float
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "derived"
+
+  - name: has_description
+    dtype: bool
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "derived"
+
+# MISSING FIELDS (NOT IMPLEMENTED)
+missing_fields:
+  # Author information (CRITICAL MISSING)
+  - name: author_id
+    dtype: string
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_book_authors.json.gz"
+    impact: "High - needed for author analysis"
+
+  - name: author_name
+    dtype: string
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_book_authors.json.gz"
+    impact: "High - needed for author identification"
+
+  - name: author_average_rating
+    dtype: float
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_book_authors.json.gz"
+    impact: "Medium - author popularity analysis"
+
+  - name: author_ratings_count
+    dtype: int
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_book_authors.json.gz"
+    impact: "Medium - author reach analysis"
+
+  # Series information (OPTIONAL MISSING)
+  - name: series_id
+    dtype: string
+    required: false
+    status: "❌ NOT IMPLEMENTED"
+    source: "goodreads_book_series.json.gz"
+    impact: "Medium - series analysis"
+
+  - name: series_title
+    dtype: string
+    required: false
+    status: "❌ NOT IMPLEMENTED"
+    source: "goodreads_book_series.json.gz"
+    impact: "Medium - series identification"
+
+  - name: series_position
+    dtype: int
+    required: false
+    status: "❌ NOT IMPLEMENTED"
+    source: "goodreads_book_series.json.gz"
+    impact: "Low - series order analysis"
+
+  # Subgenre classification (CRITICAL MISSING)
+  - name: subgenre_primary
+    dtype: string
+    required: false
+    status: "❌ NOT IMPLEMENTED (PLACEHOLDER)"
+    source: "computed"
+    impact: "High - core research objective"
+
+  - name: subgenre_keywords
+    dtype: string
+    required: false
+    status: "❌ NOT IMPLEMENTED (PLACEHOLDER)"
+    source: "computed"
+    impact: "High - subgenre validation"
+
+  - name: subgenre_final
+    dtype: string
+    required: false
+    status: "❌ NOT IMPLEMENTED (PLACEHOLDER)"
+    source: "computed"
+    impact: "High - final classification"
+
+  - name: subgenre_confidence
+    dtype: float
+    required: false
+    status: "❌ NOT IMPLEMENTED (PLACEHOLDER)"
+    source: "computed"
+    impact: "Medium - classification confidence"
+
+  # Genre validation (OPTIONAL MISSING)
+  - name: genre_tags
+    dtype: string
+    required: false
+    status: "❌ NOT IMPLEMENTED"
+    source: "goodreads_book_genres_initial.json.gz"
+    impact: "Medium - subgenre validation"
+
+# Review fields (IMPLEMENTED)
+review_fields:
+  - name: review_id
+    dtype: string
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_reviews_romance.json.gz"
+
+  - name: user_id
+    dtype: string
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_reviews_romance.json.gz"
+
+  - name: review_text
+    dtype: string
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_reviews_romance.json.gz"
+
+  - name: rating
+    dtype: int
+    required: true
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_reviews_romance.json.gz"
+
+  - name: n_votes
+    dtype: int
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_reviews_romance.json.gz"
+
+  - name: date_added
+    dtype: string
+    required: false
+    status: "✅ IMPLEMENTED"
+    source: "goodreads_reviews_romance.json.gz"
+
+# Implementation Summary
+implementation_summary:
+  total_fields: 35
+  implemented_fields: 20
+  missing_fields: 15
+  completion_percentage: 57
+  
+  critical_missing:
+    - "Author information (author_id, author_name)"
+    - "Subgenre classification (all subgenre fields)"
+    - "Series information (series_id, series_title)"
+    
+  priority_order:
+    1: "Series data integration"
+    2: "Quality threshold enforcement"
+    3: "Final validation and reporting"
+    4: "Subgenre classification implementation"
+    5: "Genre validation data"

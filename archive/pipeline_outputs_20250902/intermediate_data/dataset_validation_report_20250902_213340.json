@@ -1,0 +1,210 @@
+{
+  "validation_timestamp": "2025-09-02T21:33:40.289603",
+  "dataset_info": {
+    "total_records": 80747,
+    "total_columns": 23,
+    "memory_usage_mb": 219.0559253692627,
+    "file_path": "data/processed/integrated_romance_novels_nlp_ready_*.csv"
+  },
+  "validation_results": {
+    "structure_validation": {
+      "expected_columns": 23,
+      "actual_columns": 23,
+      "required_columns": [
+        "work_id",
+        "title",
+        "publication_year",
+        "author_id",
+        "author_name",
+        "description",
+        "duplication_status",
+        "cleaning_strategy",
+        "disambiguation_notes"
+      ],
+      "cleaning_metadata_columns": [
+        "duplication_status",
+        "cleaning_strategy",
+        "disambiguation_notes",
+        "cleaning_timestamp"
+      ],
+      "missing_columns": [],
+      "extra_columns": [
+        "author_average_rating",
+        "series_id",
+        "genres",
+        "ratings_count_sum",
+        "average_rating_weighted_mean",
+        "language_codes_en",
+        "book_id_list_en",
+        "author_ratings_count",
+        "series_works_count",
+        "popular_shelves",
+        "num_pages_median",
+        "text_reviews_count_sum",
+        "cleaning_timestamp",
+        "series_title"
+      ],
+      "structure_valid": true
+    },
+    "integrity_validation": {
+      "no_duplicate_work_ids": true,
+      "no_null_critical_fields": true,
+      "publication_year_range_valid": true,
+      "data_type_consistency": true,
+      "issues_found": [],
+      "overall_integrity": true
+    },
+    "metadata_validation": {
+      "duplication_status_coverage": 1.0,
+      "cleaning_strategy_coverage": 1.0,
+      "disambiguation_notes_coverage": 0.22195251835981522,
+      "cleaning_timestamp_coverage": 1.0,
+      "metadata_quality": "FAIR",
+      "issues_found": []
+    },
+    "sample_analysis": {
+      "sample_size": 10,
+      "records": [
+        {
+          "work_id": 24511652,
+          "title": "ikasamamemori 1",
+          "author_name": "Isaku Natsume",
+          "publication_year": 2012,
+          "duplication_status": "unique",
+          "cleaning_strategy": "none",
+          "has_disambiguation": false
+        },
+        {
+          "work_id": 46783472,
+          "title": "Top Shelf",
+          "author_name": "Kelly Jamieson",
+          "publication_year": 2016,
+          "duplication_status": "unique",
+          "cleaning_strategy": "none",
+          "has_disambiguation": false
+        },
+        {
+          "work_id": 57181517,
+          "title": "Dark Needs",
+          "author_name": "Maris Black",
+          "publication_year": 2017,
+          "duplication_status": "unique",
+          "cleaning_strategy": "none",
+          "has_disambiguation": false
+        },
+        {
+          "work_id": 26331984,
+          "title": "The Last Hour of Gann",
+          "author_name": "R. Lee Smith",
+          "publication_year": 2013,
+          "duplication_status": "unique",
+          "cleaning_strategy": "none",
+          "has_disambiguation": false
+        },
+        {
+          "work_id": 19120438,
+          "title": "A Howl for the Highlander",
+          "author_name": "Terry Spear",
+          "publication_year": 2013,
+          "duplication_status": "unique",
+          "cleaning_strategy": "none",
+          "has_disambiguation": false
+        },
+        {
+          "work_id": 42955207,
+          "title": "Nauti Seductress",
+          "author_name": "Lora Leigh",
+          "publication_year": 2015,
+          "duplication_status": "unique",
+          "cleaning_strategy": "none",
+          "has_disambiguation": false
+        },
+        {
+          "work_id": 57781269,
+          "title": "Another Chance",
+          "author_name": "Michelle Beattie",
+          "publication_year": 2011,
+          "duplication_status": "legitimate_duplicate",
+          "cleaning_strategy": "Different authors - legitimate duplicates",
+          "has_disambiguation": true
+        },
+        {
+          "work_id": 17276624,
+          "title": "Swapped",
+          "author_name": "Christopher  West",
+          "publication_year": 2011,
+          "duplication_status": "legitimate_duplicate",
+          "cleaning_strategy": "Different authors - legitimate duplicates",
+          "has_disambiguation": true
+        },
+        {
+          "work_id": 21813224,
+          "title": "Table for Two",
+          "author_name": "Alexis Lauren",
+          "publication_year": 2012,
+          "duplication_status": "legitimate_duplicate",
+          "cleaning_strategy": "Different authors - legitimate duplicates",
+          "has_disambiguation": true
+        },
+        {
+          "work_id": 40055045,
+          "title": "\u25cf \u25cf \u25cf \u25cf \u25cf",
+          "author_name": "Simon Graves",
+          "publication_year": 2014,
+          "duplication_status": "unique",
+          "cleaning_strategy": "none",
+          "has_disambiguation": false
+        }
+      ],
+      "quality_observations": [
+        "Sample contains 7 unique titles",
+        "Sample contains 3 legitimate duplicates",
+        "Sample contains 7 records with no cleaning needed"
+      ],
+      "issues_found": []
+    },
+    "quality_metrics": {
+      "completeness_scores": {
+        "work_id": 1.0,
+        "title": 1.0,
+        "publication_year": 1.0,
+        "author_id": 1.0,
+        "author_name": 1.0,
+        "description": 1.0
+      },
+      "consistency_scores": {
+        "no_duplicate_work_ids": 1.0,
+        "valid_publication_years": 1.0,
+        "cleaning_metadata_present": 1.0
+      },
+      "overall_quality_score": 100.0,
+      "quality_grade": "A+"
+    }
+  },
+  "overall_assessment": {
+    "status": "EXCELLENT",
+    "ready_for_nlp": true,
+    "strengths": [
+      "Dataset structure is correct",
+      "Data integrity is good"
+    ],
+    "weaknesses": [
+      "Cleaning metadata quality needs improvement"
+    ],
+    "critical_issues": []
+  },
+  "recommendations": {
+    "immediate_actions": [
+      "Address critical data quality issues",
+      "Re-run validation after fixes"
+    ],
+    "short_term_improvements": [
+      "Improve cleaning metadata quality"
+    ],
+    "long_term_goals": [
+      "Implement automated quality monitoring",
+      "Set up data quality dashboards",
+      "Establish data quality SLAs"
+    ]
+  }
+}

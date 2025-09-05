@@ -1,0 +1,349 @@
+{
+  "treatment_timestamp": "20250904_223829",
+  "missing_values_analysis": {
+    "total_variables": 19,
+    "variables_with_missing": 6,
+    "missing_summary": {
+      "significant": [
+        {
+          "variable": "num_pages_median",
+          "missing_count": "35908",
+          "missing_percentage": 30.003843647119773
+        },
+        {
+          "variable": "series_id",
+          "missing_count": "39570",
+          "missing_percentage": 33.063720984642124
+        },
+        {
+          "variable": "series_title",
+          "missing_count": "39572",
+          "missing_percentage": 33.06539213556376
+        },
+        {
+          "variable": "series_works_count",
+          "missing_count": "39570",
+          "missing_percentage": 33.063720984642124
+        }
+      ],
+      "moderate": [
+        {
+          "variable": "description",
+          "missing_count": "6172",
+          "missing_percentage": 5.157171744180217
+        }
+      ],
+      "minimal": [
+        {
+          "variable": "average_rating_weighted_mean",
+          "missing_count": "96",
+          "missing_percentage": 0.0802152442387072
+        }
+      ]
+    },
+    "missing_by_variable": {
+      "work_id": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "int64",
+        "completeness_rate": 100.0
+      },
+      "book_id_list_en": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "object",
+        "completeness_rate": 100.0
+      },
+      "title": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "object",
+        "completeness_rate": 100.0
+      },
+      "publication_year": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "int64",
+        "completeness_rate": 100.0
+      },
+      "language_codes_en": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "object",
+        "completeness_rate": 100.0
+      },
+      "num_pages_median": {
+        "missing_count": "35908",
+        "missing_percentage": 30.003843647119773,
+        "data_type": "float64",
+        "completeness_rate": 69.99615635288023
+      },
+      "description": {
+        "missing_count": "6172",
+        "missing_percentage": 5.157171744180217,
+        "data_type": "object",
+        "completeness_rate": 94.84282825581978
+      },
+      "popular_shelves": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "object",
+        "completeness_rate": 100.0
+      },
+      "genres": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "object",
+        "completeness_rate": 100.0
+      },
+      "author_id": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "int64",
+        "completeness_rate": 100.0
+      },
+      "author_name": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "object",
+        "completeness_rate": 100.0
+      },
+      "author_average_rating": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "float64",
+        "completeness_rate": 100.0
+      },
+      "author_ratings_count": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "int64",
+        "completeness_rate": 100.0
+      },
+      "series_id": {
+        "missing_count": "39570",
+        "missing_percentage": 33.063720984642124,
+        "data_type": "float64",
+        "completeness_rate": 66.93627901535788
+      },
+      "series_title": {
+        "missing_count": "39572",
+        "missing_percentage": 33.06539213556376,
+        "data_type": "object",
+        "completeness_rate": 66.93460786443623
+      },
+      "series_works_count": {
+        "missing_count": "39570",
+        "missing_percentage": 33.063720984642124,
+        "data_type": "float64",
+        "completeness_rate": 66.93627901535788
+      },
+      "ratings_count_sum": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "int64",
+        "completeness_rate": 100.0
+      },
+      "text_reviews_count_sum": {
+        "missing_count": "0",
+        "missing_percentage": 0.0,
+        "data_type": "int64",
+        "completeness_rate": 100.0
+      },
+      "average_rating_weighted_mean": {
+        "missing_count": "96",
+        "missing_percentage": 0.0802152442387072,
+        "data_type": "float64",
+        "completeness_rate": 99.9197847557613
+      }
+    },
+    "treatment_recommendations": {
+      "num_pages_median": {
+        "strategy": "exclude_from_analysis",
+        "rationale": "Very high missing rate (30.0%) - exclude from analysis"
+      },
+      "description": {
+        "strategy": "exclude_from_analysis",
+        "rationale": "Very high missing rate (5.2%) - exclude from analysis"
+      },
+      "series_id": {
+        "strategy": "flag_for_analysis",
+        "rationale": "Low missing rate (33.1%) - flag for analysis (no imputation)"
+      },
+      "series_title": {
+        "strategy": "flag_for_analysis",
+        "rationale": "Low missing rate (33.1%) - flag for analysis (no imputation)"
+      },
+      "series_works_count": {
+        "strategy": "flag_for_analysis",
+        "rationale": "Low missing rate (33.1%) - flag for analysis (no imputation)"
+      },
+      "average_rating_weighted_mean": {
+        "strategy": "exclude_from_analysis",
+        "rationale": "Very high missing rate (0.1%) - exclude from analysis"
+      }
+    }
+  },
+  "treatment_results": {
+    "treatments_applied": 0,
+    "records_excluded": 38874,
+    "flags_created": 3,
+    "treatment_details": {
+      "num_pages_median": {
+        "strategy": "exclude_from_analysis",
+        "records_excluded": 35908,
+        "action": "Excluded 35908 records with missing num_pages_median"
+      },
+      "description": {
+        "strategy": "exclude_from_analysis",
+        "records_excluded": 2924,
+        "action": "Excluded 2924 records with missing description"
+      },
+      "series_id": {
+        "strategy": "flag_for_analysis",
+        "flag_created": "series_id_missing_flag",
+        "missing_count": "39570",
+        "action": "Created flag column series_id_missing_flag"
+      },
+      "series_title": {
+        "strategy": "flag_for_analysis",
+        "flag_created": "series_title_missing_flag",
+        "missing_count": "39572",
+        "action": "Created flag column series_title_missing_flag"
+      },
+      "series_works_count": {
+        "strategy": "flag_for_analysis",
+        "flag_created": "series_works_count_missing_flag",
+        "missing_count": "39570",
+        "action": "Created flag column series_works_count_missing_flag"
+      },
+      "average_rating_weighted_mean": {
+        "strategy": "exclude_from_analysis",
+        "records_excluded": 42,
+        "action": "Excluded 42 records with missing average_rating_weighted_mean"
+      }
+    },
+    "final_shape": [
+      80804,
+      22
+    ],
+    "original_shape": [
+      119678,
+      19
+    ]
+  },
+  "validation_results": {
+    "validation_passed": true,
+    "remaining_missing": {
+      "series_id": "26810",
+      "series_title": "26812",
+      "series_works_count": "26810"
+    },
+    "validation_errors": [],
+    "completeness_improvement": {
+      "work_id": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "book_id_list_en": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "title": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "publication_year": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "language_codes_en": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "num_pages_median": {
+        "original": 69.99615635288022,
+        "treated": 100.0,
+        "improvement": 30.00384364711978
+      },
+      "description": {
+        "original": 94.84282825581978,
+        "treated": 100.0,
+        "improvement": 5.157171744180218
+      },
+      "popular_shelves": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "genres": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "author_id": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "author_name": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "author_average_rating": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "author_ratings_count": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "series_id": {
+        "original": 66.93627901535788,
+        "treated": 66.82094945794763,
+        "improvement": -0.11532955741024864
+      },
+      "series_title": {
+        "original": 66.93460786443623,
+        "treated": 66.81847433295381,
+        "improvement": -0.11613353148241856
+      },
+      "series_works_count": {
+        "original": 66.93627901535788,
+        "treated": 66.82094945794763,
+        "improvement": -0.11532955741024864
+      },
+      "ratings_count_sum": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "text_reviews_count_sum": {
+        "original": 100.0,
+        "treated": 100.0,
+        "improvement": 0.0
+      },
+      "average_rating_weighted_mean": {
+        "original": 99.91978475576128,
+        "treated": 100.0,
+        "improvement": 0.0802152442387154
+      }
+    }
+  },
+  "summary": {
+    "original_records": 119678,
+    "treated_records": 80804,
+    "records_excluded": 38874,
+    "treatments_applied": 0,
+    "flags_created": 3,
+    "validation_passed": true
+  }
+}

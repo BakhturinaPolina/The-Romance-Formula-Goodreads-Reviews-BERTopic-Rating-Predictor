@@ -111,8 +111,38 @@ If any of these files are needed in the future:
 - The current project structure is clean and focused on the active components needed for Phase 3
 - Data quality module is now streamlined with only essential functionality
 
+### Repository Cleanup 2025-01-05 (cleanup_20250105/)
+**Reason**: Remove outdated and duplicate files to maintain clean repository structure.
+
+**Archived Files**:
+- **Old Logs**: 20+ log files from September 2, 2025 (outdated)
+- **Duplicate Outputs**: 8 duplicate output files with older timestamps
+- **CSV Building Archive**: 4 files from src/csv_building/archive/
+- **Old Reports**: 7 superseded analysis reports and summaries
+
+**Current Active Files**: 
+- Recent logs from September 4, 2025
+- Latest output files with timestamp 20250904_223745
+- Current analysis reports and summaries
+
+### Repository Cleanup 2025-01-06 (cleanup_20250106/)
+**Reason**: Remove Python cache files, empty log files, and duplicate outputs to maintain clean repository structure.
+
+**Archived Files**:
+- **Python Cache Files**: `__pycache__` directories from src/data_quality/ and src/csv_building/
+- **Empty Log Files**: 5 empty log files (0 bytes) that were never used
+- **Duplicate Outputs**: Earlier version of memory efficient quality report and unprocessed batch files
+- **Development Tools**: 3 diagnostic scripts used during development (analyze_variable_quality.py, diagnose_null_sources.py, inspect_json_files.py)
+- **Alternative Runners**: 4 redundant runner scripts (run_batch_processing.py, run_memory_efficient.py, run_on_csv_output.py, run_outlier_detection_step4.py)
+
+**Current Active Files**: 
+- Clean source code without cache files
+- Streamlined src/ directory with only core functionality
+- Latest output files with timestamp 20250904_232345
+- Processed batch files (kept processed versions)
+
 ---
 
-**Last Updated**: September 2025  
+**Last Updated**: January 2025  
 **Archive Status**: Complete  
 **Next Review**: After NLP analysis phase completion

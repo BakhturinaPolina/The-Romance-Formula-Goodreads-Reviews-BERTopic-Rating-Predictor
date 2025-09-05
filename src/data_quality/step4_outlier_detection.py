@@ -487,6 +487,10 @@ class OutlierDetectionReporter:
         logger.info("🚀 Starting comprehensive outlier detection analysis...")
         start_time = time.time()
         
+        # Load data if not already loaded
+        if self.df is None:
+            self.load_data()
+        
         # Initialize results structure
         self.results = {
             'analysis_timestamp': self.timestamp,

@@ -33,6 +33,9 @@ from .step5_data_type_optimization import DataTypeOptimizer
 # Step 6: Final Quality Validation & Certification
 from .step6_final_quality_validation import FinalQualityValidator
 
+# Pipeline Runner
+from .pipeline_runner import DataQualityPipelineRunner
+
 __all__ = [
     # Step 1: Missing Values Treatment
     'MissingValuesCleaner',          # Step 1: Missing Values Treatment
@@ -51,5 +54,8 @@ __all__ = [
     'DataTypeOptimizer',             # Step 5: Data Type Optimization
     
     # Step 6: Final Quality Validation & Certification
-    'FinalQualityValidator'          # Step 6: Final Quality Validation
+    'FinalQualityValidator',         # Step 6: Final Quality Validation
+    
+    # Pipeline Runner
+    'DataQualityPipelineRunner'      # Complete Pipeline Runner
 ]

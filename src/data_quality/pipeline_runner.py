@@ -167,9 +167,11 @@ class DataQualityPipelineRunner:
             # Run complete treatment
             results = cleaner.run_complete_treatment()
             
-            # Update pipeline configuration
-            self.pipeline_steps['step1']['output_path'] = f"outputs/missing_values_cleaning/romance_novels_step1_missing_values_treated_{self.timestamp}.pkl"
-            self.pipeline_steps['step2']['input_path'] = self.pipeline_steps['step1']['output_path']
+            # Get the actual output path from the results
+            # The output path is stored in the results, we need to construct it
+            actual_output_path = f"outputs/missing_values_cleaning/romance_novels_step1_missing_values_treated_{cleaner.timestamp}.pkl"
+            self.pipeline_steps['step1']['output_path'] = actual_output_path
+            self.pipeline_steps['step2']['input_path'] = actual_output_path
             
             logger.info("✅ Step 1: Missing Values Treatment completed successfully")
             return results
@@ -195,9 +197,10 @@ class DataQualityPipelineRunner:
             # Run complete resolution
             results = detector.run_complete_resolution()
             
-            # Update pipeline configuration
-            self.pipeline_steps['step2']['output_path'] = f"outputs/duplicate_detection/romance_novels_step2_duplicates_resolved_{self.timestamp}.pkl"
-            self.pipeline_steps['step3']['input_path'] = self.pipeline_steps['step2']['output_path']
+            # Get the actual output path from the detector
+            actual_output_path = f"outputs/duplicate_detection/romance_novels_step2_duplicates_resolved_{detector.timestamp}.pkl"
+            self.pipeline_steps['step2']['output_path'] = actual_output_path
+            self.pipeline_steps['step3']['input_path'] = actual_output_path
             
             logger.info("✅ Step 2: Duplicate Detection & Resolution completed successfully")
             return results
@@ -223,9 +226,10 @@ class DataQualityPipelineRunner:
             # Run complete validation
             results = validator.run_complete_validation()
             
-            # Update pipeline configuration
-            self.pipeline_steps['step3']['output_path'] = f"outputs/data_type_validation/romance_novels_step3_data_types_validated_{self.timestamp}.pkl"
-            self.pipeline_steps['step4_detection']['input_path'] = self.pipeline_steps['step3']['output_path']
+            # Get the actual output path from the validator
+            actual_output_path = f"outputs/data_type_validation/romance_novels_step3_data_types_validated_{validator.timestamp}.pkl"
+            self.pipeline_steps['step3']['output_path'] = actual_output_path
+            self.pipeline_steps['step4_detection']['input_path'] = actual_output_path
             
             logger.info("✅ Step 3: Data Type Validation & Conversion completed successfully")
             return results
@@ -278,9 +282,10 @@ class DataQualityPipelineRunner:
             # Run complete treatment
             results = applier.run_complete_treatment()
             
-            # Update pipeline configuration
-            self.pipeline_steps['step4_treatment']['output_path'] = f"outputs/outlier_detection/cleaned_romance_novels_step4_treated_{self.timestamp}.pkl"
-            self.pipeline_steps['step5']['input_path'] = self.pipeline_steps['step4_treatment']['output_path']
+            # Get the actual output path from the applier
+            actual_output_path = f"outputs/outlier_detection/cleaned_romance_novels_step4_treated_{applier.timestamp}.pkl"
+            self.pipeline_steps['step4_treatment']['output_path'] = actual_output_path
+            self.pipeline_steps['step5']['input_path'] = actual_output_path
             
             logger.info("✅ Step 4b: Outlier Treatment completed successfully")
             return results
@@ -306,9 +311,10 @@ class DataQualityPipelineRunner:
             # Run complete optimization
             results = optimizer.run_complete_optimization()
             
-            # Update pipeline configuration
-            self.pipeline_steps['step5']['output_path'] = f"outputs/data_type_optimization/cleaned_romance_novels_step5_optimized_{self.timestamp}.parquet"
-            self.pipeline_steps['step6']['input_path'] = self.pipeline_steps['step5']['output_path']
+            # Get the actual output path from the optimizer
+            actual_output_path = f"outputs/data_type_optimization/cleaned_romance_novels_step5_optimized_{optimizer.timestamp}.parquet"
+            self.pipeline_steps['step5']['output_path'] = actual_output_path
+            self.pipeline_steps['step6']['input_path'] = actual_output_path
             
             logger.info("✅ Step 5: Data Type Optimization & Persistence completed successfully")
             return results

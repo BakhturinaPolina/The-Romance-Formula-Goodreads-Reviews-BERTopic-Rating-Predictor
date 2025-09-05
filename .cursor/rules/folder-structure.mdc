@@ -68,19 +68,25 @@ pipeline.run_complete_optimization()  # For full dataset
 ## File Naming Conventions
 
 ### Data Files
-- **Pipeline Outputs**: `cleaned_romance_novels_step[step]_[timestamp].[format]`
+- **Pipeline Outputs**: `romance_novels_step[step]_[timestamp].[format]`
+- **Optimized Data**: `cleaned_romance_novels_step5_optimized_[timestamp].[format]`
 - **Reports**: `*_report_step[step]_[timestamp].json`
-- **Summaries**: `STEP[step]_*_SUMMARY.md`
+- **Quality Reports**: `*_quality_report_[timestamp].txt`
 
-### Log Files
-- **Pipeline**: `*_step[step]_[timestamp].log`
-- **Validation**: `*_validation_[timestamp].log`
-- **Outlier Detection**: `outlier_detection_[timestamp].log`
+### Pipeline Step Files
+- **Step Implementations**: `step[number]_[description].py`
+- **Main Runner**: `pipeline_runner.py`
+- **Individual Runners**: `run_[description].py`
 
-### Reports
-- **Summary**: `STEP[step]_*_SUMMARY.md`
-- **JSON**: `*_report_step[step]_[timestamp].json`
-- **Execution**: `execution_summary_step[step]_[timestamp].txt`
+### Archive Files
+- **Cleanup Archives**: `cleanup_YYYYMMDD/`
+- **Archive Summaries**: `CLEANUP_SUMMARY.md`
+- **Archive Documentation**: `ARCHIVE_SUMMARY.md`
+
+### Output Organization
+- **Step Outputs**: `src/data_quality/outputs/[step_name]/`
+- **Timestamped Files**: `*_[YYYYMMDD_HHMMSS].[format]`
+- **Quality Reports**: `*_quality_report_[timestamp].md`
 
 ## Academic Compliance
 
@@ -97,8 +103,22 @@ pipeline.run_complete_optimization()  # For full dataset
 romance-novel-nlp-research/
 ├── .cursor/                          # Cursor IDE configuration
 │   └── rules/                        # Project-specific rules
-├── archive/                          # Archived unused code and outputs
-│   ├── data_quality_archive_20250902/  # Archived data quality files
+├── archive/                          # Archived development history
+│   ├── cleanup_20250105/             # January 5, 2025 cleanup
+│   │   ├── CLEANUP_SUMMARY.md        # Cleanup documentation
+│   │   ├── csv_building_archive/     # Archived CSV building files
+│   │   ├── duplicate_outputs/        # Duplicate output files
+│   │   ├── old_logs/                 # Outdated log files
+│   │   └── old_reports/              # Superseded reports
+│   ├── cleanup_20250106/             # January 6, 2025 cleanup
+│   │   ├── CLEANUP_SUMMARY.md        # Latest cleanup documentation
+│   │   ├── data_quality_pycache/     # Python cache files
+│   │   ├── csv_building_pycache/     # Python cache files
+│   │   ├── empty_logs/               # Empty log files
+│   │   ├── src_development_tools/    # Development diagnostic tools
+│   │   ├── src_alternative_runners/  # Redundant runner scripts
+│   │   └── duplicate_outputs/        # Earlier output versions
+│   ├── data_quality_archive_20250902/  # September 2025 data quality archive
 │   │   ├── legacy_analysis/           # Replaced analysis implementations
 │   │   ├── development_artifacts/     # Development versions and tests
 │   │   ├── ARCHIVE_SUMMARY.md         # Archive documentation
@@ -110,6 +130,9 @@ romance-novel-nlp-research/
 │   │   ├── intermediate_data/          # Title cleaning and validation
 │   │   ├── ARCHIVE_SUMMARY.md         # Pipeline archive documentation
 │   │   └── CLEANUP_SUMMARY.md         # Pipeline cleanup summary
+│   ├── processed_data_20250904/       # Archived processed data
+│   │   ├── ARCHIVE_SUMMARY.md         # Processed data documentation
+│   │   └── *.csv                      # Archived CSV files
 │   ├── data_quality_artifacts/        # Legacy data quality files
 │   ├── unused_code/                   # Previous implementations
 │   ├── ARCHIVE_SUMMARY.md             # Main archive documentation
@@ -129,36 +152,33 @@ romance-novel-nlp-research/
 │   ├── intermediate/                 # Temporary processing outputs
 │   └── processed/                    # Final cleaned datasets
 │       └── README.md                 # Pipeline documentation
-├── outputs/                          # Current pipeline outputs
-│   ├── final_quality_validation/     # Step 6: Final quality validation
-│   │   ├── STEP6_FINAL_QUALITY_VALIDATION_SUMMARY.md
-│   │   └── final_quality_validation_report_step6_*.json
-│   └── data_type_optimization/       # Step 5: Data type optimization
-│       ├── STEP5_DATA_TYPE_OPTIMIZATION_SUMMARY.md
-│       ├── cleaned_romance_novels_step5_optimized_*.parquet
-│       ├── cleaned_romance_novels_step5_optimized_*.pickle
-│       └── data_type_optimization_report_step5_*.json
+├── outputs/                          # Current pipeline outputs (currently empty)
+│   └── (ready for future outputs)    # Pipeline outputs now in src/data_quality/outputs/
 ├── src/                              # Source code (ALL code must be here)
-│   ├── data_quality/                 # Data quality pipeline (Steps 4-6)
+│   ├── data_quality/                 # Complete 6-step data quality pipeline
 │   │   ├── __init__.py               # Module exports
-│   │   ├── README.md                 # Comprehensive module documentation
-│   │   ├── outlier_detection_step4.py        # Step 4: Outlier Detection
-│   │   ├── apply_outlier_treatment_step4.py  # Step 4: Outlier Treatment
-│   │   ├── data_type_optimization_step5.py   # Step 5: Data Type Optimization
-│   │   ├── final_quality_validation_step6.py # Step 6: Final Quality Validation
-│   │   ├── run_outlier_detection_step4.py    # Step 4 Runner
-│   │   └── README_STEP4_OUTLIER_DETECTION.md # Step 4 detailed docs
+│   │   ├── pipeline_runner.py        # Main pipeline runner (executes all 6 steps)
+│   │   ├── step1_missing_values_cleaning.py      # Step 1: Missing Values Cleaning
+│   │   ├── step2_duplicate_detection.py          # Step 2: Duplicate Detection
+│   │   ├── step3_data_type_validation.py         # Step 3: Data Type Validation
+│   │   ├── step4_outlier_detection.py            # Step 4: Outlier Detection
+│   │   ├── step4_outlier_treatment.py            # Step 4: Outlier Treatment
+│   │   ├── step5_data_type_optimization.py       # Step 5: Data Type Optimization
+│   │   ├── step6_final_quality_validation.py     # Step 6: Final Quality Validation
+│   │   └── outputs/                              # Pipeline execution outputs
+│   │       ├── missing_values_cleaning/          # Step 1 outputs
+│   │       ├── duplicate_detection/              # Step 2 outputs
+│   │       ├── data_type_validation/             # Step 3 outputs
+│   │       ├── outlier_detection/                # Step 4 outputs
+│   │       ├── data_type_optimization/           # Step 5 outputs
+│   │       └── final_quality_validation/         # Step 6 outputs
 │   ├── csv_building/                 # CSV building and data integration
 │   │   ├── __init__.py
-│   │   ├── README.md
-│   │   ├── final_csv_builder_working.py      # Main implementation
-│   │   └── run_working_builder.py            # Runner script
+│   │   ├── final_csv_builder.py      # Main CSV builder implementation
+│   │   └── run_builder.py            # Builder runner script
 │   └── __init__.py
-├── logs/                             # Execution logs
-│   ├── outlier_detection_*.log       # Step 4 execution logs
-│   ├── title_cleaning_*.log          # Title cleaning logs
-│   ├── data_integration_*.log        # Data integration logs
-│   └── dataset_validation_*.log      # Validation logs
+├── logs/                             # Execution logs (currently empty)
+│   └── (ready for future logs)       # Logs archived in cleanup_20250105/old_logs/
 ├── notebooks/                        # Jupyter notebooks (if needed)
 ├── docs/                             # Project documentation (if needed)
 ├── .cursorrules                      # Cursor rules configuration
@@ -171,30 +191,50 @@ romance-novel-nlp-research/
 
 ## Pipeline Architecture
 
-### Current Pipeline Steps
-The project implements a **6-step data cleaning pipeline**:
+### Complete 6-Step Pipeline Implementation
+The project implements a **complete 6-step data cleaning pipeline** with all steps currently active:
 
-1. **Steps 1-3**: Initial Cleaning (Missing Values, Duplicates, Data Types)
-   - Implemented elsewhere in the project
-   - Outputs archived in `archive/pipeline_outputs_20250902/`
+1. **Step 1**: Missing Values Cleaning
+   - **Implementation**: `step1_missing_values_cleaning.py`
+   - **Outputs**: `src/data_quality/outputs/missing_values_cleaning/`
+   - **Purpose**: Handle and document missing value patterns
 
-2. **Step 4**: Outlier Detection & Treatment
-   - **Detection**: `OutlierDetectionReporter` class
-   - **Treatment**: `OutlierTreatmentApplier` class
-   - **Outputs**: Statistical reports and treated datasets
+2. **Step 2**: Duplicate Detection
+   - **Implementation**: `step2_duplicate_detection.py`
+   - **Outputs**: `src/data_quality/outputs/duplicate_detection/`
+   - **Purpose**: Identify and resolve duplicate records
 
-3. **Step 5**: Data Type Optimization & Persistence
-   - **Optimization**: `DataTypeOptimizer` class
-   - **Outputs**: Optimized datasets (parquet/pickle) and reports
+3. **Step 3**: Data Type Validation
+   - **Implementation**: `step3_data_type_validation.py`
+   - **Outputs**: `src/data_quality/outputs/data_type_validation/`
+   - **Purpose**: Validate and standardize data types
 
-4. **Step 6**: Final Quality Validation & Certification
-   - **Validation**: `FinalQualityValidator` class
-   - **Outputs**: Quality scores, validation reports, certification
+4. **Step 4**: Outlier Detection & Treatment
+   - **Detection**: `step4_outlier_detection.py`
+   - **Treatment**: `step4_outlier_treatment.py`
+   - **Outputs**: `src/data_quality/outputs/outlier_detection/`
+   - **Purpose**: Identify and treat statistical outliers
+
+5. **Step 5**: Data Type Optimization & Persistence
+   - **Implementation**: `step5_data_type_optimization.py`
+   - **Outputs**: `src/data_quality/outputs/data_type_optimization/`
+   - **Purpose**: Optimize memory usage and create persistent formats
+
+6. **Step 6**: Final Quality Validation & Certification
+   - **Implementation**: `step6_final_quality_validation.py`
+   - **Outputs**: `src/data_quality/outputs/final_quality_validation/`
+   - **Purpose**: Final quality assessment and certification
+
+### Pipeline Execution
+- **Main Runner**: `src/data_quality/pipeline_runner.py` (Executes all 6 steps)
+- **Individual Steps**: Each step can be run independently
+- **Output Organization**: All outputs organized by step in `src/data_quality/outputs/`
+- **Quality Reports**: Comprehensive reporting for each step
 
 ### Module Structure
-- **`src/data_quality/`**: Steps 4-6 implementation
+- **`src/data_quality/`**: Complete 6-step pipeline implementation
 - **`src/csv_building/`**: Data integration and CSV building
-- **Archived**: Legacy implementations and development artifacts
+- **Archived**: Legacy implementations and development artifacts (January 2025 cleanup)
 
 ## Enforcement
 
@@ -216,5 +256,26 @@ The project implements a **6-step data cleaning pipeline**:
 2. **Document what was archived** and why
 3. **Maintain recovery instructions**
 4. **Keep archive structure organized**
+
+### Recent Cleanup Activities (January 2025)
+The repository has undergone comprehensive cleanup to maintain a clean, focused codebase:
+
+**January 6, 2025 Cleanup**:
+- **Python Cache Files**: Removed `__pycache__` directories from `src/data_quality/` and `src/csv_building/`
+- **Empty Log Files**: Archived 5 empty log files (0 bytes) that were never used
+- **Duplicate Outputs**: Archived earlier versions of quality reports and unprocessed batch files
+- **Development Tools**: Archived 3 diagnostic scripts used during development
+- **Alternative Runners**: Archived 4 redundant runner scripts that duplicated core functionality
+
+**January 5, 2025 Cleanup**:
+- **Outdated Logs**: Archived 20+ log files from September 2025 (outdated)
+- **Duplicate Outputs**: Archived 8 duplicate output files with older timestamps
+- **Old Reports**: Archived 7 superseded analysis reports and summaries
+
+**Current Repository State**:
+- **Clean Source Code**: No cache files or redundant scripts in active directories
+- **Focused Structure**: Only core functionality remains in `src/` directory
+- **Preserved History**: All development artifacts safely archived
+- **Ready for Phase 4**: Clean codebase prepared for NLP analysis implementation
 
 This rule must be applied to ALL tasks and code changes.

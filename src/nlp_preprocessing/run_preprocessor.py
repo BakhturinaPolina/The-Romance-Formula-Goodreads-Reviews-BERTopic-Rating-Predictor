@@ -10,8 +10,8 @@ from pathlib import Path
 # Add the src directory to the path
 sys.path.append(str(Path(__file__).parent.parent))
 
-# Import using relative import
-from .text_preprocessor import TextPreprocessor
+# Import using absolute import
+from nlp_preprocessing.text_preprocessor import TextPreprocessor
 
 
 def main():

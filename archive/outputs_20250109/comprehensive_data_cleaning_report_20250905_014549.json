@@ -1,0 +1,119 @@
+{
+  "initial_count": 119678,
+  "cleaning_steps": {
+    "remove_outside_2000_2017": {
+      "books_removed": 122,
+      "books_remaining": 119556,
+      "removal_percentage": 0.10194020622002374
+    },
+    "remove_missing_descriptions": {
+      "books_removed": 6166,
+      "books_remaining": 113390,
+      "removal_percentage": 5.157415771688581
+    },
+    "remove_missing_pages": {
+      "books_removed": 32597,
+      "books_remaining": 80793,
+      "removal_percentage": 28.74768498103889
+    },
+    "fix_negative_work_counts": {
+      "negative_values_fixed": 2,
+      "method": "Set negative values to NaN (missing)",
+      "affected_series_fields": [
+        "series_works_count",
+        "series_id",
+        "series_title"
+      ]
+    },
+    "apply_ratings_cuts": {
+      "books_removed": 4412,
+      "books_remaining": 76381,
+      "removal_percentage": 5.460869134702264,
+      "criteria_applied": {
+        "min_ratings": 10,
+        "min_reviews": 2
+      }
+    },
+    "remove_low_rating_authors": {
+      "authors_removed": 135,
+      "books_removed": 137,
+      "books_remaining": 76244,
+      "removal_percentage": 0.1793639779526322,
+      "criteria_applied": {
+        "max_ratings_count": 59.0,
+        "max_average_rating": 3.0
+      }
+    },
+    "verify_grouping": {
+      "total_works": 76244,
+      "total_books": 76244,
+      "works_books_ratio": 1.0,
+      "empty_book_id_lists": 76244,
+      "grouping_status": "1:1 work to book relationship (expected for this dataset)"
+    },
+    "publication_years": {
+      "unique_years": [
+        2000,
+        2001,
+        2002,
+        2003,
+        2004,
+        2005,
+        2006,
+        2007,
+        2008,
+        2009,
+        2010,
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017
+      ],
+      "year_range": {
+        "min": 2000,
+        "max": 2017
+      },
+      "year_distribution": {
+        "2000": 440,
+        "2001": 447,
+        "2002": 542,
+        "2003": 583,
+        "2004": 770,
+        "2005": 901,
+        "2006": 1057,
+        "2007": 1591,
+        "2008": 1875,
+        "2009": 2651,
+        "2010": 3545,
+        "2011": 5921,
+        "2012": 9776,
+        "2013": 13425,
+        "2014": 12241,
+        "2015": 9397,
+        "2016": 7050,
+        "2017": 4032
+      },
+      "total_years": 18,
+      "suspicious_years": []
+    }
+  },
+  "final_summary": {
+    "initial_books": 119678,
+    "final_books": 76244,
+    "total_removed": 43434,
+    "removal_percentage": 36.29238456525009,
+    "cleaning_steps_completed": 8,
+    "data_quality_improvements": [
+      "Removed books outside 2000-2017 range",
+      "Removed books with missing descriptions",
+      "Removed books with missing pages",
+      "Fixed negative work count calculation errors",
+      "Applied ratings and reviews quality filters",
+      "Removed low-rating authors",
+      "Verified work_id/book_id grouping consistency"
+    ]
+  }
+}

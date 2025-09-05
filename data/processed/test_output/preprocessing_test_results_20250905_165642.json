@@ -1,0 +1,103 @@
+{
+  "data_analysis": {
+    "total_records": 100,
+    "total_columns": 19,
+    "text_columns": [
+      "description",
+      "popular_shelves",
+      "genres",
+      "title",
+      "author_name",
+      "series_title"
+    ],
+    "missing_values": {
+      "description": "4",
+      "popular_shelves": "0",
+      "genres": "0",
+      "title": "0",
+      "author_name": "0",
+      "series_title": "28"
+    },
+    "data_types": {
+      "description": "object",
+      "popular_shelves": "object",
+      "genres": "object",
+      "title": "object",
+      "author_name": "object",
+      "series_title": "object"
+    },
+    "sample_values": {
+      "description": "Unabridged audible download; approximately 11 hours 45 minutes\nIf you've ever paid off one credit card with another, thrown out a bill before opening it, or convinced yourself that buying at a two-for-one sale is like makingmoney, then this silly, appealing novel is for you. In the opening pages of Confessions of a Shopaholic, recent college graduate Rebecca Bloomwood is offered a hefty line of credit by a London bank. Within a few months, Sophie Kinsella's heroine has exceeded the limits of this generous offer, and begins furtively to scan her credit-card bills at work, certain that she couldn't have spent the reported sums.\nIn theory anyway, the world of finance shouldn't be a mystery to Rebecca, since she writes for a magazine called Successful Saving. Struggling with her spendthrift impulses, she tries to heed the advice of an expert and appreciate life's cheaper pleasures: parks, museums, and so forth. Yet her first Saturday at the Victoria and Albert Museum strikes her as a waste. Why? There's not a price tag in sight.\nIt kind of takes the fun out of it, doesn't it? You wander round, just looking at things, and it all gets a bit boring after a while. Whereas if they put price tags on, you'd be far more interested. In fact, I think all museums should put prices on their exhibits. You'd look at a silver chalice or a marble statue or the Mona Lisaor whatever, and admire it for its beauty and historical importance and everything--and then you'd reach for the price tag and gasp, \"Hey, look how much this one is!\" It would really liven things up. \nEventually, Rebecca's uncontrollable shopping and her \"imaginative\" solutions to her debt attract the attention not only of her bank manager but of handsome Luke Brandon--a multimillionaire PR representative for a finance group frequently covered in Successful Saving. Unlike her opposite number in Bridget Jones's Diary, however, Rebecca actually seems too scattered and spacey to reel in such a successful man. Maybe it's her Denny and George scarf. In any case, Kinsella's debut makes excellent fantasy reading for the long stretches between white sales and appliance specials. --Regina Marler",
+      "popular_shelves": "3-stars,5-stars,abandoned,adult-fiction,audio,audiobook,audiobooks,beach-read,beach-reads,book-club,book-to-movie,books,books-i-own,books-to-movies,borrowed,brain-candy,brit-lit,british,chic-lit,chick,chick-lit,chick-lit-romance,chiclit,comedy,contemporary,contemporary-fiction,contemporary-romance,currently-reading,default,did-not-finish,dnf,e-book,e-books,ebook,england,english,fashion,favorite,favorite-books,favorites,favourites,fiction,finished,first-in-series,fluff,for-fun,fun,funny,general-fiction,girly,girly-books,guilty-pleasures,have,hilarious,humor,humour,i-own,just-for-fun,kindle,kinsella,library-books,light-reading,light-reads,modern,movie,movies,my-books,my-bookshelf,my-library,novel,novels,on-my-shelf,own-it,owned,owned-books,paperback,part-of-a-series,re-read,read-2009,read-in-2010,read-in-2011,read-in-2012,read-in-2014,read-in-2015,read-in-english,realistic-fiction,romance,romantic-comedy,series,shopaholic,shopaholic-series,sophie-kinsella,tbr,to-buy,to-read,wish-list,women-s-fiction,womens-fiction,ya,young-adult",
+      "genres": "fiction,romance,young-adult",
+      "title": "Confessions of a Shopaholic",
+      "author_name": "Sophie Kinsella",
+      "series_title": "Shopaholic"
+    },
+    "html_indicators": "0"
+  },
+  "html_cleaning": {
+    "total_descriptions": 96,
+    "html_descriptions": 0,
+    "html_percentage": 0.0,
+    "examples": {}
+  },
+  "genre_normalization": {
+    "total_genres": 100,
+    "unique_genres": 18,
+    "genre_examples": {
+      "example_1": "fiction,romance,young-adult",
+      "example_2": "fiction,mystery, thriller, crime,romance,young-adult",
+      "example_3": "fiction,history, historical fiction, biography,romance",
+      "example_4": "fiction,history, historical fiction, biography,romance",
+      "example_5": "fantasy, paranormal,fiction,mystery, thriller, crime,romance"
+    },
+    "normalization_examples": {
+      "example_1": {
+        "original": "fiction,romance,young-adult",
+        "normalized": "fiction,romance,young adult"
+      },
+      "example_2": {
+        "original": "fiction,mystery, thriller, crime,romance,young-adult",
+        "normalized": "fiction,mystery,romance,young adult"
+      },
+      "example_3": {
+        "original": "fiction,history, historical fiction, biography,romance",
+        "normalized": "biography,fiction,historical fiction,history,romance"
+      },
+      "example_4": {
+        "original": "fiction,history, historical fiction, biography,romance",
+        "normalized": "biography,fiction,historical fiction,history,romance"
+      },
+      "example_5": {
+        "original": "fantasy, paranormal,fiction,mystery, thriller, crime,romance",
+        "normalized": "fantasy,fiction,mystery,paranormal,romance"
+      }
+    }
+  },
+  "popular_shelves_standardization": {
+    "total_shelves": 100,
+    "validation_examples": {
+      "example_1": {
+        "original": "3-stars,5-stars,abandoned,adult-fiction,audio,audiobook,audiobooks,beach-read,beach-reads,book-club,book-to-movie,books,books-i-own,books-to-movies,borrowed,brain-candy,brit-lit,british,chic-lit,chick,chick-lit,chick-lit-romance,chiclit,comedy,contemporary,contemporary-fiction,contemporary-romance,currently-reading,default,did-not-finish,dnf,e-book,e-books,ebook,england,english,fashion,favorite,favorite-books,favorites,favourites,fiction,finished,first-in-series,fluff,for-fun,fun,funny,general-fiction,girly,girly-books,guilty-pleasures,have,hilarious,humor,humour,i-own,just-for-fun,kindle,kinsella,library-books,light-reading,light-reads,modern,movie,movies,my-books,my-bookshelf,my-library,novel,novels,on-my-shelf,own-it,owned,owned-books,paperback,part-of-a-series,re-read,read-2009,read-in-2010,read-in-2011,read-in-2012,read-in-2014,read-in-2015,read-in-english,realistic-fiction,romance,romantic-comedy,series,shopaholic,shopaholic-series,sophie-kinsella,tbr,to-buy,to-read,wish-list,women-s-fiction,womens-fiction,ya,young-adult",
+        "standardized": "3-stars,5-stars,abandoned,adult-fiction,audio,audiobook,audiobooks,beach-read,beach-reads,book-club,book-to-movie,books,books-i-own,books-to-movies,borrowed,brain-candy,brit-lit,british,chic-lit,chick,chick-lit,chick-lit-romance,chiclit,comedy,contemporary,contemporary-fiction,contemporary-romance,currently-reading,default,did-not-finish,dnf,e-book,e-books,ebook,england,english,fashion,favorite,favorite-books,favorites,favourites,fiction,finished,first-in-series,fluff,for-fun,fun,funny,general-fiction,girly,girly-books,guilty-pleasures,have,hilarious,humor,humour,i-own,just-for-fun,kindle,kinsella,library-books,light-reading,light-reads,modern,movie,movies,my-books,my-bookshelf,my-library,novel,novels,on-my-shelf,own-it,owned,owned-books,paperback,part-of-a-series,re-read,read-2009,read-in-2010,read-in-2011,read-in-2012,read-in-2014,read-in-2015,read-in-english,realistic-fiction,romance,romantic-comedy,series,shopaholic,shopaholic-series,sophie-kinsella,tbr,to-buy,to-read,wish-list,women-s-fiction,womens-fiction,ya,young-adult"
+      },
+      "example_2": {
+        "original": "2000,2001,2012-reads,adult,adult-fiction,already-read,audio,audio-book,audio-books,audiobook,audiobooks,books-i-have,books-i-own,books-owned,books-to-buy,borrowed,chic-lit,chick-lit,chicklit,contemporary,contemporary-fiction,contemporary-romance,currently-reading,default,drama,e-book,e-books,ebook,ebooks,english,family,favorite,favorite-authors,favorite-books,favorites,favourites,fiction,finished,general-fiction,guilty-pleasures,hardcover,have,i-own,in-my-library,kindle,library,love,love-stories,love-story,made-me-cry,maybe,mine,my-books,my-bookshelf,my-favorites,my-library,mystery,n-sparks,need-to-buy,nicholas,nicholas-sparks,nicholas-sparks-books,nicolas-sparks,nook,novel,novels,on-kindle,on-my-shelf,other,own-it,own-to-read,owned,paperback,re-read,read-2014,read-in-2011,read-in-2012,read-in-2013,read-in-2014,realistic-fiction,relationships,romance,romance-novels,romantic,shelfari-favorites,southern,sparks,sparks-nicholas,stand-alone,standalone,sub,summer-reads,tear-jerker,tear-jerkers,the-rescue,to-buy,to-read,wish-list,women-s-fiction,womens-fiction,young-adult",
+        "standardized": "2000,2001,2012-reads,adult,adult-fiction,already-read,audio,audio-book,audio-books,audiobook,audiobooks,books-i-have,books-i-own,books-owned,books-to-buy,borrowed,chic-lit,chick-lit,chicklit,contemporary,contemporary-fiction,contemporary-romance,currently-reading,default,drama,e-book,e-books,ebook,ebooks,english,family,favorite,favorite-authors,favorite-books,favorites,favourites,fiction,finished,general-fiction,guilty-pleasures,hardcover,have,i-own,in-my-library,kindle,library,love,love-stories,love-story,made-me-cry,maybe,mine,my-books,my-bookshelf,my-favorites,my-library,mystery,n-sparks,need-to-buy,nicholas,nicholas-sparks,nicholas-sparks-books,nicolas-sparks,nook,novel,novels,on-kindle,on-my-shelf,other,own-it,own-to-read,owned,paperback,re-read,read-2014,read-in-2011,read-in-2012,read-in-2013,read-in-2014,realistic-fiction,relationships,romance,romance-novels,romantic,shelfari-favorites,southern,sparks,sparks-nicholas,stand-alone,standalone,sub,summer-reads,tear-jerker,tear-jerkers,the-rescue,to-buy,to-read,wish-list,women-s-fiction,womens-fiction,young-adult"
+      },
+      "example_3": {
+        "original": "19th-century,1st-in-series,2012-reads,2016-reads,3-stars,4-stars,5-stars,adult,adult-fiction,adult-romance,audio,audiobook,audiobooks,author-julia-quinn,books-i-own,bridgerton,bridgerton-series,bridgertons,chick-lit,currently-reading,default,did-not-finish,dnf,duke,e-book,e-books,ebook,ebooks,england,family,favorite,favorite-authors,favorite-series,favorites,favourites,fiction,first-in-series,friends-to-lovers,funny,guilty-pleasure,guilty-pleasures,historic-romance,historical,historical-fiction,historical-regency,historical-romance,historical-romances,historicalromance,historicals,history,hr,humor,humorous,humour,i-own,julia-quinn,keepers,kindle,library,m-f,made-me-laugh,marriage-of-convenience,maybe,nook,novel,owned,owned-books,paperback,part-of-a-series,quinn,quinn-julia,re-read,read-2013,read-2014,read-2015,read-2016,read-2017,read-in-2010,read-in-2011,read-in-2012,read-in-2013,read-in-2014,read-in-2015,read-in-2016,read-in-2017,regency,regency-romance,reread,reviewed,romance,romance-historical,romance-novels,romance-regency,romances,series,to-buy,to-read,tortured-hero,virgin-heroine,wish-list",
+        "standardized": "19th-century,1st-in-series,2012-reads,2016-reads,3-stars,4-stars,5-stars,adult,adult-fiction,adult-romance,audio,audiobook,audiobooks,author-julia-quinn,books-i-own,bridgerton,bridgerton-series,bridgertons,chick-lit,currently-reading,default,did-not-finish,dnf,duke,e-book,e-books,ebook,ebooks,england,family,favorite,favorite-authors,favorite-series,favorites,favourites,fiction,first-in-series,friends-to-lovers,funny,guilty-pleasure,guilty-pleasures,historic-romance,historical,historical-fiction,historical-regency,historical-romance,historical-romances,historicalromance,historicals,history,hr,humor,humorous,humour,i-own,julia-quinn,keepers,kindle,library,m-f,made-me-laugh,marriage-of-convenience,maybe,nook,novel,owned,owned-books,paperback,part-of-a-series,quinn,quinn-julia,re-read,read-2013,read-2014,read-2015,read-2016,read-2017,read-in-2010,read-in-2011,read-in-2012,read-in-2013,read-in-2014,read-in-2015,read-in-2016,read-in-2017,regency,regency-romance,reread,reviewed,romance,romance-historical,romance-novels,romance-regency,romances,series,to-buy,to-read,tortured-hero,virgin-heroine,wish-list"
+      },
+      "example_4": {
+        "original": "1,19th-century,2016-reads,3-stars,4-stars,5-stars,adult,adult-fiction,adult-romance,all-time-favorites,alpha-male,audiobook,author-julia-quinn,books-i-own,bridgerton,bridgerton-series,bridgertons,bridgertons-series,chick-lit,currently-reading,default,e-book,e-books,ebook,ebooks,enemies-to-lovers,england,family,favorite,favorite-author,favorite-authors,favorite-series,favorites,favourites,favs,fiction,funny,guilty-pleasure,guilty-pleasures,historic,historic-romance,historical,historical-fiction,historical-regency,historical-romance,historical-romances,historicalromance,historicals,history,hr,humor,humorous,i-own,julia-quinn,keepers,kindle,library,library-book,love-hate,love-hate-relationship,m-f,made-me-laugh,marriage-of-convenience,my-books,nook,own-it,owned,owned-books,paperback,part-of-a-series,part-of-series,quinn,quinn-julia,re-read,read-2013,read-2014,read-2015,read-2016,read-in-2010,read-in-2011,read-in-2012,read-in-2013,read-in-2014,read-in-2015,read-in-2016,read-in-2017,regency,regency-romance,reread,reviewed,romance,romance-historical,romance-novels,romance-regency,romances,series,series-bridgertons,steamy,to-read,virgin-heroine",
+        "standardized": "1,19th-century,2016-reads,3-stars,4-stars,5-stars,adult,adult-fiction,adult-romance,all-time-favorites,alpha-male,audiobook,author-julia-quinn,books-i-own,bridgerton,bridgerton-series,bridgertons,bridgertons-series,chick-lit,currently-reading,default,e-book,e-books,ebook,ebooks,enemies-to-lovers,england,family,favorite,favorite-author,favorite-authors,favorite-series,favorites,favourites,favs,fiction,funny,guilty-pleasure,guilty-pleasures,historic,historic-romance,historical,historical-fiction,historical-regency,historical-romance,historical-romances,historicalromance,historicals,history,hr,humor,humorous,i-own,julia-quinn,keepers,kindle,library,library-book,love-hate,love-hate-relationship,m-f,made-me-laugh,marriage-of-convenience,my-books,nook,own-it,owned,owned-books,paperback,part-of-a-series,part-of-series,quinn,quinn-julia,re-read,read-2013,read-2014,read-2015,read-2016,read-in-2010,read-in-2011,read-in-2012,read-in-2013,read-in-2014,read-in-2015,read-in-2016,read-in-2017,regency,regency-romance,reread,reviewed,romance,romance-historical,romance-novels,romance-regency,romances,series,series-bridgertons,steamy,to-read,virgin-heroine"
+      },
+      "example_5": {
+        "original": "2006,4-stars,5-stars,adult,adult-fiction,adult-romance,audio,audio-books,audiobook,audiobooks,author-nora-roberts,books,books-i-have,books-i-own,bookshelf,borrowed,chic-lit,chick-lit,contemp-romance,contemporary,contemporary-fiction,contemporary-romance,crime,currently-reading,default,dnf,drama,e-book,e-books,ebook,ebooks,favorite,favorite-author,favorites,favourites,fiction,fiction-romance,guilty-pleasures,have,have-read,home-library,i-own,kindle,library,m-f,murder-mystery,my-books,my-collection,my-library,mysteries,mystery,mystery-romance,mystery-suspense,mystery-thriller,nora,nora-roberts,nora-roberts-books,nora-roberts-jd-robb,nora-roberts-read,noraroberts,novels,nr,own-it,own-to-read,owned,owned-books,paperback,paranormal,paranormal-romance,personal-library,psychic,re-read,read-2016,read-in-2010,read-in-2013,roberts,roberts-nora,romance,romance-contemporary,romance-novels,romance-suspense,romances,romantic,romantic-suspence,romantic-suspense,shelfari-favorites,small-town,south-carolina,southern,stand-alone,standalone,suspence,suspense,suspense-romance,suspense-thriller,thriller,thriller-suspense,to-read,wish-list,women-s-fiction",
+        "standardized": "2006,4-stars,5-stars,adult,adult-fiction,adult-romance,audio,audio-books,audiobook,audiobooks,author-nora-roberts,books,books-i-have,books-i-own,bookshelf,borrowed,chic-lit,chick-lit,contemp-romance,contemporary,contemporary-fiction,contemporary-romance,crime,currently-reading,default,dnf,drama,e-book,e-books,ebook,ebooks,favorite,favorite-author,favorites,favourites,fiction,fiction-romance,guilty-pleasures,have,have-read,home-library,i-own,kindle,library,m-f,murder-mystery,my-books,my-collection,my-library,mysteries,mystery,mystery-romance,mystery-suspense,mystery-thriller,nora,nora-roberts,nora-roberts-books,nora-roberts-jd-robb,nora-roberts-read,noraroberts,novels,nr,own-it,own-to-read,owned,owned-books,paperback,paranormal,paranormal-romance,personal-library,psychic,re-read,read-2016,read-in-2010,read-in-2013,roberts,roberts-nora,romance,romance-contemporary,romance-novels,romance-suspense,romances,romantic,romantic-suspence,romantic-suspense,shelfari-favorites,small-town,south-carolina,southern,stand-alone,standalone,suspence,suspense,suspense-romance,suspense-thriller,thriller,thriller-suspense,to-read,wish-list,women-s-fiction"
+      }
+    }
+  }
+}

@@ -1,0 +1,2407 @@
+{
+  "resolution_timestamp": "20250905_003406",
+  "detection_results": {
+    "exact_duplicates": {
+      "criteria_used": [
+        "work_id",
+        "title",
+        "author_id",
+        "publication_year"
+      ],
+      "total_duplicates": 0,
+      "duplicate_groups": 0,
+      "duplicate_analysis": {}
+    },
+    "title_duplicates": {
+      "criteria_used": [
+        "title",
+        "author_id"
+      ],
+      "total_duplicates": 251,
+      "duplicate_groups": 104,
+      "duplicate_analysis": {
+        "('A Baby For The Millionaire', np.int64(6604687))": {
+          "count": 4,
+          "work_ids": [
+            21935566,
+            23906487,
+            21936958,
+            23906418
+          ],
+          "publication_years": [
+            2012,
+            2012,
+            2012,
+            2012
+          ],
+          "series_info": [
+            "The Millionaires Club",
+            "The Millionaires Club",
+            "The Millionaires Club",
+            "The Millionaires Club"
+          ]
+        },
+        "(\"A Lawman's Christmas\", np.int64(6223))": {
+          "count": 2,
+          "work_ids": [
+            15799598,
+            40047872
+          ],
+          "publication_years": [
+            2011,
+            2011
+          ],
+          "series_info": [
+            "McKettricks",
+            "McKettricks"
+          ]
+        },
+        "('A Little Bit Country', np.int64(3009736))": {
+          "count": 2,
+          "work_ids": [
+            16958425,
+            26130787
+          ],
+          "publication_years": [
+            2011,
+            2013
+          ],
+          "series_info": [
+            "Don't Read in the Closet Events",
+            NaN
+          ]
+        },
+        "('A Promise Worth Keeping', np.int64(6937686))": {
+          "count": 2,
+          "work_ids": [
+            24159481,
+            25363885
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            "Promises Collection",
+            "Promises Collection"
+          ]
+        },
+        "('A Whole New Crowd', np.int64(4851199))": {
+          "count": 2,
+          "work_ids": [
+            21436565,
+            42669080
+          ],
+          "publication_years": [
+            2014,
+            2014
+          ],
+          "series_info": [
+            "A Whole New Crowd",
+            "A Whole New Crowd"
+          ]
+        },
+        "('Again', np.int64(7177798))": {
+          "count": 2,
+          "work_ids": [
+            25630279,
+            40361011
+          ],
+          "publication_years": [
+            2013,
+            2014
+          ],
+          "series_info": [
+            "Again",
+            "Again"
+          ]
+        },
+        "('Against the Fire', np.int64(49381))": {
+          "count": 2,
+          "work_ids": [
+            14605415,
+            13579766
+          ],
+          "publication_years": [
+            2011,
+            2011
+          ],
+          "series_info": [
+            "Against Series / Raines of Wind Canyon",
+            "Against Series / Raines of Wind Canyon"
+          ]
+        },
+        "('An Indecent Proposition', np.int64(1365342))": {
+          "count": 2,
+          "work_ids": [
+            26730415,
+            24746028
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            "Indecent Proposition",
+            "Indecent Proposition"
+          ]
+        },
+        "('An Unexpected Return', np.int64(4959083))": {
+          "count": 2,
+          "work_ids": [
+            52718527,
+            19267980
+          ],
+          "publication_years": [
+            2012,
+            2012
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('Around the World in 80 Men', np.int64(5806812))": {
+          "count": 2,
+          "work_ids": [
+            21505642,
+            21887861
+          ],
+          "publication_years": [
+            2012,
+            2012
+          ],
+          "series_info": [
+            "Around the World in 80 Men",
+            "Around the World in 80 Men"
+          ]
+        },
+        "('Bait', np.int64(3132972))": {
+          "count": 2,
+          "work_ids": [
+            7279807,
+            21509416
+          ],
+          "publication_years": [
+            2009,
+            2010
+          ],
+          "series_info": [
+            "Vanguards",
+            "Angler"
+          ]
+        },
+        "('Bedded by the Warrior', np.int64(333092))": {
+          "count": 2,
+          "work_ids": [
+            6643751,
+            19154989
+          ],
+          "publication_years": [
+            2007,
+            2009
+          ],
+          "series_info": [
+            "Commanded/Bedded",
+            "Commanded/Bedded"
+          ]
+        },
+        "('Begin With Goodbye', np.int64(7237040))": {
+          "count": 2,
+          "work_ids": [
+            25992424,
+            41970475
+          ],
+          "publication_years": [
+            2013,
+            2014
+          ],
+          "series_info": [
+            "Begin With Goodbye",
+            NaN
+          ]
+        },
+        "('Beyond Duty', np.int64(4563849))": {
+          "count": 2,
+          "work_ids": [
+            20581956,
+            44744697
+          ],
+          "publication_years": [
+            2012,
+            2013
+          ],
+          "series_info": [
+            "Beyond Duty",
+            "Beyond Duty"
+          ]
+        },
+        "('Bought By The Billionaire Brothers', np.int64(5357343))": {
+          "count": 5,
+          "work_ids": [
+            21769421,
+            21769422,
+            21899880,
+            23984335,
+            24155481
+          ],
+          "publication_years": [
+            2012,
+            2012,
+            2012,
+            2013,
+            2013
+          ],
+          "series_info": [
+            "Buchanan Brothers",
+            "Buchanan Brothers",
+            "Buchanan Brothers",
+            "Buchanan Brothers",
+            "Buchanan Brothers"
+          ]
+        },
+        "('Bound to be Punished', np.int64(7102681))": {
+          "count": 3,
+          "work_ids": [
+            25196376,
+            25191688,
+            25537715
+          ],
+          "publication_years": [
+            2013,
+            2013,
+            2013
+          ],
+          "series_info": [
+            "Bound to be Punished",
+            "Bound to be Punished",
+            "Bound to be Punished"
+          ]
+        },
+        "(\"Burnin' for You\", np.int64(2907794))": {
+          "count": 2,
+          "work_ids": [
+            6607121,
+            41367934
+          ],
+          "publication_years": [
+            2008,
+            2014
+          ],
+          "series_info": [
+            "Burnin' For You",
+            "Burnin' For You"
+          ]
+        },
+        "('Captive Films: Season 1', np.int64(4833990))": {
+          "count": 4,
+          "work_ids": [
+            57985810,
+            57985833,
+            57985992,
+            57986050
+          ],
+          "publication_years": [
+            2014,
+            2014,
+            2014,
+            2014
+          ],
+          "series_info": [
+            "Captive Films",
+            "Captive Films",
+            "Captive Films",
+            "Captive Films"
+          ]
+        },
+        "('Changing Worlds', np.int64(2989189))": {
+          "count": 2,
+          "work_ids": [
+            19148371,
+            52956738
+          ],
+          "publication_years": [
+            2012,
+            2016
+          ],
+          "series_info": [
+            "Worlds",
+            "Worlds"
+          ]
+        },
+        "('Chasing Beautiful', np.int64(6567915))": {
+          "count": 2,
+          "work_ids": [
+            21936702,
+            23974582
+          ],
+          "publication_years": [
+            2012,
+            2013
+          ],
+          "series_info": [
+            "Chasing",
+            "Chasing"
+          ]
+        },
+        "('Chosen', np.int64(339874))": {
+          "count": 2,
+          "work_ids": [
+            47542044,
+            47542051
+          ],
+          "publication_years": [
+            2015,
+            2015
+          ],
+          "series_info": [
+            "Allure",
+            "Allure"
+          ]
+        },
+        "('Chun woBao iteita', np.int64(17074))": {
+          "count": 2,
+          "work_ids": [
+            24839409,
+            24511019
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            "Embracing Love - Deluxe Edition",
+            "Embracing Love - Deluxe Edition"
+          ]
+        },
+        "('Close to the Skin', np.int64(15230944))": {
+          "count": 2,
+          "work_ids": [
+            57117648,
+            57450456
+          ],
+          "publication_years": [
+            2017,
+            2017
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('Come Here, Go Away', np.int64(6093884))": {
+          "count": 3,
+          "work_ids": [
+            43486956,
+            43594422,
+            44363405
+          ],
+          "publication_years": [
+            2015,
+            2015,
+            2015
+          ],
+          "series_info": [
+            NaN,
+            NaN,
+            NaN
+          ]
+        },
+        "('Cookies for Santa', np.int64(6573130))": {
+          "count": 2,
+          "work_ids": [
+            26218272,
+            21958332
+          ],
+          "publication_years": [
+            2012,
+            2012
+          ],
+          "series_info": [
+            "Nick Spinelli",
+            NaN
+          ]
+        },
+        "('Dark Hunger', np.int64(6268))": {
+          "count": 2,
+          "work_ids": [
+            476486,
+            46098721
+          ],
+          "publication_years": [
+            2004,
+            2012
+          ],
+          "series_info": [
+            NaN,
+            "Dark"
+          ]
+        },
+        "('Designing Emma', np.int64(6462060))": {
+          "count": 2,
+          "work_ids": [
+            43273542,
+            43809425
+          ],
+          "publication_years": [
+            2014,
+            2014
+          ],
+          "series_info": [
+            "Designing Emma",
+            "Designing Emma"
+          ]
+        },
+        "('Die yoHua yo', np.int64(866775))": {
+          "count": 8,
+          "work_ids": [
+            6608694,
+            7005055,
+            9030449,
+            13077707,
+            8940739,
+            13735480,
+            15424696,
+            15424697
+          ],
+          "publication_years": [
+            2006,
+            2006,
+            2006,
+            2007,
+            2007,
+            2008,
+            2008,
+            2009
+          ],
+          "series_info": [
+            "Butterflies, Flowers",
+            "Butterflies, Flowers",
+            "Butterflies, Flowers",
+            "Butterflies, Flowers",
+            "Butterflies, Flowers",
+            "Butterflies, Flowers",
+            "Butterflies, Flowers",
+            "Butterflies, Flowers"
+          ]
+        },
+        "('Dirty Little Lies', np.int64(21940))": {
+          "count": 2,
+          "work_ids": [
+            38652,
+            16329681
+          ],
+          "publication_years": [
+            2005,
+            2006
+          ],
+          "series_info": [
+            "Marisela Morales/Dirty",
+            "Marisela Morales/Dirty"
+          ]
+        },
+        "('Embrace the Night Eternal', np.int64(2961326))": {
+          "count": 2,
+          "work_ids": [
+            6808337,
+            6808334
+          ],
+          "publication_years": [
+            2010,
+            2010
+          ],
+          "series_info": [
+            "Heroes of New Vegas",
+            "Heroes of New Vegas"
+          ]
+        },
+        "('Evenfall', np.int64(4942228))": {
+          "count": 2,
+          "work_ids": [
+            13009740,
+            40295208
+          ],
+          "publication_years": [
+            2007,
+            2014
+          ],
+          "series_info": [
+            "In the Company of Shadows",
+            "In the Company of Shadows"
+          ]
+        },
+        "(\"Falcon's Desire\", np.int64(333092))": {
+          "count": 2,
+          "work_ids": [
+            735620,
+            40777363
+          ],
+          "publication_years": [
+            2003,
+            2003
+          ],
+          "series_info": [
+            "Faucon Family",
+            "Faucon Family"
+          ]
+        },
+        "('Fender Bender Blues', np.int64(6905991))": {
+          "count": 2,
+          "work_ids": [
+            23904559,
+            57459372
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('Fever', np.int64(3241738))": {
+          "count": 3,
+          "work_ids": [
+            45431496,
+            45431497,
+            45431498
+          ],
+          "publication_years": [
+            2015,
+            2015,
+            2015
+          ],
+          "series_info": [
+            "A Ballroom Romance",
+            "A Ballroom Romance",
+            "A Ballroom Romance"
+          ]
+        },
+        "('Free Me', np.int64(4093476))": {
+          "count": 2,
+          "work_ids": [
+            51430153,
+            22007723
+          ],
+          "publication_years": [
+            2011,
+            2011
+          ],
+          "series_info": [
+            "Freedom In His Arms",
+            "Freedom In His Arms"
+          ]
+        },
+        "('Future Tense', np.int64(177047))": {
+          "count": 2,
+          "work_ids": [
+            25765825,
+            25765818
+          ],
+          "publication_years": [
+            2011,
+            2012
+          ],
+          "series_info": [
+            "My Immortals",
+            "My Immortals"
+          ]
+        },
+        "('Guilty Pleasure by Lora Leigh', np.int64(2614))": {
+          "count": 2,
+          "work_ids": [
+            54787435,
+            54787442
+          ],
+          "publication_years": [
+            2010,
+            2010
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('Hapi Mari', np.int64(13446981))": {
+          "count": 6,
+          "work_ids": [
+            13314553,
+            14693263,
+            14693264,
+            14419305,
+            15824666,
+            18961685
+          ],
+          "publication_years": [
+            2009,
+            2009,
+            2010,
+            2010,
+            2011,
+            2011
+          ],
+          "series_info": [
+            "Happy Marriage?!",
+            "Happy Marriage?!",
+            "Happy Marriage?!",
+            "Happy Marriage?!",
+            "Happy Marriage?!",
+            "Happy Marriage?!"
+          ]
+        },
+        "('Heart of the Winter Wolf', np.int64(1357414))": {
+          "count": 2,
+          "work_ids": [
+            14499667,
+            3223309
+          ],
+          "publication_years": [
+            2007,
+            2007
+          ],
+          "series_info": [
+            "Changeling",
+            NaN
+          ]
+        },
+        "('His Secret Desire', np.int64(6991776))": {
+          "count": 2,
+          "work_ids": [
+            25442097,
+            24547476
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            "His Secret Desire",
+            "His Secret Desire"
+          ]
+        },
+        "('Hot Gimmick', np.int64(5182891))": {
+          "count": 8,
+          "work_ids": [
+            1997259,
+            1396188,
+            1396190,
+            2951158,
+            1151564,
+            2951157,
+            1024163,
+            1024164
+          ],
+          "publication_years": [
+            2002,
+            2002,
+            2003,
+            2004,
+            2004,
+            2005,
+            2005,
+            2005
+          ],
+          "series_info": [
+            "Hot Gimmick",
+            "Hot Gimmick",
+            "Hot Gimmick",
+            "Hot Gimmick",
+            "Hot Gimmick",
+            "Hot Gimmick",
+            "Hot Gimmick",
+            "Hot Gimmick"
+          ]
+        },
+        "('Hot Gimmick, Volume 3', np.int64(5182891))": {
+          "count": 2,
+          "work_ids": [
+            2951153,
+            13246666
+          ],
+          "publication_years": [
+            2002,
+            2009
+          ],
+          "series_info": [
+            "Hot Gimmick",
+            "Hot Gimmick"
+          ]
+        },
+        "('If I Never Knew You', np.int64(6937914))": {
+          "count": 2,
+          "work_ids": [
+            24163076,
+            24386738
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            "If I Never Knew You",
+            "If I Never Knew You"
+          ]
+        },
+        "('Incongruent Angel', np.int64(4874967))": {
+          "count": 2,
+          "work_ids": [
+            19342882,
+            21410466
+          ],
+          "publication_years": [
+            2012,
+            2013
+          ],
+          "series_info": [
+            "Don't Read in the Closet Events",
+            "Liquid Sin"
+          ]
+        },
+        "('Inked', np.int64(4833778))": {
+          "count": 2,
+          "work_ids": [
+            16220827,
+            25965071
+          ],
+          "publication_years": [
+            2011,
+            2013
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('Innocence to the Max', np.int64(4563849))": {
+          "count": 2,
+          "work_ids": [
+            16973867,
+            45362010
+          ],
+          "publication_years": [
+            2011,
+            2015
+          ],
+          "series_info": [
+            "Iunctio Copula",
+            "Iunctio Copula"
+          ]
+        },
+        "('Jameson Hotel', np.int64(7752968))": {
+          "count": 2,
+          "work_ids": [
+            45440561,
+            45275489
+          ],
+          "publication_years": [
+            2015,
+            2015
+          ],
+          "series_info": [
+            "Jameson Hotel",
+            "Jameson Hotel"
+          ]
+        },
+        "('Kissed by Twilight', np.int64(6448358))": {
+          "count": 2,
+          "work_ids": [
+            26102449,
+            40096117
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            "Capture My Heart Love Story",
+            NaN
+          ]
+        },
+        "('Learning How to Lose, in Six Easy Steps', np.int64(7808827))": {
+          "count": 2,
+          "work_ids": [
+            43700103,
+            43700152
+          ],
+          "publication_years": [
+            2014,
+            2014
+          ],
+          "series_info": [
+            "Learning How to Lose",
+            "Learning How to Lose"
+          ]
+        },
+        "('Limits of Destiny', np.int64(14161119))": {
+          "count": 2,
+          "work_ids": [
+            45927343,
+            47266469
+          ],
+          "publication_years": [
+            2015,
+            2015
+          ],
+          "series_info": [
+            "Limits of Destiny",
+            "Limits of Destiny"
+          ]
+        },
+        "('Little Butterfly', np.int64(17042))": {
+          "count": 2,
+          "work_ids": [
+            30617,
+            30615
+          ],
+          "publication_years": [
+            2004,
+            2004
+          ],
+          "series_info": [
+            "Little Butterfly",
+            "Little Butterfly"
+          ]
+        },
+        "('Loyalty & Respect', np.int64(6569905))": {
+          "count": 6,
+          "work_ids": [
+            25530108,
+            25530092,
+            25778310,
+            25640235,
+            25884924,
+            26163751
+          ],
+          "publication_years": [
+            2013,
+            2013,
+            2013,
+            2013,
+            2013,
+            2013
+          ],
+          "series_info": [
+            "Loyalty and Respect universe",
+            "Loyalty and Respect universe",
+            "Loyalty and Respect universe",
+            "Loyalty and Respect universe",
+            "Loyalty and Respect universe",
+            "Loyalty and Respect universe"
+          ]
+        },
+        "('Master of Illusion', np.int64(7036779))": {
+          "count": 2,
+          "work_ids": [
+            24819618,
+            38770104
+          ],
+          "publication_years": [
+            2013,
+            2014
+          ],
+          "series_info": [
+            "Master of Illusion",
+            "Master of Illusion"
+          ]
+        },
+        "('Mistletoe Rules Anthology', np.int64(1089931))": {
+          "count": 3,
+          "work_ids": [
+            21915768,
+            21915785,
+            21915782
+          ],
+          "publication_years": [
+            2009,
+            2009,
+            2009
+          ],
+          "series_info": [
+            "Romancing Wisconsin",
+            "Romancing Wisconsin",
+            "Romancing Wisconsin"
+          ]
+        },
+        "('Mr. Popsalos', np.int64(3501047))": {
+          "count": 2,
+          "work_ids": [
+            43852819,
+            18191972
+          ],
+          "publication_years": [
+            2011,
+            2014
+          ],
+          "series_info": [
+            "Mr. Popsalos",
+            "Mr. Popsalos"
+          ]
+        },
+        "('My Body-His', np.int64(6551789))": {
+          "count": 2,
+          "work_ids": [
+            21871993,
+            23576759
+          ],
+          "publication_years": [
+            2012,
+            2013
+          ],
+          "series_info": [
+            "My Body Trilogy",
+            "My Body Trilogy"
+          ]
+        },
+        "('My Brother, My Rival', np.int64(6452269))": {
+          "count": 2,
+          "work_ids": [
+            42571941,
+            25843082
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            "My Brother, My Rival",
+            "My Brother, My Rival"
+          ]
+        },
+        "('North And South', np.int64(7280802))": {
+          "count": 3,
+          "work_ids": [
+            26239823,
+            26356422,
+            26476472
+          ],
+          "publication_years": [
+            2013,
+            2013,
+            2013
+          ],
+          "series_info": [
+            "The Wild And Wanton Edition",
+            "The Wild And Wanton Edition",
+            "The Wild And Wanton Edition"
+          ]
+        },
+        "('One Night in Paradise', np.int64(6983412))": {
+          "count": 2,
+          "work_ids": [
+            41343945,
+            42068561
+          ],
+          "publication_years": [
+            2014,
+            2014
+          ],
+          "series_info": [
+            "One Night Series",
+            "One Night Series"
+          ]
+        },
+        "('Phantom Lover', np.int64(1914286))": {
+          "count": 2,
+          "work_ids": [
+            6746457,
+            4646930
+          ],
+          "publication_years": [
+            2007,
+            2007
+          ],
+          "series_info": [
+            "Phantom Lover",
+            "Phantom Lover"
+          ]
+        },
+        "('Poker Face', np.int64(6475176))": {
+          "count": 2,
+          "work_ids": [
+            21584212,
+            25874344
+          ],
+          "publication_years": [
+            2012,
+            2013
+          ],
+          "series_info": [
+            "Poker Face",
+            "Poker Face"
+          ]
+        },
+        "('Pride Of The Pack', np.int64(7255520))": {
+          "count": 2,
+          "work_ids": [
+            26104732,
+            26865998
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('Pulled', np.int64(4665585))": {
+          "count": 2,
+          "work_ids": [
+            16736232,
+            15456915
+          ],
+          "publication_years": [
+            2011,
+            2011
+          ],
+          "series_info": [
+            "Take This Regret",
+            NaN
+          ]
+        },
+        "(\"Rebecca's Lost Journals\", np.int64(73977))": {
+          "count": 2,
+          "work_ids": [
+            43614392,
+            43614378
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            "Inside Out",
+            "Inside Out"
+          ]
+        },
+        "('Reckless Nights in Rome', np.int64(5822511))": {
+          "count": 2,
+          "work_ids": [
+            19215421,
+            21844260
+          ],
+          "publication_years": [
+            2012,
+            2012
+          ],
+          "series_info": [
+            "Ludlow Hall",
+            "The Vampyre Legal Chronicles"
+          ]
+        },
+        "('Reimi no Arcana', np.int64(5596285))": {
+          "count": 2,
+          "work_ids": [
+            18965592,
+            19184996
+          ],
+          "publication_years": [
+            2011,
+            2011
+          ],
+          "series_info": [
+            "Dawn of the Arcana",
+            "Dawn of the Arcana"
+          ]
+        },
+        "('Second Kiss', np.int64(4397603))": {
+          "count": 2,
+          "work_ids": [
+            14348502,
+            25597783
+          ],
+          "publication_years": [
+            2010,
+            2013
+          ],
+          "series_info": [
+            "Second Kiss",
+            "Second Kiss"
+          ]
+        },
+        "('Shifter: Alpha Claim', np.int64(4755913))": {
+          "count": 2,
+          "work_ids": [
+            47217601,
+            47217765
+          ],
+          "publication_years": [
+            2012,
+            2015
+          ],
+          "series_info": [
+            "Lycan: Alpha Claim",
+            "Lycan: Alpha Claim"
+          ]
+        },
+        "('Sin', np.int64(7212486))": {
+          "count": 2,
+          "work_ids": [
+            42378999,
+            42486757
+          ],
+          "publication_years": [
+            2014,
+            2014
+          ],
+          "series_info": [
+            "Sin",
+            "Sin"
+          ]
+        },
+        "('Single by Saturday', np.int64(2905789))": {
+          "count": 2,
+          "work_ids": [
+            21993617,
+            24880256
+          ],
+          "publication_years": [
+            2013,
+            2014
+          ],
+          "series_info": [
+            "The Weekday Brides",
+            "The Weekday Brides"
+          ]
+        },
+        "(\"Somebody's Lover\", np.int64(130583))": {
+          "count": 2,
+          "work_ids": [
+            24074945,
+            630614
+          ],
+          "publication_years": [
+            2006,
+            2014
+          ],
+          "series_info": [
+            "The Jackson Brothers",
+            "The Jackson Brothers"
+          ]
+        },
+        "('Stirred Up', np.int64(7087549))": {
+          "count": 2,
+          "work_ids": [
+            41342233,
+            40689910
+          ],
+          "publication_years": [
+            2014,
+            2014
+          ],
+          "series_info": [
+            "Stirred Up",
+            "Stirred Up"
+          ]
+        },
+        "('Stoking the Embers', np.int64(9757456))": {
+          "count": 2,
+          "work_ids": [
+            44581946,
+            44943002
+          ],
+          "publication_years": [
+            2015,
+            2015
+          ],
+          "series_info": [
+            "Embers",
+            "Embers"
+          ]
+        },
+        "('Taken', np.int64(8193380))": {
+          "count": 2,
+          "work_ids": [
+            41386223,
+            42747384
+          ],
+          "publication_years": [
+            2014,
+            2014
+          ],
+          "series_info": [
+            "The Vampire's Concubine",
+            "The Vampire's Concubine"
+          ]
+        },
+        "('Tamed And Mated', np.int64(7164843))": {
+          "count": 3,
+          "work_ids": [
+            26632941,
+            26632969,
+            26632953
+          ],
+          "publication_years": [
+            2013,
+            2013,
+            2013
+          ],
+          "series_info": [
+            "Tamed and Mated",
+            "Tamed and Mated",
+            "Tamed and Mated"
+          ]
+        },
+        "('Tears of Crimson', np.int64(7390971))": {
+          "count": 2,
+          "work_ids": [
+            14190482,
+            43188360
+          ],
+          "publication_years": [
+            2010,
+            2015
+          ],
+          "series_info": [
+            "Tears of Crimson",
+            NaN
+          ]
+        },
+        "('The Ballad', np.int64(7161911))": {
+          "count": 2,
+          "work_ids": [
+            25527120,
+            42966644
+          ],
+          "publication_years": [
+            2013,
+            2013
+          ],
+          "series_info": [
+            "The Bridge",
+            "Discography"
+          ]
+        },
+        "('The Bliss King - Captive', np.int64(5011315))": {
+          "count": 2,
+          "work_ids": [
+            44635325,
+            44635342
+          ],
+          "publication_years": [
+            2015,
+            2015
+          ],
+          "series_info": [
+            "The Bliss King",
+            "The Bliss King"
+          ]
+        },
+        "(\"The Dark God's Bride\", np.int64(7125979))": {
+          "count": 2,
+          "work_ids": [
+            19266584,
+            26155278
+          ],
+          "publication_years": [
+            2012,
+            2012
+          ],
+          "series_info": [
+            "The Dark God's Bride",
+            "The Dark God's Bride"
+          ]
+        },
+        "('The Debt', np.int64(6424546))": {
+          "count": 3,
+          "work_ids": [
+            41860053,
+            42079147,
+            42236089
+          ],
+          "publication_years": [
+            2014,
+            2014,
+            2014
+          ],
+          "series_info": [
+            "Club Alpha",
+            "Club Alpha",
+            "Club Alpha"
+          ]
+        },
+        "(\"The High King's Golden Tongue\", np.int64(1427650))": {
+          "count": 2,
+          "work_ids": [
+            47453880,
+            57728035
+          ],
+          "publication_years": [
+            2012,
+            2012
+          ],
+          "series_info": [
+            "Don't Read in the Closet Events",
+            NaN
+          ]
+        },
+        "('The Inheritance', np.int64(7903169))": {
+          "count": 3,
+          "work_ids": [
+            42752885,
+            42906682,
+            43245889
+          ],
+          "publication_years": [
+            2014,
+            2014,
+            2014
+          ],
+          "series_info": [
+            "The Inheritance",
+            "The Inheritance",
+            "The Inheritance"
+          ]
+        },
+        "('The Legend of Banzai Maguire', np.int64(90455))": {
+          "count": 2,
+          "work_ids": [
+            56921696,
+            56921798
+          ],
+          "publication_years": [
+            2004,
+            2016
+          ],
+          "series_info": [
+            "2176 Series",
+            "2176 Freedom Series"
+          ]
+        },
+        "('The Price of His Redemption', np.int64(4990))": {
+          "count": 2,
+          "work_ids": [
+            45636608,
+            57893012
+          ],
+          "publication_years": [
+            2015,
+            2015
+          ],
+          "series_info": [
+            "Irresistible Russian Tycoons",
+            "Irresistible Russian Tycoons"
+          ]
+        },
+        "('The Roche Hotel', np.int64(4625596))": {
+          "count": 2,
+          "work_ids": [
+            42926329,
+            45459009
+          ],
+          "publication_years": [
+            2014,
+            2015
+          ],
+          "series_info": [
+            "The Roche Hotel",
+            "The Roche Hotel"
+          ]
+        },
+        "('The Stacks', np.int64(8146946))": {
+          "count": 2,
+          "work_ids": [
+            41218879,
+            41810681
+          ],
+          "publication_years": [
+            2014,
+            2014
+          ],
+          "series_info": [
+            "The Stacks",
+            "The Stacks"
+          ]
+        },
+        "(\"The Tycoon's Pregnant Mistress\", np.int64(24978))": {
+          "count": 2,
+          "work_ids": [
+            4049778,
+            21545281
+          ],
+          "publication_years": [
+            2008,
+            2012
+          ],
+          "series_info": [
+            "The Anetakis Tycoons",
+            "Anetakis Tycoons"
+          ]
+        },
+        "(\"The Tycoon's Rebel Bride\", np.int64(24978))": {
+          "count": 2,
+          "work_ids": [
+            6326585,
+            25074374
+          ],
+          "publication_years": [
+            2009,
+            2013
+          ],
+          "series_info": [
+            "The Anetakis Tycoons",
+            "Anetakis Tycoons"
+          ]
+        },
+        "('The Vincent Brothers', np.int64(4872191))": {
+          "count": 2,
+          "work_ids": [
+            17572318,
+            18598990
+          ],
+          "publication_years": [
+            2011,
+            2012
+          ],
+          "series_info": [
+            "The Vincent Boys",
+            "The Vincent Boys"
+          ]
+        },
+        "('To Challenge a Dragon', np.int64(1395810))": {
+          "count": 2,
+          "work_ids": [
+            3332311,
+            51728748
+          ],
+          "publication_years": [
+            2004,
+            2004
+          ],
+          "series_info": [
+            "Dragon Kin",
+            "Dragon Kin"
+          ]
+        },
+        "('To Know Me', np.int64(6587358))": {
+          "count": 2,
+          "work_ids": [
+            25981993,
+            42301132
+          ],
+          "publication_years": [
+            2013,
+            2014
+          ],
+          "series_info": [
+            "To Know Me",
+            "To Know Me"
+          ]
+        },
+        "('True Control', np.int64(9876754))": {
+          "count": 2,
+          "work_ids": [
+            44113924,
+            44113976
+          ],
+          "publication_years": [
+            2015,
+            2015
+          ],
+          "series_info": [
+            "True",
+            "True"
+          ]
+        },
+        "('Trust Me', np.int64(7092860))": {
+          "count": 2,
+          "work_ids": [
+            26225348,
+            42464658
+          ],
+          "publication_years": [
+            2013,
+            2014
+          ],
+          "series_info": [
+            "Love, Life, & Happiness",
+            "Love, Life, & Happiness"
+          ]
+        },
+        "('Tuck & Cover', np.int64(4563849))": {
+          "count": 2,
+          "work_ids": [
+            45916601,
+            40701258
+          ],
+          "publication_years": [
+            2012,
+            2012
+          ],
+          "series_info": [
+            "Rough Rangers",
+            "Rough Rangers"
+          ]
+        },
+        "('Under the Mistletoe', np.int64(6559967))": {
+          "count": 2,
+          "work_ids": [
+            27350410,
+            22024345
+          ],
+          "publication_years": [
+            2012,
+            2013
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('Unexpected', np.int64(7327371))": {
+          "count": 2,
+          "work_ids": [
+            44323008,
+            44843311
+          ],
+          "publication_years": [
+            2014,
+            2014
+          ],
+          "series_info": [
+            "Unexpected",
+            "Unexpected"
+          ]
+        },
+        "('Vacant', np.int64(6871363))": {
+          "count": 2,
+          "work_ids": [
+            24079475,
+            24251329
+          ],
+          "publication_years": [
+            2012,
+            2013
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('Venus wa Kataomoi', np.int64(905098))": {
+          "count": 3,
+          "work_ids": [
+            3324892,
+            3324899,
+            3324908
+          ],
+          "publication_years": [
+            2002,
+            2002,
+            2003
+          ],
+          "series_info": [
+            "Venus in Love",
+            "Venus in Love",
+            "Venus in Love"
+          ]
+        },
+        "('Witch Wars', np.int64(14851642))": {
+          "count": 2,
+          "work_ids": [
+            48682864,
+            57853264
+          ],
+          "publication_years": [
+            2016,
+            2017
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('With Regret: Part One', np.int64(6768654))": {
+          "count": 2,
+          "work_ids": [
+            43300067,
+            22992790
+          ],
+          "publication_years": [
+            2012,
+            2012
+          ],
+          "series_info": [
+            NaN,
+            NaN
+          ]
+        },
+        "('Xiao Lin gaKe Ai sugitetsuraitsu!!', np.int64(1055786))": {
+          "count": 2,
+          "work_ids": [
+            41817700,
+            47454293
+          ],
+          "publication_years": [
+            2012,
+            2016
+          ],
+          "series_info": [
+            "So Cute It Hurts!!",
+            "So Cute It Hurts!!"
+          ]
+        },
+        "('jeongcebulmyeong saesaegsi', np.int64(2871713))": {
+          "count": 4,
+          "work_ids": [
+            6510845,
+            6510844,
+            10647347,
+            10647346
+          ],
+          "publication_years": [
+            2007,
+            2007,
+            2008,
+            2008
+          ],
+          "series_info": [
+            "Pig Bride",
+            "Pig Bride",
+            "Pig Bride",
+            "Pig Bride"
+          ]
+        },
+        "('supeshiyaru*e', np.int64(791996))": {
+          "count": 5,
+          "work_ids": [
+            2127653,
+            2332056,
+            13077782,
+            6488130,
+            6488131
+          ],
+          "publication_years": [
+            2003,
+            2004,
+            2008,
+            2009,
+            2009
+          ],
+          "series_info": [
+            "Special A",
+            "Special A",
+            "Special A",
+            "Special A",
+            "Special A"
+          ]
+        },
+        "('yamatonadeshikoQi Bian Hua', np.int64(127404))": {
+          "count": 4,
+          "work_ids": [
+            1092731,
+            210456,
+            18149273,
+            16359686
+          ],
+          "publication_years": [
+            2001,
+            2006,
+            2011,
+            2011
+          ],
+          "series_info": [
+            "The Wallflower",
+            "The Wallflower",
+            "The Wallflower",
+            "The Wallflower"
+          ]
+        }
+      },
+      "classification": {
+        "('A Baby For The Millionaire', np.int64(6604687))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "(\"A Lawman's Christmas\", np.int64(6223))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('A Little Bit Country', np.int64(3009736))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('A Promise Worth Keeping', np.int64(6937686))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('A Whole New Crowd', np.int64(4851199))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Again', np.int64(7177798))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Against the Fire', np.int64(49381))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('An Indecent Proposition', np.int64(1365342))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('An Unexpected Return', np.int64(4959083))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Around the World in 80 Men', np.int64(5806812))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Bait', np.int64(3132972))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "manual_review",
+          "details": {
+            "series_conflict": true
+          }
+        },
+        "('Bedded by the Warrior', np.int64(333092))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('Begin With Goodbye', np.int64(7237040))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Beyond Duty', np.int64(4563849))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Bought By The Billionaire Brothers', np.int64(5357343))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Bound to be Punished', np.int64(7102681))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "(\"Burnin' for You\", np.int64(2907794))": {
+          "type": "different_editions",
+          "confidence": "medium",
+          "recommendation": "keep_all",
+          "details": {}
+        },
+        "('Captive Films: Season 1', np.int64(4833990))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Changing Worlds', np.int64(2989189))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('Chasing Beautiful', np.int64(6567915))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Chosen', np.int64(339874))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Chun woBao iteita', np.int64(17074))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Close to the Skin', np.int64(15230944))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Come Here, Go Away', np.int64(6093884))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Cookies for Santa', np.int64(6573130))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Dark Hunger', np.int64(6268))": {
+          "type": "different_editions",
+          "confidence": "medium",
+          "recommendation": "keep_all",
+          "details": {}
+        },
+        "('Designing Emma', np.int64(6462060))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Die yoHua yo', np.int64(866775))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('Dirty Little Lies', np.int64(21940))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Embrace the Night Eternal', np.int64(2961326))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Evenfall', np.int64(4942228))": {
+          "type": "different_editions",
+          "confidence": "medium",
+          "recommendation": "keep_all",
+          "details": {}
+        },
+        "(\"Falcon's Desire\", np.int64(333092))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Fender Bender Blues', np.int64(6905991))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Fever', np.int64(3241738))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Free Me', np.int64(4093476))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Future Tense', np.int64(177047))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Guilty Pleasure by Lora Leigh', np.int64(2614))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Hapi Mari', np.int64(13446981))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('Heart of the Winter Wolf', np.int64(1357414))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('His Secret Desire', np.int64(6991776))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Hot Gimmick', np.int64(5182891))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('Hot Gimmick, Volume 3', np.int64(5182891))": {
+          "type": "different_editions",
+          "confidence": "medium",
+          "recommendation": "keep_all",
+          "details": {}
+        },
+        "('If I Never Knew You', np.int64(6937914))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Incongruent Angel', np.int64(4874967))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "manual_review",
+          "details": {
+            "series_conflict": true
+          }
+        },
+        "('Inked', np.int64(4833778))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('Innocence to the Max', np.int64(4563849))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('Jameson Hotel', np.int64(7752968))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Kissed by Twilight', np.int64(6448358))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Learning How to Lose, in Six Easy Steps', np.int64(7808827))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Limits of Destiny', np.int64(14161119))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Little Butterfly', np.int64(17042))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Loyalty & Respect', np.int64(6569905))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Master of Illusion', np.int64(7036779))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Mistletoe Rules Anthology', np.int64(1089931))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Mr. Popsalos', np.int64(3501047))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('My Body-His', np.int64(6551789))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('My Brother, My Rival', np.int64(6452269))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('North And South', np.int64(7280802))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('One Night in Paradise', np.int64(6983412))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Phantom Lover', np.int64(1914286))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Poker Face', np.int64(6475176))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Pride Of The Pack', np.int64(7255520))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Pulled', np.int64(4665585))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "(\"Rebecca's Lost Journals\", np.int64(73977))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Reckless Nights in Rome', np.int64(5822511))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "manual_review",
+          "details": {
+            "series_conflict": true
+          }
+        },
+        "('Reimi no Arcana', np.int64(5596285))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Second Kiss', np.int64(4397603))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('Shifter: Alpha Claim', np.int64(4755913))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('Sin', np.int64(7212486))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Single by Saturday', np.int64(2905789))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "(\"Somebody's Lover\", np.int64(130583))": {
+          "type": "different_editions",
+          "confidence": "medium",
+          "recommendation": "keep_all",
+          "details": {}
+        },
+        "('Stirred Up', np.int64(7087549))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Stoking the Embers', np.int64(9757456))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Taken', np.int64(8193380))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Tamed And Mated', np.int64(7164843))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Tears of Crimson', np.int64(7390971))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('The Ballad', np.int64(7161911))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "manual_review",
+          "details": {
+            "series_conflict": true
+          }
+        },
+        "('The Bliss King - Captive', np.int64(5011315))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "(\"The Dark God's Bride\", np.int64(7125979))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('The Debt', np.int64(6424546))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "(\"The High King's Golden Tongue\", np.int64(1427650))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('The Inheritance', np.int64(7903169))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('The Legend of Banzai Maguire', np.int64(90455))": {
+          "type": "different_editions",
+          "confidence": "medium",
+          "recommendation": "manual_review",
+          "details": {
+            "series_conflict": true
+          }
+        },
+        "('The Price of His Redemption', np.int64(4990))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('The Roche Hotel', np.int64(4625596))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('The Stacks', np.int64(8146946))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "(\"The Tycoon's Pregnant Mistress\", np.int64(24978))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "manual_review",
+          "details": {
+            "series_conflict": true
+          }
+        },
+        "(\"The Tycoon's Rebel Bride\", np.int64(24978))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "manual_review",
+          "details": {
+            "series_conflict": true
+          }
+        },
+        "('The Vincent Brothers', np.int64(4872191))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('To Challenge a Dragon', np.int64(1395810))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('To Know Me', np.int64(6587358))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('True Control', np.int64(9876754))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Trust Me', np.int64(7092860))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Tuck & Cover', np.int64(4563849))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Under the Mistletoe', np.int64(6559967))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Unexpected', np.int64(7327371))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Vacant', np.int64(6871363))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Venus wa Kataomoi', np.int64(905098))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Witch Wars', np.int64(14851642))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('With Regret: Part One', np.int64(6768654))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('Xiao Lin gaKe Ai sugitetsuraitsu!!', np.int64(1055786))": {
+          "type": "reprint",
+          "confidence": "medium",
+          "recommendation": "keep_original",
+          "details": {}
+        },
+        "('jeongcebulmyeong saesaegsi', np.int64(2871713))": {
+          "type": "same_edition",
+          "confidence": "high",
+          "recommendation": "keep_most_recent",
+          "details": {}
+        },
+        "('supeshiyaru*e', np.int64(791996))": {
+          "type": "different_editions",
+          "confidence": "medium",
+          "recommendation": "keep_all",
+          "details": {}
+        },
+        "('yamatonadeshikoQi Bian Hua', np.int64(127404))": {
+          "type": "different_editions",
+          "confidence": "medium",
+          "recommendation": "keep_all",
+          "details": {}
+        }
+      }
+    },
+    "author_duplicates": {
+      "total_potential_duplicates": 11021,
+      "duplicate_analysis": {},
+      "author_id_conflicts": 0
+    }
+  },
+  "resolution_results": {
+    "exact_duplicates_removed": 0,
+    "title_duplicates_resolved": 0,
+    "author_duplicates_resolved": 0,
+    "flags_created": 2,
+    "resolution_details": {
+      "title_duplicates": {
+        "resolved_count": 0,
+        "resolution_strategy": "classification_based",
+        "details": {
+          "strategy": "Flagged for manual review",
+          "reason": "Complex disambiguation required"
+        }
+      }
+    },
+    "final_shape": [
+      80804,
+      24
+    ],
+    "original_shape": [
+      80804,
+      22
+    ]
+  },
+  "validation_results": {
+    "validation_passed": true,
+    "remaining_duplicates": {
+      "title_duplicates_flagged": "251",
+      "author_duplicates_flagged": "69930"
+    },
+    "validation_errors": [],
+    "resolution_effectiveness": {
+      "original_records": 80804,
+      "resolved_records": 80804,
+      "records_removed": 0,
+      "reduction_percentage": 0.0
+    }
+  },
+  "summary": {
+    "original_records": 80804,
+    "resolved_records": 80804,
+    "exact_duplicates_removed": 0,
+    "title_duplicates_resolved": 0,
+    "author_duplicates_resolved": 0,
+    "flags_created": 2,
+    "validation_passed": true
+  }
+}

@@ -1,0 +1,20 @@
+2025-09-02 19:35:27,537 - INFO - Starting full data integration pipeline...
+2025-09-02 19:35:27,537 - INFO - Loading cleaned titles from: outputs/title_cleaning/cleaned_titles_20250902_174006.csv
+2025-09-02 19:35:31,911 - INFO - Loaded cleaned titles: 80,747 records
+2025-09-02 19:35:31,912 - INFO - Loading main dataset from: data/processed/final_books_2000_2020_en_cleaned_nlp_ready_20250902_161743.csv
+2025-09-02 19:35:36,452 - INFO - Loaded main dataset: 80,747 records
+2025-09-02 19:35:36,452 - INFO - Dataset validation passed - all required fields present
+2025-09-02 19:35:36,541 - INFO - Found 80,747 overlapping work_ids between datasets
+2025-09-02 19:35:36,541 - INFO - Cleaned titles unique IDs: 80,747
+2025-09-02 19:35:36,541 - INFO - Main dataset unique IDs: 80,747
+2025-09-02 19:35:36,557 - INFO - Preparing datasets for integration...
+2025-09-02 19:35:36,572 - INFO - Dataset preparation completed
+2025-09-02 19:35:36,572 - INFO - Starting dataset integration...
+2025-09-02 19:36:02,958 - INFO - Integration completed: 80,747 records updated
+2025-09-02 19:36:03,001 - INFO - Validating integration results...
+2025-09-02 19:36:03,079 - INFO - Integration validation completed
+2025-09-02 19:36:03,079 - INFO - Saving integrated dataset to: data/processed/integrated_romance_novels_nlp_ready_20250902_193603.csv
+2025-09-02 19:36:10,417 - INFO - Integrated dataset saved: 80,747 records
+2025-09-02 19:36:10,417 - INFO - Generating integration report...
+2025-09-02 19:36:10,951 - INFO - Integration report saved to: data/processed/integration_report_20250902_193610.json
+2025-09-02 19:36:10,951 - INFO - Full integration pipeline completed successfully

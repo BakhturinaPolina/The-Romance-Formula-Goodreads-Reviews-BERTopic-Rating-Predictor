@@ -1,0 +1,25 @@
+TEXT PREPROCESSOR TEST REPORT
+==================================================
+Generated: 2025-09-05 16:56:42
+Sample size: 100
+
+DATA ANALYSIS
+--------------------
+Total records: 100
+Total columns: 19
+Text columns: description, popular_shelves, genres, title, author_name, series_title
+
+HTML CLEANING TEST
+--------------------
+Total descriptions: 96
+HTML descriptions: 0
+HTML percentage: 0.00%
+
+GENRE NORMALIZATION TEST
+--------------------
+Total genres: 100
+Unique genres: 18
+
+POPULAR SHELVES STANDARDIZATION TEST
+--------------------
+Total shelves: 100

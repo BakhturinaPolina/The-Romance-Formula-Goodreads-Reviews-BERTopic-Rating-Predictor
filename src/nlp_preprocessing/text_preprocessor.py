@@ -69,7 +69,7 @@ class TextPreprocessor:
             'whitespace': re.compile(r'\s+'),
             'line_breaks': re.compile(r'[\r\n]+'),
             'quotes': re.compile(r'["""]'),
-            'apostrophes': re.compile(r'[''']')
+            'apostrophes': re.compile(r"[''']")
         }
         
         # Genre normalization mappings

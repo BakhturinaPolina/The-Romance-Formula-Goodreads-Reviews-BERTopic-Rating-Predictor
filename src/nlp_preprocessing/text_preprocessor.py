@@ -496,8 +496,9 @@ class TextPreprocessor:
         preprocessing_results['text_field_processing']['genres'] = {
             'original_count': original_genres_count,
             'processed_count': processed_genres_count,
-            'normalized': True,
-            'categorized': True
+            'html_cleaned': True,
+            'format_standardized': True,
+            'normalized': True
         }
         
         # Add preprocessing metadata

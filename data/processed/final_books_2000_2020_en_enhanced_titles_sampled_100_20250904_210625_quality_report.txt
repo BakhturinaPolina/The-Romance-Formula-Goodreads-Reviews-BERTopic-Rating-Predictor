@@ -1,0 +1,13 @@
+ENHANCED CSV BUILDER QUALITY REPORT
+==================================================
+
+Generated: 2025-09-04 21:06:25
+Output file: final_books_2000_2020_en_enhanced_titles_sampled_100_20250904_210625.csv
+
+QUALITY METRICS:
+--------------------
+works_processed: 96
+works_skipped: 4
+works_with_ratings: 96
+
+VALIDATION ERRORS: 0

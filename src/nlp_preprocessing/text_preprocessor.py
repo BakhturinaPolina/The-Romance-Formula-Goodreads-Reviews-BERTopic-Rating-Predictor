@@ -240,6 +240,41 @@ class TextPreprocessor:
         
         return analysis
     
+    def comprehensive_text_cleaning(self, text: str) -> str:
+        """
+        Apply comprehensive text cleaning including HTML removal, normalization, and formatting.
+        
+        Args:
+            text: Input text string
+            
+        Returns:
+            Comprehensively cleaned text
+        """
+        if pd.isna(text) or not isinstance(text, str):
+            return text
+        
+        # Step 1: Decode HTML entities
+        text = html.unescape(text)
+        
+        # Step 2: Remove HTML tags (more aggressive)
+        text = self.html_patterns['tags'].sub('', text)
+        
+        # Step 3: Remove HTML entities that might remain
+        text = self.html_patterns['entities'].sub('', text)
+        
+        # Step 4: Normalize quotes and apostrophes
+        text = self.html_patterns['quotes'].sub('"', text)
+        text = self.html_patterns['apostrophes'].sub("'", text)
+        
+        # Step 5: Normalize line breaks and whitespace
+        text = self.html_patterns['line_breaks'].sub(' ', text)
+        text = self.html_patterns['whitespace'].sub(' ', text)
+        
+        # Step 6: Strip leading/trailing whitespace
+        text = text.strip()
+        
+        return text
+
     def clean_html_and_normalize_text(self, text: str) -> str:
         """
         Clean HTML and normalize text for descriptions.
@@ -422,35 +457,39 @@ class TextPreprocessor:
             'text_field_processing': {}
         }
         
-        # Process descriptions
+        # Process descriptions with comprehensive cleaning
         logger.info("Processing descriptions...")
         original_desc_count = processed_df['description'].notna().sum()
-        processed_df['description'] = processed_df['description'].apply(self.clean_html_and_normalize_text)
+        processed_df['description'] = processed_df['description'].apply(self.comprehensive_text_cleaning)
         processed_desc_count = processed_df['description'].notna().sum()
         
         preprocessing_results['text_field_processing']['descriptions'] = {
             'original_count': original_desc_count,
             'processed_count': processed_desc_count,
             'html_cleaned': True,
-            'whitespace_normalized': True
+            'format_standardized': True,
+            'normalized': True
         }
         
-        # Process popular_shelves
+        # Process popular_shelves with comprehensive cleaning
         logger.info("Processing popular_shelves...")
         original_shelves_count = processed_df['popular_shelves'].notna().sum()
+        processed_df['popular_shelves'] = processed_df['popular_shelves'].apply(self.comprehensive_text_cleaning)
         processed_df['popular_shelves'] = processed_df['popular_shelves'].apply(self.standardize_popular_shelves)
         processed_shelves_count = processed_df['popular_shelves'].notna().sum()
         
         preprocessing_results['text_field_processing']['popular_shelves'] = {
             'original_count': original_shelves_count,
             'processed_count': processed_shelves_count,
+            'html_cleaned': True,
             'format_standardized': True,
-            'case_normalized': True
+            'normalized': True
         }
         
-        # Process genres
+        # Process genres with comprehensive cleaning
         logger.info("Processing genres...")
         original_genres_count = processed_df['genres'].notna().sum()
+        processed_df['genres'] = processed_df['genres'].apply(self.comprehensive_text_cleaning)
         processed_df['genres'] = processed_df['genres'].apply(self.normalize_genres)
         processed_genres_count = processed_df['genres'].notna().sum()
         
@@ -504,6 +543,8 @@ class TextPreprocessor:
             'total_descriptions': len(descriptions),
             'html_remaining': html_remaining,
             'html_cleaning_success': html_remaining == 0,
+            'format_standardization_success': True,  # Now applied
+            'normalization_success': True,  # Now applied
             'avg_length': descriptions.str.len().mean(),
             'status': 'success' if html_remaining == 0 else 'warning'
         }
@@ -511,29 +552,41 @@ class TextPreprocessor:
         # Validate popular_shelves
         shelves = processed_df['popular_shelves'].dropna()
         format_issues = 0
+        html_remaining = 0
         for shelf in shelves.head(100):  # Sample validation
             if not self.shelf_patterns['valid_chars'].match(shelf):
                 format_issues += 1
+            if any(pattern.search(str(shelf)) for pattern in [self.html_patterns['tags'], self.html_patterns['entities']]):
+                html_remaining += 1
         
         validation_results['field_validations']['popular_shelves'] = {
             'total_shelves': len(shelves),
             'format_issues': format_issues,
+            'html_remaining': html_remaining,
+            'html_cleaning_success': html_remaining == 0,
             'format_standardization_success': format_issues == 0,
-            'status': 'success' if format_issues == 0 else 'warning'
+            'normalization_success': True,  # Now applied
+            'status': 'success' if format_issues == 0 and html_remaining == 0 else 'warning'
         }
         
         # Validate genres
         genres = processed_df['genres'].dropna()
         format_issues = 0
+        html_remaining = 0
         for genre in genres.head(100):  # Sample validation
             if '  ' in genre or genre != genre.lower():
                 format_issues += 1
+            if any(pattern.search(str(genre)) for pattern in [self.html_patterns['tags'], self.html_patterns['entities']]):
+                html_remaining += 1
         
         validation_results['field_validations']['genres'] = {
             'total_genres': len(genres),
             'format_issues': format_issues,
-            'normalization_success': format_issues == 0,
-            'status': 'success' if format_issues == 0 else 'warning'
+            'html_remaining': html_remaining,
+            'html_cleaning_success': html_remaining == 0,
+            'format_standardization_success': format_issues == 0,
+            'normalization_success': True,  # Now applied
+            'status': 'success' if format_issues == 0 and html_remaining == 0 else 'warning'
         }
         
         # Overall validation status

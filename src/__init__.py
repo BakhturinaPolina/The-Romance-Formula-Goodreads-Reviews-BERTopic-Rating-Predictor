@@ -7,8 +7,10 @@ __version__ = "1.0.0"
 # Import working modules only
 from . import csv_building
 from . import data_quality
+from . import nlp_preprocessing
 
 __all__ = [
     'csv_building',
-    'data_quality'
+    'data_quality',
+    'nlp_preprocessing'
 ]

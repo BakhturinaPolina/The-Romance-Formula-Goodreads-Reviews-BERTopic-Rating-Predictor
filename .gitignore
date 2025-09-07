@@ -31,3 +31,10 @@ src/logs/
 *.jpg
 *.jpeg
 *.gif
+outputs/data_type_optimization/*.pickle
+
+# Exclude large pickle files
+*.pkl
+*.pickle
+outputs/*/*.pkl
+outputs/*/*.pickle

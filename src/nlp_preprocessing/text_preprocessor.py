@@ -126,11 +126,13 @@ class TextPreprocessor:
         logger.info(f"Loading data from {self.data_path}")
         
         try:
-            # Try pickle first for better performance
-            pickle_path = self.data_path.with_suffix('.pkl')
-            if pickle_path.exists():
-                logger.info("Loading from pickle file for better performance")
-                with open(pickle_path, 'rb') as f:
+            # Try different file formats
+            if self.data_path.suffix.lower() == '.parquet':
+                logger.info("Loading from parquet file")
+                self.df = pd.read_parquet(self.data_path)
+            elif self.data_path.suffix.lower() == '.pkl' or self.data_path.suffix.lower() == '.pickle':
+                logger.info("Loading from pickle file")
+                with open(self.data_path, 'rb') as f:
                     self.df = pickle.load(f)
             else:
                 logger.info("Loading from CSV file")

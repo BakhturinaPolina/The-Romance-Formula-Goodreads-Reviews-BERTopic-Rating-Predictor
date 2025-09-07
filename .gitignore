@@ -25,3 +25,9 @@ __pycache__/
 
 # Exclude logs
 src/logs/
+
+# Exclude visualization outputs (PNG files)
+*.png
+*.jpg
+*.jpeg
+*.gif

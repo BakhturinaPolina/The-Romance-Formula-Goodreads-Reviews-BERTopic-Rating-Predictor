@@ -1,0 +1,115 @@
+{
+  "timestamp": "2025-09-07T01:07:39.381764",
+  "dataset_info": {
+    "before_cleaning": {
+      "total_books": 119678,
+      "features": 19
+    },
+    "after_cleaning": {
+      "total_books": 119678,
+      "features": 21
+    },
+    "data_reduction": {
+      "books_removed": 0,
+      "reduction_percentage": 0.0
+    }
+  },
+  "numerical_variables_analysis": {
+    "publication_year": {
+      "before_cleaning": {
+        "count": 119678,
+        "mean": 2012.7483,
+        "median": 2013.0,
+        "std": 3.2766,
+        "min": "2000",
+        "max": "2019"
+      },
+      "after_cleaning": {
+        "count": 119678,
+        "mean": 2012.7483,
+        "median": 2013.0,
+        "std": 3.2766,
+        "min": "2000",
+        "max": "2019"
+      },
+      "cleaning_impact": {
+        "data_points_removed": 0,
+        "removal_percentage": 0.0,
+        "mean_change": 0.0,
+        "std_change": 0.0
+      }
+    },
+    "num_pages_median": {
+      "before_cleaning": {
+        "count": 83770,
+        "mean": 232.9317,
+        "median": 225.0,
+        "std": 375.8629,
+        "min": 1.0,
+        "max": 69473.0
+      },
+      "after_cleaning": {
+        "count": 83770,
+        "mean": 232.9317,
+        "median": 225.0,
+        "std": 375.8629,
+        "min": 1.0,
+        "max": 69473.0
+      },
+      "cleaning_impact": {
+        "data_points_removed": 0,
+        "removal_percentage": 0.0,
+        "mean_change": 0.0,
+        "std_change": 0.0
+      }
+    },
+    "ratings_count_sum": {
+      "before_cleaning": {
+        "count": 119678,
+        "mean": 938.9817,
+        "median": 113.0,
+        "std": 9619.8392,
+        "min": "0",
+        "max": "1686868"
+      },
+      "after_cleaning": {
+        "count": 119678,
+        "mean": 938.9817,
+        "median": 113.0,
+        "std": 9619.8392,
+        "min": "0",
+        "max": "1686868"
+      },
+      "cleaning_impact": {
+        "data_points_removed": 0,
+        "removal_percentage": 0.0,
+        "mean_change": 0.0,
+        "std_change": 0.0
+      }
+    },
+    "average_rating_weighted_mean": {
+      "before_cleaning": {
+        "count": 119582,
+        "mean": 3.8761,
+        "median": 3.9,
+        "std": 0.39,
+        "min": 1.0,
+        "max": 5.0
+      },
+      "after_cleaning": {
+        "count": 119582,
+        "mean": 3.8761,
+        "median": 3.9,
+        "std": 0.39,
+        "min": 1.0,
+        "max": 5.0
+      },
+      "cleaning_impact": {
+        "data_points_removed": 0,
+        "removal_percentage": 0.0,
+        "mean_change": 0.0,
+        "std_change": 0.0
+      }
+    }
+  }
+}

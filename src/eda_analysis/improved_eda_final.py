@@ -320,8 +320,8 @@ class ImprovedEDAFinal:
 def main():
     """Main execution function."""
     # Set up paths - using proper before/after datasets
-    data_path_before = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/data/processed/final_books_2000_2020_en_enhanced_20250906_204009.csv"
-    data_path_after = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/data/processed/eda_cleaned_dataset_20250907_003348.csv"
+    data_path_before = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/data/processed/romance_novels_text_preprocessed_20250906_213043.csv"
+    data_path_after = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/archive/processed_data_20250109/cleaned_romance_novels_2000_2017_20250905_014541.csv"
     output_dir = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/src/eda_analysis/outputs/improved_eda_final"
     
     # Create visualizer

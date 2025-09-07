@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 """
-Comparative Distribution Visualization Script - Legacy Version
+Improved EDA Final Script - Clean and Focused
 Senior Data Scientist Review & Production
 
-DEPRECATED: This script is kept for reference but improved_eda_final.py 
-should be used instead for cleaner, more focused visualizations.
+This script creates exactly two publication-ready figures:
+1. Before/After Cleaning Distributions (2x2 histograms)
+2. Cleaned Data Summary (Boxplots with jitter)
 
-This script creates two publication-ready figures comparing numerical variables
-before and after data cleaning using the Antique color palette.
-
-Figure 1: Before vs. After Distribution Histograms (2x2 grid)
-Figure 2: Comparative Boxplots of Cleaned Data (2x2 grid)
+Uses Antique color palette and follows academic publication standards.
 """
 
 import pandas as pd
@@ -26,7 +23,7 @@ warnings.filterwarnings('ignore')
 # Set up academic publication style
 sns.set_theme(style="darkgrid")
 plt.rcParams.update({
-    'figure.figsize': (12, 8),
+    'figure.figsize': (14, 10),
     'figure.dpi': 300,
     'font.size': 11,
     'axes.labelsize': 12,
@@ -58,8 +55,8 @@ ANTIQUE_COLORS = [
     '#7C7C7CFF'   # Gray
 ]
 
-class ComparativeDistributionVisualizer:
-    """Create comparative distribution visualizations for before/after data cleaning."""
+class ImprovedEDAFinal:
+    """Clean, focused EDA plot generator with exactly two essential figures."""
     
     def __init__(self, data_path_before, data_path_after, output_dir):
         """
@@ -90,83 +87,64 @@ class ComparativeDistributionVisualizer:
             'ratings_count_sum',
             'average_rating_weighted_mean'
         ]
-        
-        # Define clean titles for plots
-        self.var_titles = [
-            'Publication Year Distribution',
-            'Median Page Count Distribution',
-            'Total Ratings Count Distribution',
-            'Average Rating Distribution'
-        ]
-        
-        # Define x-axis labels
-        self.var_labels = [
-            'Publication Year',
-            'Number of Pages',
-            'Number of Ratings',
-            'Average Rating (1-5)'
-        ]
     
     def create_figure_1_histograms(self):
         """
-        Create Figure 1: Before vs. After Distribution Histograms (2x2 grid).
+        FIGURE 1: Before/After Cleaning Distributions (2x2 histograms)
         
-        Shows overlaid histograms for each numerical variable comparing
-        raw data vs cleaned data distributions.
+        Creates a 2×2 subplot layout comparing distributions before and after 
+        data cleaning for four numerical variables using Antique color palette.
         """
-        print("Creating Figure 1: Before vs. After Distribution Histograms...")
+        print("Creating Figure 1: Before/After Cleaning Distributions...")
         
-        fig, axs = plt.subplots(2, 2, figsize=(16, 12))
-        axs = axs.flatten()
+        fig, axs = plt.subplots(2, 2, figsize=(14, 10))
         
-        for i, (var, title, xlabel) in enumerate(zip(self.numerical_vars, self.var_titles, self.var_labels)):
-            ax = axs[i]
-            
-            # Get data for both datasets
-            data_before = self.df_before[var].dropna()
-            data_after = self.df_after[var].dropna()
-            
-            # Create overlaid histograms
-            sns.histplot(data=data_before, alpha=0.6, color=ANTIQUE_COLORS[0], 
-                        label='Before Cleaning', ax=ax, kde=False)
-            sns.histplot(data=data_after, alpha=0.6, color=ANTIQUE_COLORS[1], 
-                        label='After Cleaning', ax=ax, kde=False)
-            
-            # Special handling for average_rating_weighted_mean - add KDE
-            if var == 'average_rating_weighted_mean':
-                sns.histplot(data=data_after, alpha=0.3, color=ANTIQUE_COLORS[1], 
-                            kde=True, ax=ax, label='After Cleaning (KDE)')
-            
-            # Special handling for ratings_count_sum - use log scale if heavily skewed
-            if var == 'ratings_count_sum':
-                # Check if data is heavily skewed (skewness > 2)
-                skewness = data_after.skew()
-                if skewness > 2:
-                    ax.set_xscale('log')
-                    ax.set_xlabel(f'{xlabel} (log scale)')
-                else:
-                    ax.set_xlabel(xlabel)
-            else:
-                ax.set_xlabel(xlabel)
-            
-            ax.set_ylabel('Frequency')
-            ax.set_title(title)
-            ax.legend()
-            ax.grid(True, alpha=0.3)
-            
-            # Add sample size annotations
-            ax.text(0.02, 0.98, 
-                   f'Before: n={len(data_before):,}\nAfter: n={len(data_after):,}', 
-                   transform=ax.transAxes, fontsize=9,
-                   bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8),
-                   verticalalignment='top')
+        # 1. Publication Year Distribution
+        sns.histplot(data=self.df_before, x="publication_year", kde=False, color=ANTIQUE_COLORS[0], 
+                     label="Before Cleaning", ax=axs[0,0], alpha=0.6, bins=30)
+        sns.histplot(data=self.df_after, x="publication_year", kde=False, color=ANTIQUE_COLORS[1], 
+                     label="After Cleaning", ax=axs[0,0], alpha=0.6, bins=30)
+        axs[0,0].set_title("Publication Year Distribution", fontsize=12, fontweight='bold')
+        axs[0,0].set_xlabel("Publication Year")
+        axs[0,0].set_ylabel("Count")
+        axs[0,0].legend()
         
-        plt.suptitle('Distribution Comparison: Before vs After Data Cleaning', 
-                    fontsize=16, y=0.98)
+        # 2. Median Page Count Distribution  
+        sns.histplot(data=self.df_before, x="num_pages_median", kde=False, color=ANTIQUE_COLORS[2], 
+                     label="Before Cleaning", ax=axs[0,1], alpha=0.6, bins=30)
+        sns.histplot(data=self.df_after, x="num_pages_median", kde=False, color=ANTIQUE_COLORS[3], 
+                     label="After Cleaning", ax=axs[0,1], alpha=0.6, bins=30)
+        axs[0,1].set_title("Median Page Count Distribution", fontsize=12, fontweight='bold')
+        axs[0,1].set_xlabel("Number of Pages (Median)")
+        axs[0,1].set_ylabel("Count")
+        axs[0,1].legend()
+        
+        # 3. Ratings Count Distribution (with log scale to show popular vs niche)
+        sns.histplot(data=self.df_before, x="ratings_count_sum", kde=False, color=ANTIQUE_COLORS[4], 
+                     label="Before Cleaning", ax=axs[1,0], alpha=0.6, bins=50)
+        sns.histplot(data=self.df_after, x="ratings_count_sum", kde=False, color=ANTIQUE_COLORS[5], 
+                     label="After Cleaning", ax=axs[1,0], alpha=0.6, bins=50)
+        axs[1,0].set_title("Ratings Count Distribution (Popular vs Niche)", fontsize=12, fontweight='bold')
+        axs[1,0].set_xlabel("Total Ratings Count (log scale)")
+        axs[1,0].set_ylabel("Count")
+        axs[1,0].set_xscale("log")  # Log scale to distinguish popular vs niche books
+        axs[1,0].legend()
+        
+        # 4. Average Rating Distribution (with KDE to show skewness)
+        sns.histplot(data=self.df_before, x="average_rating_weighted_mean", kde=True, color=ANTIQUE_COLORS[6], 
+                     label="Before Cleaning", ax=axs[1,1], alpha=0.6, bins=30, stat="density")
+        sns.histplot(data=self.df_after, x="average_rating_weighted_mean", kde=True, color=ANTIQUE_COLORS[7], 
+                     label="After Cleaning", ax=axs[1,1], alpha=0.6, bins=30, stat="density")
+        axs[1,1].set_title("Average Rating Distribution (Skewness Check)", fontsize=12, fontweight='bold')
+        axs[1,1].set_xlabel("Weighted Average Rating")
+        axs[1,1].set_ylabel("Density")
+        axs[1,1].legend()
+        
+        plt.suptitle("Data Distribution: Before vs After Cleaning", fontsize=14, fontweight='bold', y=1.02)
         plt.tight_layout()
         
         # Save the figure
-        output_path = self.output_dir / 'figure_1_before_after_histograms.png'
+        output_path = self.output_dir / 'figure_1_before_after_distributions.png'
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
         plt.show()
         
@@ -174,56 +152,51 @@ class ComparativeDistributionVisualizer:
     
     def create_figure_2_boxplots(self):
         """
-        Create Figure 2: Comparative Boxplots of Cleaned Data (2x2 grid).
+        FIGURE 2: Cleaned Data Summary (Boxplots with jitter)
         
-        Shows horizontal boxplots with jitter for all four numerical variables
-        from the cleaned dataset, each on its own subplot with appropriate scaling.
+        Creates a horizontal boxplot with jittered individual points showing 
+        the distribution of all four cleaned numerical variables.
         """
-        print("Creating Figure 2: Comparative Boxplots of Cleaned Data...")
+        print("Creating Figure 2: Cleaned Data Summary (Boxplots with jitter)...")
         
-        fig, axs = plt.subplots(2, 2, figsize=(16, 10))
-        axs = axs.flatten()
+        # Prepare data for boxplot - use raw values but transform ratings_count to log scale for visibility
+        cleaned_vars = self.df_after[self.numerical_vars].copy()
         
-        for i, (var, title, xlabel) in enumerate(zip(self.numerical_vars, self.var_titles, self.var_labels)):
-            ax = axs[i]
-            
-            # Get cleaned data
-            data_clean = self.df_after[var].dropna()
-            
-            # Create horizontal boxplot
-            sns.boxplot(data=self.df_after, x=var, ax=ax, color=ANTIQUE_COLORS[i], width=0.4)
-            
-            # Add jitter/stripplot overlay
-            sns.stripplot(data=self.df_after, x=var, ax=ax, color='grey', alpha=0.3, size=3)
-            
-            # Set labels and title
-            ax.set_title(f'Distribution of {title.split()[0]} {title.split()[1]} (Cleaned)')
-            ax.set_xlabel('Value')
-            ax.set_ylabel('')  # No y-label needed for single horizontal boxplot
-            
-            # Add sample size annotation
-            ax.text(0.02, 0.98, f'n = {len(data_clean):,}', 
-                   transform=ax.transAxes, fontsize=10,
-                   bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8),
-                   verticalalignment='top')
-            
-            # Add basic statistics
-            mean_val = data_clean.mean()
-            median_val = data_clean.median()
-            std_val = data_clean.std()
-            
-            stats_text = f'Mean: {mean_val:.2f}\nMedian: {median_val:.2f}\nStd: {std_val:.2f}'
-            ax.text(0.98, 0.98, stats_text, 
-                   transform=ax.transAxes, fontsize=9,
-                   bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgray", alpha=0.8),
-                   verticalalignment='top', horizontalalignment='right')
+        # Transform ratings_count to log scale for better visibility
+        cleaned_vars['ratings_count_sum'] = np.log1p(cleaned_vars['ratings_count_sum'])  # log(1+x) to handle zeros
         
-        plt.suptitle('Summary of Numerical Variables After Cleaning', 
-                    fontsize=16, y=0.98)
+        # Melt dataframe for grouped boxplot
+        cleaned_melted = cleaned_vars.melt(var_name='Variable', value_name='Value')
+        
+        # Rename variables for better display
+        variable_names = {
+            'publication_year': 'Publication Year',
+            'num_pages_median': 'Pages (Median)',
+            'ratings_count_sum': 'Ratings Count (log)',
+            'average_rating_weighted_mean': 'Avg Rating (Weighted)'
+        }
+        cleaned_melted['Variable'] = cleaned_melted['Variable'].map(variable_names)
+        
+        # Create horizontal boxplot with jitter
+        fig, ax = plt.subplots(figsize=(10, 6))
+        
+        # Boxplot
+        sns.boxplot(data=cleaned_melted, y='Variable', x='Value', 
+                    palette=ANTIQUE_COLORS[:4], orient='h', ax=ax, width=0.6)
+        
+        # Add jittered points
+        sns.stripplot(data=cleaned_melted, y='Variable', x='Value', 
+                      color='gray', alpha=0.3, size=2, jitter=True, ax=ax)
+        
+        ax.set_title("Distribution Summary of Cleaned Numerical Variables", fontsize=14, fontweight='bold')
+        ax.set_xlabel("Value", fontsize=11)
+        ax.set_ylabel("")
+        ax.grid(True, alpha=0.3)
+        
         plt.tight_layout()
         
         # Save the figure
-        output_path = self.output_dir / 'figure_2_cleaned_data_boxplots.png'
+        output_path = self.output_dir / 'figure_2_cleaned_data_summary.png'
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
         plt.show()
         
@@ -253,20 +226,18 @@ class ComparativeDistributionVisualizer:
         }
         
         # Analyze each numerical variable
-        for var, title in zip(self.numerical_vars, self.var_titles):
+        for var in self.numerical_vars:
             data_before = self.df_before[var].dropna()
             data_after = self.df_after[var].dropna()
             
             summary_stats['numerical_variables_analysis'][var] = {
-                'variable_name': title,
                 'before_cleaning': {
                     'count': len(data_before),
                     'mean': round(data_before.mean(), 4),
                     'median': round(data_before.median(), 4),
                     'std': round(data_before.std(), 4),
                     'min': data_before.min(),
-                    'max': data_before.max(),
-                    'skewness': round(data_before.skew(), 4)
+                    'max': data_before.max()
                 },
                 'after_cleaning': {
                     'count': len(data_after),
@@ -274,8 +245,7 @@ class ComparativeDistributionVisualizer:
                     'median': round(data_after.median(), 4),
                     'std': round(data_after.std(), 4),
                     'min': data_after.min(),
-                    'max': data_after.max(),
-                    'skewness': round(data_after.skew(), 4)
+                    'max': data_after.max()
                 },
                 'cleaning_impact': {
                     'data_points_removed': len(data_before) - len(data_after),
@@ -289,7 +259,7 @@ class ComparativeDistributionVisualizer:
     
     def save_summary_report(self, summary_stats):
         """Save summary statistics to JSON file."""
-        report_path = self.output_dir / 'comparative_distribution_summary.json'
+        report_path = self.output_dir / 'improved_eda_final_summary.json'
         
         with open(report_path, 'w') as f:
             json.dump(summary_stats, f, indent=2, default=str)
@@ -299,7 +269,7 @@ class ComparativeDistributionVisualizer:
     def print_summary(self, summary_stats):
         """Print a summary of the analysis."""
         print("=" * 80)
-        print("COMPARATIVE DISTRIBUTION ANALYSIS SUMMARY")
+        print("IMPROVED EDA FINAL ANALYSIS SUMMARY")
         print("=" * 80)
         
         # Dataset overview
@@ -313,7 +283,7 @@ class ComparativeDistributionVisualizer:
         # Numerical variables analysis
         print("Numerical Variables Analysis:")
         for var, analysis in summary_stats['numerical_variables_analysis'].items():
-            print(f"  {analysis['variable_name']}:")
+            print(f"  {var}:")
             print(f"    Before: n={analysis['before_cleaning']['count']:,}, "
                   f"mean={analysis['before_cleaning']['mean']}, "
                   f"std={analysis['before_cleaning']['std']}")
@@ -327,14 +297,14 @@ class ComparativeDistributionVisualizer:
         print("=" * 80)
     
     def generate_all_visualizations(self):
-        """Generate all comparative distribution visualizations."""
-        print("Generating comparative distribution visualizations...")
+        """Generate both essential figures."""
+        print("Generating improved EDA final visualizations...")
         print("=" * 60)
         
-        # Create Figure 1: Before vs After Histograms
+        # Create Figure 1: Before/After Distributions
         self.create_figure_1_histograms()
         
-        # Create Figure 2: Cleaned Data Boxplots
+        # Create Figure 2: Cleaned Data Summary
         self.create_figure_2_boxplots()
         
         # Generate and save summary statistics
@@ -343,7 +313,7 @@ class ComparativeDistributionVisualizer:
         self.print_summary(summary_stats)
         
         print("=" * 60)
-        print("All comparative distribution visualizations generated successfully!")
+        print("All improved EDA final visualizations generated successfully!")
         print(f"Output directory: {self.output_dir}")
 
 
@@ -351,11 +321,11 @@ def main():
     """Main execution function."""
     # Set up paths - using proper before/after datasets
     data_path_before = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/data/processed/final_books_2000_2020_en_enhanced_20250906_204009.csv"
-    data_path_after = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/src/eda_analysis/outputs/eda_with_cleaning/eda_cleaned_dataset_20250907_003348.csv"
-    output_dir = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/src/eda_analysis/outputs/comparative_distribution_analysis"
+    data_path_after = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/data/processed/eda_cleaned_dataset_20250907_003348.csv"
+    output_dir = "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/src/eda_analysis/outputs/improved_eda_final"
     
     # Create visualizer
-    visualizer = ComparativeDistributionVisualizer(data_path_before, data_path_after, output_dir)
+    visualizer = ImprovedEDAFinal(data_path_before, data_path_after, output_dir)
     
     # Generate all visualizations
     visualizer.generate_all_visualizations()

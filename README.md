@@ -125,21 +125,24 @@ This approach ensures fair comparison between books regardless of how many editi
 - **Data Cleaning**: Titles normalized, descriptions cleaned, series structured
 - **Quality Validation**: Data quality assessed and documented
 - **Data Quality Pipeline**: 6-step pipeline implemented and validated
-- **Code Cleanup**: Unused code archived, working modules consolidated
+- **Complete Data Cleaning Pipeline**: Full pipeline from raw data to final analysis
+- **NLP Text Preprocessing**: HTML cleaning, text normalization, genre categorization
+- **EDA Analysis**: Before/after distribution comparisons with publication-ready visualizations
+- **Repository Organization**: All outputs centralized and organized
+- **Repository Cleanup**: Comprehensive cleanup with all files safely archived
 
 ### 🔄 **In Progress**
-- **NLP Analysis Setup**: Preparing for topic modeling and theme extraction
-- **Documentation Updates**: Consolidating project documentation
+- **Documentation Updates**: Finalizing project documentation
 
 ### 📋 **Next Steps**
-- **Text Preprocessing**: Apply NLP preprocessing to quality-certified datasets
 - **Topic Modeling**: Implement BERTopic for theme extraction
 - **Subgenre Classification**: Parse popular shelves for standardized categories
 - **Correlation Analysis**: Analyze theme-popularity relationships
+- **Research Paper**: Prepare findings for academic publication
 
 ## Project Structure
 
-### Active Components
+### Current Clean Repository Structure
 ```
 romance-novel-nlp-research/
 ├── src/                                          # Clean, focused source code
@@ -151,27 +154,40 @@ romance-novel-nlp-research/
 │   │   ├── step4_outlier_detection.py            # Step 4: Outlier Detection
 │   │   ├── step4_outlier_treatment.py            # Step 4: Outlier Treatment
 │   │   ├── step5_data_type_optimization.py       # Step 5: Data Type Optimization
-│   │   ├── step6_final_quality_validation.py     # Step 6: Final Quality Validation
-│   │   └── outputs/                              # Pipeline execution outputs
-│   │       ├── missing_values_cleaning/          # Step 1 outputs
-│   │       ├── duplicate_detection/              # Step 2 outputs
-│   │       ├── data_type_validation/             # Step 3 outputs
-│   │       ├── outlier_detection/                # Step 4 outputs
-│   │       ├── data_type_optimization/           # Step 5 outputs
-│   │       └── final_quality_validation/         # Step 6 outputs
-│   └── csv_building/                             # CSV generation module
-│       ├── final_csv_builder.py                  # Main CSV builder
-│       └── run_builder.py                        # Builder runner script
+│   │   └── step6_final_quality_validation.py     # Step 6: Final Quality Validation
+│   ├── csv_building/                             # CSV generation module
+│   │   ├── final_csv_builder.py                  # Main CSV builder
+│   │   └── run_builder.py                        # Builder runner script
+│   ├── nlp_preprocessing/                        # NLP text preprocessing
+│   │   ├── text_preprocessor.py                  # Main text preprocessor
+│   │   ├── run_preprocessor.py                   # Preprocessor runner
+│   │   └── test_preprocessor.py                  # Preprocessor tests
+│   └── eda_analysis/                             # Exploratory data analysis
+│       ├── improved_eda_final.py                 # Main EDA analysis
+│       ├── comparative_distribution_visualization.py
+│       └── outputs/                              # EDA outputs
+│           └── complete_pipeline_analysis/       # Final analysis results
 ├── data/
 │   ├── raw/                                      # Original Goodreads JSON files (9 files)
 │   ├── intermediate/                              # Temporary processing outputs
-│   └── processed/                                # Final cleaned datasets
-├── logs/                                          # Current execution logs
-├── docs/                                          # Project documentation
-├── notebooks/                                     # Jupyter notebooks
-└── archive/                                       # Archived development history
+│   └── processed/                                # Current datasets (3 files)
+│       ├── final_books_2000_2020_en_enhanced_20250907_013708.csv
+│       ├── romance_novels_text_preprocessed_20250907_015606.csv
+│       └── text_preprocessing_report_20250907_015613.json
+├── organized_outputs/                            # All organized outputs
+│   ├── datasets/                                 # All dataset versions
+│   │   ├── step_by_step/                         # 7 datasets showing pipeline progression
+│   │   └── specialized_versions/                 # 3 final dataset versions
+│   ├── logs/                                     # All pipeline execution logs
+│   ├── reports/                                  # All analysis reports
+│   │   ├── json/                                 # 15 JSON reports with statistics
+│   │   └── markdown/                             # 5 Markdown analysis reports
+│   ├── visualizations/                           # 17 publication-ready plots
+│   └── README.md                                 # Complete output documentation
+└── archive/                                      # Archived development history
     ├── cleanup_20250105/                         # January 5, 2025 cleanup
     ├── cleanup_20250106/                         # January 6, 2025 cleanup
+    ├── cleanup_20250907/                         # September 7, 2025 comprehensive cleanup
     ├── data_quality_archive_20250902/            # September 2025 data quality archive
     ├── data_quality_artifacts/                   # Development artifacts
     ├── pipeline_outputs_20250902/                # Archived pipeline outputs
@@ -182,39 +198,45 @@ romance-novel-nlp-research/
 ### Key Files
 - **Main Pipeline Runner**: `src/data_quality/pipeline_runner.py` (Complete 6-step pipeline)
 - **CSV Builder**: `src/csv_building/final_csv_builder.py` (Dataset generation)
-- **Builder Runner**: `src/csv_building/run_builder.py` (CSV generation runner)
+- **NLP Preprocessor**: `src/nlp_preprocessing/text_preprocessor.py` (Text cleaning and normalization)
+- **EDA Analysis**: `src/eda_analysis/improved_eda_final.py` (Exploratory data analysis)
 - **Raw Data**: `data/raw/` (9 Goodreads JSON files)
-- **Pipeline Outputs**: `src/data_quality/outputs/` (All pipeline step outputs)
-- **Quality Reports**: Archived in `archive/processed_data_20250904/`
+- **Current Datasets**: `data/processed/` (3 current dataset files)
+- **Organized Outputs**: `organized_outputs/` (All organized outputs and visualizations)
+- **Archive**: `archive/` (All archived development history)
 
 ## Repository Maintenance
 
-### Recent Cleanup Activities (January 2025)
-The repository has undergone comprehensive cleanup to maintain a clean, focused codebase:
+### Recent Cleanup Activities (September 2025)
+The repository has undergone comprehensive cleanup and organization to maintain a clean, focused codebase:
 
-**January 6, 2025 Cleanup**:
+**September 7, 2025 Comprehensive Cleanup**:
+- **Repository Organization**: All outputs centralized in `organized_outputs/` directory
+- **Duplicate Files**: Archived 50+ duplicate files now superseded by organized structure
+- **Old Dataset Versions**: Archived 5 outdated dataset versions, keeping only current ones
+- **Old Logs**: Archived 3 old log files superseded by organized logs
+- **Old Reports**: Archived 10+ outdated reports superseded by organized reports
+- **Data Quality Outputs**: Archived old pipeline outputs from `src/data_quality/outputs/`
+
+**Previous Cleanup Activities (January 2025)**:
 - **Python Cache Files**: Removed `__pycache__` directories from `src/data_quality/` and `src/csv_building/`
 - **Empty Log Files**: Archived 5 empty log files (0 bytes) that were never used
 - **Duplicate Outputs**: Archived earlier versions of quality reports and unprocessed batch files
 - **Development Tools**: Archived 3 diagnostic scripts used during development
 - **Alternative Runners**: Archived 4 redundant runner scripts that duplicated core functionality
 
-**January 5, 2025 Cleanup**:
-- **Outdated Logs**: Archived 20+ log files from September 2025 (outdated)
-- **Duplicate Outputs**: Archived 8 duplicate output files with older timestamps
-- **Old Reports**: Archived 7 superseded analysis reports and summaries
-
 **Archive Organization**:
 - All development history preserved in `archive/` directory
 - Clean separation between active code and development artifacts
 - Easy recovery process for any archived files if needed
-- Streamlined `src/` directory with only essential functionality
+- Streamlined repository with only essential functionality
 
 ### Current Repository State
 - **Clean Source Code**: No cache files or redundant scripts in active directories
-- **Focused Structure**: Only core functionality remains in `src/` directory
+- **Organized Outputs**: All outputs centralized in `organized_outputs/` with clear structure
+- **Current Datasets**: Only 3 current dataset files in `data/processed/`
 - **Preserved History**: All development artifacts safely archived
-- **Ready for Phase 4**: Clean codebase prepared for NLP analysis implementation
+- **Ready for Research**: Clean, organized codebase prepared for advanced NLP analysis
 
 ## Data Quality Pipeline
 
@@ -297,14 +319,21 @@ The project implements a comprehensive data quality pipeline with all steps curr
 
 ## Data Quality
 
-### Current Dataset Characteristics
-- **Size**: 119,678 romance novels
-- **Coverage**: 2000-2020 publication years
-- **Completeness**: 95%+ for core fields
-- **Text Quality**: Clean descriptions with minimal HTML artifacts
-- **Series Coverage**: 67% of books properly categorized
-- **Structure**: Simplified 19-column format for research efficiency
-- **Quality Status**: Quality-certified through 6-step pipeline
+### Complete Pipeline Results
+- **Starting Records**: 119,678 romance novels (raw integrated data)
+- **Final Records**: 80,755 romance novels (cleaned and preprocessed)
+- **Total Reduction**: 38,923 records (32.52% reduction)
+- **Data Quality**: High-quality, research-ready dataset
+- **Text Processing**: HTML cleaned, normalized, and validated
+- **Coverage**: 2000-2017 publication years (English editions)
+- **Structure**: 30 columns (complete) or 23 columns (core research)
+- **Quality Status**: Quality-certified through complete 6-step pipeline
+
+### Dataset Versions Available
+- **Complete Dataset**: All 30 columns with full metadata
+- **Core Research Dataset**: 23 essential columns for efficient analysis
+- **False Duplicates Dataset**: 21,105 records with similar titles by different authors
+- **Step-by-Step Datasets**: 7 datasets showing pipeline progression
 
 ### Data Strengths
 - Complete core metadata (title, author, publication year)
@@ -417,8 +446,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**Last Updated**: January 2025  
-**Status**: Phase 3 Complete, Phase 4 Ready  
-**Code Status**: Clean, focused codebase with comprehensive data quality pipeline  
-**Repository Status**: Streamlined after comprehensive cleanup (January 2025)  
-**Next Milestone**: Topic modeling implementation and theme extraction
+**Last Updated**: September 2025  
+**Status**: Complete Data Pipeline, Ready for Advanced NLP Analysis  
+**Code Status**: Clean, organized codebase with complete data processing pipeline  
+**Repository Status**: Fully organized with comprehensive cleanup (September 2025)  
+**Next Milestone**: Topic modeling implementation and theme extraction  
+**Data Status**: 80,755 high-quality romance novels ready for NLP analysis

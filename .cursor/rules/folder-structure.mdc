@@ -23,14 +23,18 @@
 - **Files**: `cleaned_romance_novels_step*.pkl/csv` (pipeline outputs)
 
 ### Logs
-- **Location**: `romance-novel-nlp-research/logs/`
-- **Purpose**: Execution logs, validation reports, error logs
-- **Files**: `*_20250902_*.log` (timestamped execution logs)
+- **Location**: `romance-novel-nlp-research/organized_outputs/logs/`
+- **Purpose**: All pipeline execution logs, validation reports, error logs
+- **Files**: `*_20250907_*.log` (timestamped execution logs)
 
 ### Outputs
-- **Location**: `romance-novel-nlp-research/outputs/`
-- **Purpose**: Pipeline step outputs, analysis results, reports
-- **Structure**: Organized by pipeline step (step5, step6)
+- **Location**: `romance-novel-nlp-research/organized_outputs/`
+- **Purpose**: All organized outputs, analysis results, reports, visualizations
+- **Structure**: 
+  - `datasets/` - All dataset versions (step-by-step + specialized)
+  - `logs/` - All pipeline execution logs
+  - `reports/` - All analysis reports (JSON + Markdown)
+  - `visualizations/` - All plots and charts
 
 ### Configuration
 - **Location**: `romance-novel-nlp-research/config/` (if needed)
@@ -105,37 +109,20 @@ romance-novel-nlp-research/
 │   └── rules/                        # Project-specific rules
 ├── archive/                          # Archived development history
 │   ├── cleanup_20250105/             # January 5, 2025 cleanup
-│   │   ├── CLEANUP_SUMMARY.md        # Cleanup documentation
-│   │   ├── csv_building_archive/     # Archived CSV building files
-│   │   ├── duplicate_outputs/        # Duplicate output files
-│   │   ├── old_logs/                 # Outdated log files
-│   │   └── old_reports/              # Superseded reports
 │   ├── cleanup_20250106/             # January 6, 2025 cleanup
-│   │   ├── CLEANUP_SUMMARY.md        # Latest cleanup documentation
-│   │   ├── data_quality_pycache/     # Python cache files
-│   │   ├── csv_building_pycache/     # Python cache files
-│   │   ├── empty_logs/               # Empty log files
-│   │   ├── src_development_tools/    # Development diagnostic tools
-│   │   ├── src_alternative_runners/  # Redundant runner scripts
-│   │   └── duplicate_outputs/        # Earlier output versions
+│   ├── cleanup_20250907/             # September 7, 2025 comprehensive cleanup
+│   │   ├── CLEANUP_SUMMARY.md        # Comprehensive cleanup documentation
+│   │   ├── duplicate_outputs/        # Files now in organized_outputs/
+│   │   ├── old_datasets/             # Outdated dataset versions
+│   │   ├── old_logs/                 # Old log files
+│   │   ├── old_reports/              # Outdated reports
+│   │   └── scratch_files/            # (Empty - no scratch files found)
 │   ├── data_quality_archive_20250902/  # September 2025 data quality archive
-│   │   ├── legacy_analysis/           # Replaced analysis implementations
-│   │   ├── development_artifacts/     # Development versions and tests
-│   │   ├── ARCHIVE_SUMMARY.md         # Archive documentation
-│   │   └── CLEANUP_SUMMARY.md         # Cleanup operation summary
-│   ├── pipeline_outputs_20250902/     # Archived pipeline outputs
-│   │   ├── step1_3_processed/         # Step 1-3 intermediate datasets
-│   │   ├── step1_3_outputs/           # Step 1-3 summary reports
-│   │   ├── step4_outputs/             # Step 4 outlier detection outputs
-│   │   ├── intermediate_data/          # Title cleaning and validation
-│   │   ├── ARCHIVE_SUMMARY.md         # Pipeline archive documentation
-│   │   └── CLEANUP_SUMMARY.md         # Pipeline cleanup summary
-│   ├── processed_data_20250904/       # Archived processed data
-│   │   ├── ARCHIVE_SUMMARY.md         # Processed data documentation
-│   │   └── *.csv                      # Archived CSV files
-│   ├── data_quality_artifacts/        # Legacy data quality files
-│   ├── unused_code/                   # Previous implementations
-│   ├── ARCHIVE_SUMMARY.md             # Main archive documentation
+│   ├── data_quality_artifacts/       # Legacy data quality files
+│   ├── pipeline_outputs_20250902/    # Archived pipeline outputs
+│   ├── processed_data_20250904/      # Archived processed data
+│   ├── unused_code/                  # Previous implementations
+│   ├── ARCHIVE_SUMMARY.md            # Main archive documentation
 │   └── DATA_QUALITY_ARCHIVE_SUMMARY.md # Data quality archive summary
 ├── data/                             # Data storage
 │   ├── raw/                          # Original Goodreads JSON files (read-only)
@@ -150,10 +137,20 @@ romance-novel-nlp-research/
 │   │   ├── goodreads_reviews_spoiler.json.gz
 │   │   └── README.md
 │   ├── intermediate/                 # Temporary processing outputs
-│   └── processed/                    # Final cleaned datasets
-│       └── README.md                 # Pipeline documentation
-├── outputs/                          # Current pipeline outputs (currently empty)
-│   └── (ready for future outputs)    # Pipeline outputs now in src/data_quality/outputs/
+│   └── processed/                    # Current datasets (3 files)
+│       ├── final_books_2000_2020_en_enhanced_20250907_013708.csv
+│       ├── romance_novels_text_preprocessed_20250907_015606.csv
+│       └── text_preprocessing_report_20250907_015613.json
+├── organized_outputs/                # All organized outputs
+│   ├── datasets/                     # All dataset versions
+│   │   ├── step_by_step/             # 7 datasets showing pipeline progression
+│   │   └── specialized_versions/     # 3 final dataset versions
+│   ├── logs/                         # All pipeline execution logs
+│   ├── reports/                      # All analysis reports
+│   │   ├── json/                     # 15 JSON reports with statistics
+│   │   └── markdown/                 # 5 Markdown analysis reports
+│   ├── visualizations/               # 17 publication-ready plots
+│   └── README.md                     # Complete output documentation
 ├── src/                              # Source code (ALL code must be here)
 │   ├── data_quality/                 # Complete 6-step data quality pipeline
 │   │   ├── __init__.py               # Module exports
@@ -164,23 +161,23 @@ romance-novel-nlp-research/
 │   │   ├── step4_outlier_detection.py            # Step 4: Outlier Detection
 │   │   ├── step4_outlier_treatment.py            # Step 4: Outlier Treatment
 │   │   ├── step5_data_type_optimization.py       # Step 5: Data Type Optimization
-│   │   ├── step6_final_quality_validation.py     # Step 6: Final Quality Validation
-│   │   └── outputs/                              # Pipeline execution outputs
-│   │       ├── missing_values_cleaning/          # Step 1 outputs
-│   │       ├── duplicate_detection/              # Step 2 outputs
-│   │       ├── data_type_validation/             # Step 3 outputs
-│   │       ├── outlier_detection/                # Step 4 outputs
-│   │       ├── data_type_optimization/           # Step 5 outputs
-│   │       └── final_quality_validation/         # Step 6 outputs
+│   │   └── step6_final_quality_validation.py     # Step 6: Final Quality Validation
 │   ├── csv_building/                 # CSV building and data integration
 │   │   ├── __init__.py
 │   │   ├── final_csv_builder.py      # Main CSV builder implementation
 │   │   └── run_builder.py            # Builder runner script
+│   ├── nlp_preprocessing/            # NLP text preprocessing
+│   │   ├── __init__.py
+│   │   ├── text_preprocessor.py      # Main text preprocessor
+│   │   ├── run_preprocessor.py       # Preprocessor runner
+│   │   └── test_preprocessor.py      # Preprocessor tests
+│   ├── eda_analysis/                 # Exploratory data analysis
+│   │   ├── __init__.py
+│   │   ├── improved_eda_final.py     # Main EDA analysis
+│   │   ├── comparative_distribution_visualization.py
+│   │   └── outputs/                  # EDA outputs
+│   │       └── complete_pipeline_analysis/       # Final analysis results
 │   └── __init__.py
-├── logs/                             # Execution logs (currently empty)
-│   └── (ready for future logs)       # Logs archived in cleanup_20250105/old_logs/
-├── notebooks/                        # Jupyter notebooks (if needed)
-├── docs/                             # Project documentation (if needed)
 ├── .cursorrules                      # Cursor rules configuration
 ├── .cursorignore                     # Cursor ignore patterns
 ├── .gitignore                        # Git ignore patterns
@@ -257,25 +254,29 @@ The project implements a **complete 6-step data cleaning pipeline** with all ste
 3. **Maintain recovery instructions**
 4. **Keep archive structure organized**
 
-### Recent Cleanup Activities (January 2025)
-The repository has undergone comprehensive cleanup to maintain a clean, focused codebase:
+### Recent Cleanup Activities (September 2025)
+The repository has undergone comprehensive cleanup and organization to maintain a clean, focused codebase:
 
-**January 6, 2025 Cleanup**:
+**September 7, 2025 Comprehensive Cleanup**:
+- **Repository Organization**: All outputs centralized in `organized_outputs/` directory
+- **Duplicate Files**: Archived 50+ duplicate files now superseded by organized structure
+- **Old Dataset Versions**: Archived 5 outdated dataset versions, keeping only current ones
+- **Old Logs**: Archived 3 old log files superseded by organized logs
+- **Old Reports**: Archived 10+ outdated reports superseded by organized reports
+- **Data Quality Outputs**: Archived old pipeline outputs from `src/data_quality/outputs/`
+
+**Previous Cleanup Activities (January 2025)**:
 - **Python Cache Files**: Removed `__pycache__` directories from `src/data_quality/` and `src/csv_building/`
 - **Empty Log Files**: Archived 5 empty log files (0 bytes) that were never used
 - **Duplicate Outputs**: Archived earlier versions of quality reports and unprocessed batch files
 - **Development Tools**: Archived 3 diagnostic scripts used during development
 - **Alternative Runners**: Archived 4 redundant runner scripts that duplicated core functionality
 
-**January 5, 2025 Cleanup**:
-- **Outdated Logs**: Archived 20+ log files from September 2025 (outdated)
-- **Duplicate Outputs**: Archived 8 duplicate output files with older timestamps
-- **Old Reports**: Archived 7 superseded analysis reports and summaries
-
 **Current Repository State**:
 - **Clean Source Code**: No cache files or redundant scripts in active directories
-- **Focused Structure**: Only core functionality remains in `src/` directory
+- **Organized Outputs**: All outputs centralized in `organized_outputs/` with clear structure
+- **Current Datasets**: Only 3 current dataset files in `data/processed/`
 - **Preserved History**: All development artifacts safely archived
-- **Ready for Phase 4**: Clean codebase prepared for NLP analysis implementation
+- **Ready for Research**: Clean, organized codebase prepared for advanced NLP analysis
 
 This rule must be applied to ALL tasks and code changes.

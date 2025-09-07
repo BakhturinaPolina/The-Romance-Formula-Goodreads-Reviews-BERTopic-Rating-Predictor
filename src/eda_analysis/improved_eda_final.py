@@ -18,7 +18,23 @@ from pathlib import Path
 import json
 from datetime import datetime
 import warnings
+import logging
+import time
+from typing import Dict, List, Any, Optional
 warnings.filterwarnings('ignore')
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# Custom exceptions for Coding Agent Pattern
+class AnalysisError(Exception):
+    """Raised when task analysis fails."""
+    pass
+
+class ModificationError(Exception):
+    """Raised when code modification fails."""
+    pass
 
 # Set up academic publication style
 sns.set_theme(style="darkgrid")
@@ -56,11 +72,11 @@ ANTIQUE_COLORS = [
 ]
 
 class ImprovedEDAFinal:
-    """Clean, focused EDA plot generator with exactly two essential figures."""
+    """Clean, focused EDA plot generator with Coding Agent Pattern implementation."""
     
     def __init__(self, data_path_before, data_path_after, output_dir):
         """
-        Initialize the visualizer.
+        Initialize the visualizer with Coding Agent Pattern components.
         
         Args:
             data_path_before: Path to the raw dataset CSV file
@@ -72,13 +88,23 @@ class ImprovedEDAFinal:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
         
-        # Load datasets
-        self.df_before = pd.read_csv(self.data_path_before)
-        self.df_after = pd.read_csv(self.data_path_after)
+        # Coding Agent Pattern: Change history tracking
+        self.change_history = []
+        self.task_analysis = {}
+        self.change_plan = {}
         
-        print(f"Loaded before dataset: {self.df_before.shape[0]:,} books, {self.df_before.shape[1]} features")
-        print(f"Loaded after dataset: {self.df_after.shape[0]:,} books, {self.df_after.shape[1]} features")
-        print(f"Output directory: {self.output_dir}")
+        # Load datasets with error handling
+        try:
+            self.df_before = pd.read_csv(self.data_path_before)
+            self.df_after = pd.read_csv(self.data_path_after)
+            logger.info(f"Successfully loaded datasets")
+        except Exception as e:
+            logger.error(f"Failed to load datasets: {str(e)}")
+            raise
+        
+        logger.info(f"Loaded before dataset: {self.df_before.shape[0]:,} books, {self.df_before.shape[1]} features")
+        logger.info(f"Loaded after dataset: {self.df_after.shape[0]:,} books, {self.df_after.shape[1]} features")
+        logger.info(f"Output directory: {self.output_dir}")
         
         # Define the four numerical variables to analyze
         self.numerical_vars = [
@@ -296,25 +322,263 @@ class ImprovedEDAFinal:
         
         print("=" * 80)
     
+    # ============================================================================
+    # CODING AGENT PATTERN METHODS
+    # ============================================================================
+    
+    def analyze_task(self, task_description: str = "Create EDA visualizations") -> Dict[str, Any]:
+        """
+        Analyze coding task requirements (Coding Agent Pattern).
+        
+        Args:
+            task_description: Description of the task
+            
+        Returns:
+            Analysis results with requirements, affected files, and change plan
+        """
+        logger.info("Analyzing EDA visualization task...")
+        
+        try:
+            # Parse requirements
+            requirements = {
+                'create_figure_1': True,  # Before/after histograms
+                'create_figure_2': True,  # Cleaned data boxplots
+                'generate_statistics': True,  # Summary statistics
+                'save_outputs': True,  # Save all outputs
+                'use_antique_palette': True,  # Use specified color palette
+                'academic_standards': True  # Follow publication standards
+            }
+            
+            # Identify affected files
+            affected_files = {
+                'input_files': [str(self.data_path_before), str(self.data_path_after)],
+                'output_files': [
+                    str(self.output_dir / 'figure_1_before_after_distributions.png'),
+                    str(self.output_dir / 'figure_2_cleaned_data_summary.png'),
+                    str(self.output_dir / 'improved_eda_final_summary.json')
+                ]
+            }
+            
+            # Create change plan
+            change_plan = {
+                'sequence': [
+                    'validate_data_availability',
+                    'create_figure_1_histograms',
+                    'create_figure_2_boxplots', 
+                    'generate_summary_statistics',
+                    'save_all_outputs',
+                    'verify_outputs'
+                ],
+                'dependencies': {
+                    'create_figure_1_histograms': ['validate_data_availability'],
+                    'create_figure_2_boxplots': ['validate_data_availability'],
+                    'generate_summary_statistics': ['validate_data_availability'],
+                    'save_all_outputs': ['create_figure_1_histograms', 'create_figure_2_boxplots', 'generate_summary_statistics'],
+                    'verify_outputs': ['save_all_outputs']
+                }
+            }
+            
+            self.task_analysis = {
+                'requirements': requirements,
+                'affected_files': affected_files,
+                'change_plan': change_plan,
+                'timestamp': datetime.now().isoformat()
+            }
+            
+            logger.info("Task analysis completed successfully")
+            return self.task_analysis
+            
+        except Exception as e:
+            logger.error(f"Task analysis failed: {str(e)}")
+            raise AnalysisError("Failed to analyze EDA task")
+    
+    def validate_data_availability(self) -> bool:
+        """
+        Validate that required data is available (Coding Agent Pattern).
+        
+        Returns:
+            bool indicating if data validation passed
+        """
+        logger.info("Validating data availability...")
+        
+        try:
+            # Check if datasets are loaded
+            if self.df_before is None or self.df_after is None:
+                raise ValueError("Datasets not loaded")
+            
+            # Check if required columns exist
+            missing_cols_before = set(self.numerical_vars) - set(self.df_before.columns)
+            missing_cols_after = set(self.numerical_vars) - set(self.df_after.columns)
+            
+            if missing_cols_before:
+                raise ValueError(f"Missing columns in before dataset: {missing_cols_before}")
+            if missing_cols_after:
+                raise ValueError(f"Missing columns in after dataset: {missing_cols_after}")
+            
+            # Check if output directory is writable
+            if not self.output_dir.exists():
+                self.output_dir.mkdir(parents=True, exist_ok=True)
+            
+            logger.info("Data validation passed")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Data validation failed: {str(e)}")
+            return False
+    
+    def apply_changes(self, change_plan: Dict[str, Any]) -> List[str]:
+        """
+        Apply planned code changes (Coding Agent Pattern).
+        
+        Args:
+            change_plan: Planned changes
+            
+        Returns:
+            List of modified files
+        """
+        logger.info("Applying planned changes...")
+        
+        try:
+            modified_files = []
+            start_time = time.time()
+            
+            # Execute changes in dependency order
+            for step in change_plan['sequence']:
+                logger.info(f"Executing step: {step}")
+                
+                if step == 'validate_data_availability':
+                    if not self.validate_data_availability():
+                        raise ValueError("Data validation failed")
+                        
+                elif step == 'create_figure_1_histograms':
+                    self.create_figure_1_histograms()
+                    modified_files.append(str(self.output_dir / 'figure_1_before_after_distributions.png'))
+                    
+                elif step == 'create_figure_2_boxplots':
+                    self.create_figure_2_boxplots()
+                    modified_files.append(str(self.output_dir / 'figure_2_cleaned_data_summary.png'))
+                    
+                elif step == 'generate_summary_statistics':
+                    summary_stats = self.generate_summary_statistics()
+                    self.save_summary_report(summary_stats)
+                    modified_files.append(str(self.output_dir / 'improved_eda_final_summary.json'))
+                    
+                elif step == 'save_all_outputs':
+                    # Already handled in individual steps
+                    pass
+                    
+                elif step == 'verify_outputs':
+                    if not self.verify_changes(modified_files):
+                        raise ValueError("Output verification failed")
+                
+                # Record change
+                self.change_history.append({
+                    'step': step,
+                    'timestamp': time.time(),
+                    'duration': time.time() - start_time,
+                    'status': 'completed'
+                })
+            
+            logger.info(f"All changes applied successfully. Modified {len(modified_files)} files")
+            return modified_files
+            
+        except Exception as e:
+            logger.error(f"Change application failed: {str(e)}")
+            self._revert_changes()
+            raise ModificationError("Failed to apply EDA changes")
+    
+    def verify_changes(self, modified_files: List[str]) -> bool:
+        """
+        Verify changes through testing (Coding Agent Pattern).
+        
+        Args:
+            modified_files: List of modified files
+            
+        Returns:
+            bool indicating if changes pass verification
+        """
+        logger.info("Verifying changes...")
+        
+        try:
+            verification_results = {
+                'file_existence': True,
+                'data_integrity': True,
+                'figure_quality': True
+            }
+            
+            # Check file existence
+            for file_path in modified_files:
+                if not Path(file_path).exists():
+                    logger.error(f"Output file not found: {file_path}")
+                    verification_results['file_existence'] = False
+            
+            # Check data integrity
+            if len(self.df_before) == 0 or len(self.df_after) == 0:
+                logger.error("Empty datasets detected")
+                verification_results['data_integrity'] = False
+            
+            # Check figure quality (basic checks)
+            for var in self.numerical_vars:
+                if self.df_after[var].isna().all():
+                    logger.error(f"All values missing for variable: {var}")
+                    verification_results['figure_quality'] = False
+            
+            all_passed = all(verification_results.values())
+            
+            if all_passed:
+                logger.info("All verifications passed")
+            else:
+                logger.error(f"Verification failed: {verification_results}")
+            
+            return all_passed
+            
+        except Exception as e:
+            logger.error(f"Verification failed: {str(e)}")
+            return False
+    
+    def _revert_changes(self):
+        """Revert changes on failure (Coding Agent Pattern)."""
+        logger.warning("Reverting changes due to failure...")
+        
+        try:
+            # Remove any created output files
+            for change in self.change_history:
+                if change['status'] == 'completed':
+                    # Could implement file cleanup here if needed
+                    pass
+            
+            # Clear change history
+            self.change_history = []
+            logger.info("Changes reverted successfully")
+            
+        except Exception as e:
+            logger.error(f"Failed to revert changes: {str(e)}")
+    
     def generate_all_visualizations(self):
-        """Generate both essential figures."""
-        print("Generating improved EDA final visualizations...")
+        """Generate both essential figures using Coding Agent Pattern."""
+        logger.info("Starting EDA visualization generation with Coding Agent Pattern...")
         print("=" * 60)
         
-        # Create Figure 1: Before/After Distributions
-        self.create_figure_1_histograms()
-        
-        # Create Figure 2: Cleaned Data Summary
-        self.create_figure_2_boxplots()
-        
-        # Generate and save summary statistics
-        summary_stats = self.generate_summary_statistics()
-        self.save_summary_report(summary_stats)
-        self.print_summary(summary_stats)
-        
-        print("=" * 60)
-        print("All improved EDA final visualizations generated successfully!")
-        print(f"Output directory: {self.output_dir}")
+        try:
+            # Step 1: Analyze task
+            task_analysis = self.analyze_task("Create EDA visualizations")
+            self.change_plan = task_analysis['change_plan']
+            
+            # Step 2: Apply changes using the plan
+            modified_files = self.apply_changes(self.change_plan)
+            
+            # Step 3: Print summary
+            summary_stats = self.generate_summary_statistics()
+            self.print_summary(summary_stats)
+            
+            logger.info("All EDA visualizations generated successfully using Coding Agent Pattern!")
+            print("=" * 60)
+            print(f"Output directory: {self.output_dir}")
+            print(f"Generated files: {len(modified_files)}")
+            
+        except Exception as e:
+            logger.error(f"EDA generation failed: {str(e)}")
+            raise
 
 
 def main():

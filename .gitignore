@@ -38,3 +38,9 @@ outputs/data_type_optimization/*.pickle
 *.pickle
 outputs/*/*.pkl
 outputs/*/*.pickle
+
+# Exclude large files that exceed GitHub's 100MB limit
+*.csv
+*.pkl
+*.pickle
+*.parquet

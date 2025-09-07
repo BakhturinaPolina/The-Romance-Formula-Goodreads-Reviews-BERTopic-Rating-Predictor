@@ -1,0 +1,2404 @@
+{
+  "pipeline_timestamp": "20250904_223745",
+  "input_data_path": "../../data/processed/final_books_2000_2020_en_enhanced_titles_sampled_100_20250904_210625.csv",
+  "dataset_type": "sample",
+  "pipeline_steps": {
+    "step1": {
+      "name": "Missing Values Treatment",
+      "status": "completed",
+      "results": {
+        "treatment_timestamp": "20250904_223745",
+        "dataset_info": {
+          "original_shape": [
+            88,
+            19
+          ],
+          "original_memory_mb": 0.20619964599609375,
+          "original_columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean"
+          ]
+        },
+        "missing_values_analysis": {
+          "total_variables": 19,
+          "variables_with_missing": 5,
+          "missing_summary": {
+            "significant": [
+              {
+                "variable": "num_pages_median",
+                "missing_count": "22",
+                "missing_percentage": 25.0
+              },
+              {
+                "variable": "series_id",
+                "missing_count": "26",
+                "missing_percentage": 29.545454545454547
+              },
+              {
+                "variable": "series_title",
+                "missing_count": "26",
+                "missing_percentage": 29.545454545454547
+              },
+              {
+                "variable": "series_works_count",
+                "missing_count": "26",
+                "missing_percentage": 29.545454545454547
+              }
+            ],
+            "moderate": [
+              {
+                "variable": "description",
+                "missing_count": "4",
+                "missing_percentage": 4.545454545454546
+              }
+            ]
+          },
+          "missing_by_variable": {
+            "work_id": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "int64",
+              "completeness_rate": 100.0
+            },
+            "book_id_list_en": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "object",
+              "completeness_rate": 100.0
+            },
+            "title": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "object",
+              "completeness_rate": 100.0
+            },
+            "publication_year": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "int64",
+              "completeness_rate": 100.0
+            },
+            "language_codes_en": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "object",
+              "completeness_rate": 100.0
+            },
+            "num_pages_median": {
+              "missing_count": "22",
+              "missing_percentage": 25.0,
+              "data_type": "float64",
+              "completeness_rate": 75.0
+            },
+            "description": {
+              "missing_count": "4",
+              "missing_percentage": 4.545454545454546,
+              "data_type": "object",
+              "completeness_rate": 95.45454545454545
+            },
+            "popular_shelves": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "object",
+              "completeness_rate": 100.0
+            },
+            "genres": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "object",
+              "completeness_rate": 100.0
+            },
+            "author_id": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "int64",
+              "completeness_rate": 100.0
+            },
+            "author_name": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "object",
+              "completeness_rate": 100.0
+            },
+            "author_average_rating": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "float64",
+              "completeness_rate": 100.0
+            },
+            "author_ratings_count": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "int64",
+              "completeness_rate": 100.0
+            },
+            "series_id": {
+              "missing_count": "26",
+              "missing_percentage": 29.545454545454547,
+              "data_type": "float64",
+              "completeness_rate": 70.45454545454545
+            },
+            "series_title": {
+              "missing_count": "26",
+              "missing_percentage": 29.545454545454547,
+              "data_type": "object",
+              "completeness_rate": 70.45454545454545
+            },
+            "series_works_count": {
+              "missing_count": "26",
+              "missing_percentage": 29.545454545454547,
+              "data_type": "float64",
+              "completeness_rate": 70.45454545454545
+            },
+            "ratings_count_sum": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "int64",
+              "completeness_rate": 100.0
+            },
+            "text_reviews_count_sum": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "int64",
+              "completeness_rate": 100.0
+            },
+            "average_rating_weighted_mean": {
+              "missing_count": "0",
+              "missing_percentage": 0.0,
+              "data_type": "float64",
+              "completeness_rate": 100.0
+            }
+          },
+          "treatment_recommendations": {
+            "num_pages_median": {
+              "strategy": "exclude_from_analysis",
+              "rationale": "Very high missing rate (25.0%) - exclude from analysis"
+            },
+            "description": {
+              "strategy": "exclude_from_analysis",
+              "rationale": "Very high missing rate (4.5%) - exclude from analysis"
+            },
+            "series_id": {
+              "strategy": "flag_for_analysis",
+              "rationale": "Low missing rate (29.5%) - flag for analysis (no imputation)"
+            },
+            "series_title": {
+              "strategy": "flag_for_analysis",
+              "rationale": "Low missing rate (29.5%) - flag for analysis (no imputation)"
+            },
+            "series_works_count": {
+              "strategy": "flag_for_analysis",
+              "rationale": "Low missing rate (29.5%) - flag for analysis (no imputation)"
+            }
+          }
+        },
+        "treatment_results": {
+          "treatments_applied": 0,
+          "records_excluded": 23,
+          "flags_created": 3,
+          "treatment_details": {
+            "num_pages_median": {
+              "strategy": "exclude_from_analysis",
+              "records_excluded": 22,
+              "action": "Excluded 22 records with missing num_pages_median"
+            },
+            "description": {
+              "strategy": "exclude_from_analysis",
+              "records_excluded": 1,
+              "action": "Excluded 1 records with missing description"
+            },
+            "series_id": {
+              "strategy": "flag_for_analysis",
+              "flag_created": "series_id_missing_flag",
+              "missing_count": "26",
+              "action": "Created flag column series_id_missing_flag"
+            },
+            "series_title": {
+              "strategy": "flag_for_analysis",
+              "flag_created": "series_title_missing_flag",
+              "missing_count": "26",
+              "action": "Created flag column series_title_missing_flag"
+            },
+            "series_works_count": {
+              "strategy": "flag_for_analysis",
+              "flag_created": "series_works_count_missing_flag",
+              "missing_count": "26",
+              "action": "Created flag column series_works_count_missing_flag"
+            }
+          },
+          "final_shape": [
+            65,
+            22
+          ],
+          "original_shape": [
+            88,
+            19
+          ]
+        },
+        "validation_results": {
+          "validation_passed": true,
+          "remaining_missing": {
+            "series_id": "19",
+            "series_title": "19",
+            "series_works_count": "19"
+          },
+          "validation_errors": [],
+          "completeness_improvement": {
+            "work_id": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "book_id_list_en": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "title": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "publication_year": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "language_codes_en": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "num_pages_median": {
+              "original": 75.0,
+              "treated": 100.0,
+              "improvement": 25.0
+            },
+            "description": {
+              "original": 95.45454545454545,
+              "treated": 100.0,
+              "improvement": 4.545454545454547
+            },
+            "popular_shelves": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "genres": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "author_id": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "author_name": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "author_average_rating": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "author_ratings_count": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "series_id": {
+              "original": 70.45454545454545,
+              "treated": 70.76923076923077,
+              "improvement": 0.31468531468532035
+            },
+            "series_title": {
+              "original": 70.45454545454545,
+              "treated": 70.76923076923077,
+              "improvement": 0.31468531468532035
+            },
+            "series_works_count": {
+              "original": 70.45454545454545,
+              "treated": 70.76923076923077,
+              "improvement": 0.31468531468532035
+            },
+            "ratings_count_sum": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "text_reviews_count_sum": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            },
+            "average_rating_weighted_mean": {
+              "original": 100.0,
+              "treated": 100.0,
+              "improvement": 0.0
+            }
+          }
+        },
+        "final_dataset_info": {
+          "final_shape": [
+            65,
+            22
+          ],
+          "final_memory_mb": 0.16385269165039062,
+          "final_columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean",
+            "series_id_missing_flag",
+            "series_title_missing_flag",
+            "series_works_count_missing_flag"
+          ],
+          "data_type_preservation": "Maintained (pickle format)"
+        },
+        "treatment_summary": {
+          "total_treatments_applied": 0,
+          "total_records_excluded": 23,
+          "total_flags_created": 3,
+          "validation_passed": true,
+          "data_integrity": "Maintained - strategic treatment applied",
+          "execution_time": "0:00:00.036348"
+        }
+      }
+    },
+    "step2": {
+      "name": "Duplicate Detection & Resolution",
+      "status": "completed",
+      "results": {
+        "resolution_timestamp": "20250904_223745",
+        "dataset_info": {
+          "original_shape": [
+            65,
+            22
+          ],
+          "original_memory_mb": 0.16155624389648438,
+          "original_columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean",
+            "series_id_missing_flag",
+            "series_title_missing_flag",
+            "series_works_count_missing_flag"
+          ]
+        },
+        "detection_results": {
+          "exact_duplicates": {
+            "criteria_used": [
+              "work_id",
+              "title",
+              "author_id",
+              "publication_year"
+            ],
+            "total_duplicates": 0,
+            "duplicate_groups": 0,
+            "duplicate_analysis": {}
+          },
+          "title_duplicates": {
+            "criteria_used": [
+              "title",
+              "author_id"
+            ],
+            "total_duplicates": 0,
+            "duplicate_groups": 0,
+            "duplicate_analysis": {},
+            "classification": {}
+          },
+          "author_duplicates": {
+            "total_potential_duplicates": 1,
+            "duplicate_analysis": {},
+            "author_id_conflicts": 0
+          }
+        },
+        "resolution_results": {
+          "exact_duplicates_removed": 0,
+          "title_duplicates_resolved": 0,
+          "author_duplicates_resolved": 0,
+          "flags_created": 2,
+          "resolution_details": {},
+          "final_shape": [
+            65,
+            24
+          ],
+          "original_shape": [
+            65,
+            22
+          ]
+        },
+        "validation_results": {
+          "validation_passed": true,
+          "remaining_duplicates": {
+            "title_duplicates_flagged": "0",
+            "author_duplicates_flagged": "2"
+          },
+          "validation_errors": [],
+          "resolution_effectiveness": {
+            "original_records": 65,
+            "resolved_records": 65,
+            "records_removed": 0,
+            "reduction_percentage": 0.0
+          }
+        },
+        "final_dataset_info": {
+          "final_shape": [
+            65,
+            24
+          ],
+          "final_memory_mb": 0.16484451293945312,
+          "final_columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean",
+            "series_id_missing_flag",
+            "series_title_missing_flag",
+            "series_works_count_missing_flag",
+            "title_duplicate_flag",
+            "author_id_duplicate_flag"
+          ],
+          "data_type_preservation": "Maintained (pickle format)"
+        },
+        "resolution_summary": {
+          "total_exact_duplicates_removed": 0,
+          "total_title_duplicates_resolved": 0,
+          "total_author_duplicates_resolved": 0,
+          "total_flags_created": 2,
+          "validation_passed": true,
+          "data_integrity": "Maintained - duplicates resolved strategically",
+          "execution_time": "0:00:00.022750"
+        }
+      }
+    },
+    "step3": {
+      "name": "Data Type Validation & Conversion",
+      "status": "completed",
+      "results": {
+        "validation_timestamp": "20250904_223745",
+        "dataset_info": {
+          "original_shape": [
+            65,
+            24
+          ],
+          "original_memory_mb": 0.16254806518554688,
+          "original_columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean",
+            "series_id_missing_flag",
+            "series_title_missing_flag",
+            "series_works_count_missing_flag",
+            "title_duplicate_flag",
+            "author_id_duplicate_flag"
+          ]
+        },
+        "data_type_analysis": {
+          "total_columns": 24,
+          "current_memory_mb": 0.16254806518554688,
+          "data_type_distribution": {
+            "int64": 11,
+            "object": 8,
+            "float64": 5
+          },
+          "optimization_opportunities": {
+            "work_id": {
+              "current": "int64",
+              "target": "int32",
+              "potential_savings": 0.000247955322265625
+            },
+            "publication_year": {
+              "current": "int64",
+              "target": "int16",
+              "potential_savings": 0.0003719329833984375
+            },
+            "num_pages_median": {
+              "current": "float64",
+              "target": "float32",
+              "potential_savings": 0.000247955322265625
+            },
+            "author_id": {
+              "current": "int64",
+              "target": "int32",
+              "potential_savings": 0.000247955322265625
+            },
+            "author_average_rating": {
+              "current": "float64",
+              "target": "float32",
+              "potential_savings": 0.000247955322265625
+            },
+            "author_ratings_count": {
+              "current": "int64",
+              "target": "int32",
+              "potential_savings": 0.000247955322265625
+            },
+            "series_id": {
+              "current": "float64",
+              "target": "float32",
+              "potential_savings": 0.000247955322265625
+            },
+            "series_works_count": {
+              "current": "float64",
+              "target": "float32",
+              "potential_savings": 0.000247955322265625
+            },
+            "ratings_count_sum": {
+              "current": "int64",
+              "target": "int32",
+              "potential_savings": 0.000247955322265625
+            },
+            "text_reviews_count_sum": {
+              "current": "int64",
+              "target": "int32",
+              "potential_savings": 0.000247955322265625
+            },
+            "average_rating_weighted_mean": {
+              "current": "float64",
+              "target": "float32",
+              "potential_savings": 0.000247955322265625
+            }
+          },
+          "validation_issues": {},
+          "categorical_opportunities": [
+            {
+              "column": "language_codes_en",
+              "unique_count": 8,
+              "total_count": 65,
+              "uniqueness_ratio": 0.12307692307692308
+            },
+            {
+              "column": "genres",
+              "unique_count": 16,
+              "total_count": 65,
+              "uniqueness_ratio": 0.24615384615384617
+            }
+          ]
+        },
+        "publication_year_validation": {
+          "total_records": 65,
+          "valid_years": 65,
+          "invalid_years": 0,
+          "year_range": {
+            "min": 2001,
+            "max": 2017
+          },
+          "decade_distribution": {
+            "2000": 9,
+            "2010": 56
+          },
+          "validation_issues": []
+        },
+        "derived_variables": {
+          "variables_created": 4,
+          "creation_details": {
+            "decade": {
+              "type": "categorical",
+              "unique_values": 2,
+              "description": "Publication decade (e.g., 2000, 2010)"
+            },
+            "book_length_category": {
+              "type": "categorical",
+              "unique_values": 4,
+              "description": "Book length categories based on page count"
+            },
+            "rating_category": {
+              "type": "categorical",
+              "unique_values": 2,
+              "description": "Rating categories based on average rating"
+            },
+            "popularity_category": {
+              "type": "categorical",
+              "unique_values": 4,
+              "description": "Popularity categories based on rating count quartiles"
+            }
+          },
+          "validation_issues": []
+        },
+        "optimization_results": {
+          "optimizations_applied": 15,
+          "optimizations_failed": 0,
+          "memory_before_mb": 0.1640310287475586,
+          "optimization_details": {
+            "work_id": {
+              "from": "int64",
+              "to": "int32",
+              "status": "success"
+            },
+            "publication_year": {
+              "from": "int64",
+              "to": "int16",
+              "status": "success"
+            },
+            "author_id": {
+              "from": "int64",
+              "to": "int32",
+              "status": "success"
+            },
+            "author_ratings_count": {
+              "from": "int64",
+              "to": "int32",
+              "status": "success"
+            },
+            "ratings_count_sum": {
+              "from": "int64",
+              "to": "int32",
+              "status": "success"
+            },
+            "text_reviews_count_sum": {
+              "from": "int64",
+              "to": "int32",
+              "status": "success"
+            },
+            "series_id": {
+              "from": "float64",
+              "to": "float32",
+              "status": "success"
+            },
+            "series_works_count": {
+              "from": "float64",
+              "to": "float32",
+              "status": "success"
+            },
+            "average_rating_weighted_mean": {
+              "from": "float64",
+              "to": "float32",
+              "status": "success"
+            },
+            "author_average_rating": {
+              "from": "float64",
+              "to": "float32",
+              "status": "success"
+            },
+            "num_pages_median": {
+              "from": "float64",
+              "to": "float32",
+              "status": "success"
+            },
+            "genres": {
+              "from": "object",
+              "to": "category",
+              "status": "success",
+              "unique_values": 16
+            },
+            "author_name": {
+              "from": "object",
+              "to": "category",
+              "status": "success",
+              "unique_values": 64
+            },
+            "series_title": {
+              "from": "object",
+              "to": "category",
+              "status": "success",
+              "unique_values": 45
+            },
+            "language_codes_en": {
+              "from": "object",
+              "to": "category",
+              "status": "success",
+              "unique_values": 8
+            }
+          },
+          "memory_after_mb": 0.15741729736328125,
+          "memory_saved_mb": 0.006613731384277344
+        },
+        "validation_results": {
+          "validation_passed": true,
+          "optimization_validation": {
+            "work_id": {
+              "status": "\u2705 Validated",
+              "expected": "int32",
+              "actual": "int32"
+            },
+            "publication_year": {
+              "status": "\u2705 Validated",
+              "expected": "int16",
+              "actual": "int16"
+            },
+            "author_id": {
+              "status": "\u2705 Validated",
+              "expected": "int32",
+              "actual": "int32"
+            },
+            "author_ratings_count": {
+              "status": "\u2705 Validated",
+              "expected": "int32",
+              "actual": "int32"
+            },
+            "ratings_count_sum": {
+              "status": "\u2705 Validated",
+              "expected": "int32",
+              "actual": "int32"
+            },
+            "text_reviews_count_sum": {
+              "status": "\u2705 Validated",
+              "expected": "int32",
+              "actual": "int32"
+            },
+            "series_id": {
+              "status": "\u2705 Validated",
+              "expected": "float32",
+              "actual": "float32"
+            },
+            "series_works_count": {
+              "status": "\u2705 Validated",
+              "expected": "float32",
+              "actual": "float32"
+            },
+            "average_rating_weighted_mean": {
+              "status": "\u2705 Validated",
+              "expected": "float32",
+              "actual": "float32"
+            },
+            "author_average_rating": {
+              "status": "\u2705 Validated",
+              "expected": "float32",
+              "actual": "float32"
+            },
+            "num_pages_median": {
+              "status": "\u2705 Validated",
+              "expected": "float32",
+              "actual": "float32"
+            },
+            "genres": {
+              "status": "\u2705 Validated",
+              "expected": "category",
+              "actual": "category"
+            },
+            "author_name": {
+              "status": "\u2705 Validated",
+              "expected": "category",
+              "actual": "category"
+            },
+            "series_title": {
+              "status": "\u2705 Validated",
+              "expected": "category",
+              "actual": "category"
+            },
+            "language_codes_en": {
+              "status": "\u2705 Validated",
+              "expected": "category",
+              "actual": "category"
+            }
+          },
+          "validation_errors": [],
+          "memory_efficiency": {
+            "memory_before_mb": 0.1640310287475586,
+            "memory_after_mb": 0.15741729736328125,
+            "memory_saved_mb": 0.006613731384277344,
+            "efficiency_percentage": 4.032000186047593
+          }
+        },
+        "final_dataset_info": {
+          "final_shape": [
+            65,
+            28
+          ],
+          "final_memory_mb": 0.1597137451171875,
+          "final_columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean",
+            "series_id_missing_flag",
+            "series_title_missing_flag",
+            "series_works_count_missing_flag",
+            "title_duplicate_flag",
+            "author_id_duplicate_flag",
+            "decade",
+            "book_length_category",
+            "rating_category",
+            "popularity_category"
+          ],
+          "data_type_preservation": "Optimized and preserved"
+        },
+        "validation_summary": {
+          "total_optimizations_applied": 15,
+          "total_optimizations_failed": 0,
+          "derived_variables_created": 4,
+          "memory_saved_mb": 0.006613731384277344,
+          "validation_passed": true,
+          "data_integrity": "Maintained - data types optimized and validated",
+          "execution_time": "0:00:00.041959"
+        }
+      }
+    },
+    "step4_detection": {
+      "name": "Outlier Detection",
+      "status": "completed",
+      "results": {
+        "analysis_timestamp": "20250904_223745",
+        "dataset_info": {
+          "shape": [
+            65,
+            28
+          ],
+          "memory_usage_mb": 0.15297698974609375,
+          "total_records": 65
+        },
+        "statistical_outliers": {
+          "publication_year": {
+            "field": "publication_year",
+            "total_values": 65,
+            "missing_values": "0",
+            "outliers": {
+              "zscore": {
+                "count": 2,
+                "percentage": 3.076923076923077,
+                "indices": [
+                  0,
+                  1
+                ],
+                "values": [
+                  2001,
+                  2002
+                ]
+              },
+              "iqr": {
+                "count": 7,
+                "percentage": 10.76923076923077,
+                "indices": [
+                  0,
+                  1,
+                  3,
+                  4,
+                  7,
+                  8,
+                  9
+                ],
+                "values": [
+                  2001,
+                  2002,
+                  2004,
+                  2005,
+                  2006,
+                  2007,
+                  2008
+                ],
+                "bounds": {
+                  "lower": 2009.0,
+                  "upper": 2017.0
+                }
+              },
+              "percentile": {
+                "count": 1,
+                "percentage": 1.5384615384615385,
+                "indices": [
+                  0
+                ],
+                "values": [
+                  2001
+                ],
+                "bounds": {
+                  "p1": 2001.64,
+                  "p99": 2017.0
+                }
+              }
+            },
+            "statistics": {
+              "mean": 2012.4923076923078,
+              "median": 2013.0,
+              "std": 3.3871221049507727,
+              "min": 2001.0,
+              "max": 2017.0,
+              "q1": 2012.0,
+              "q3": 2014.0
+            },
+            "consensus": {
+              "total_unique_outliers": 7,
+              "consensus_percentage": 10.76923076923077
+            }
+          },
+          "average_rating_weighted_mean": {
+            "field": "average_rating_weighted_mean",
+            "total_values": 65,
+            "missing_values": "0",
+            "outliers": {
+              "zscore": {
+                "count": 0,
+                "percentage": 0.0,
+                "indices": [],
+                "values": []
+              },
+              "iqr": {
+                "count": 0,
+                "percentage": 0.0,
+                "indices": [],
+                "values": [],
+                "bounds": {
+                  "lower": 2.740000009536743,
+                  "upper": 4.979999780654907
+                }
+              },
+              "percentile": {
+                "count": 1,
+                "percentage": 1.5384615384615385,
+                "indices": [
+                  12
+                ],
+                "values": [
+                  3.190000057220459
+                ],
+                "bounds": {
+                  "p1": 3.285999965667725,
+                  "p99": 4.570000171661377
+                }
+              }
+            },
+            "statistics": {
+              "mean": 3.8853845596313477,
+              "median": 3.8399999141693115,
+              "std": 0.34586432576179504,
+              "min": 3.190000057220459,
+              "max": 4.570000171661377,
+              "q1": 3.5799999237060547,
+              "q3": 4.139999866485596
+            },
+            "consensus": {
+              "total_unique_outliers": 1,
+              "consensus_percentage": 1.5384615384615385
+            }
+          },
+          "ratings_count_sum": {
+            "field": "ratings_count_sum",
+            "total_values": 65,
+            "missing_values": "0",
+            "outliers": {
+              "zscore": {
+                "count": 1,
+                "percentage": 1.5384615384615385,
+                "indices": [
+                  4
+                ],
+                "values": [
+                  30574
+                ]
+              },
+              "iqr": {
+                "count": 11,
+                "percentage": 16.923076923076923,
+                "indices": [
+                  3,
+                  4,
+                  13,
+                  18,
+                  22,
+                  23,
+                  31,
+                  32,
+                  49,
+                  50,
+                  51
+                ],
+                "values": [
+                  1278,
+                  30574,
+                  7920,
+                  4457,
+                  3919,
+                  2672,
+                  1429,
+                  1351,
+                  8314,
+                  1783,
+                  1632
+                ],
+                "bounds": {
+                  "lower": -647.0,
+                  "upper": 1185.0
+                }
+              },
+              "percentile": {
+                "count": 2,
+                "percentage": 3.076923076923077,
+                "indices": [
+                  4,
+                  48
+                ],
+                "values": [
+                  30574,
+                  7
+                ],
+                "bounds": {
+                  "p1": 8.92,
+                  "p99": 16327.599999999988
+                }
+              }
+            },
+            "statistics": {
+              "mean": 1172.246153846154,
+              "median": 148.0,
+              "std": 4023.753133855448,
+              "min": 7.0,
+              "max": 30574.0,
+              "q1": 40.0,
+              "q3": 498.0
+            },
+            "consensus": {
+              "total_unique_outliers": 12,
+              "consensus_percentage": 18.461538461538463
+            }
+          },
+          "text_reviews_count_sum": {
+            "field": "text_reviews_count_sum",
+            "total_values": 65,
+            "missing_values": "0",
+            "outliers": {
+              "zscore": {
+                "count": 2,
+                "percentage": 3.076923076923077,
+                "indices": [
+                  4,
+                  49
+                ],
+                "values": [
+                  715,
+                  1137
+                ]
+              },
+              "iqr": {
+                "count": 6,
+                "percentage": 9.230769230769232,
+                "indices": [
+                  4,
+                  13,
+                  18,
+                  22,
+                  31,
+                  49
+                ],
+                "values": [
+                  715,
+                  335,
+                  350,
+                  514,
+                  222,
+                  1137
+                ],
+                "bounds": {
+                  "lower": -101.5,
+                  "upper": 190.5
+                }
+              },
+              "percentile": {
+                "count": 1,
+                "percentage": 1.5384615384615385,
+                "indices": [
+                  49
+                ],
+                "values": [
+                  1137
+                ],
+                "bounds": {
+                  "p1": 2.0,
+                  "p99": 866.9199999999997
+                }
+              }
+            },
+            "statistics": {
+              "mean": 89.01538461538462,
+              "median": 24.0,
+              "std": 179.7663841896348,
+              "min": 2.0,
+              "max": 1137.0,
+              "q1": 8.0,
+              "q3": 81.0
+            },
+            "consensus": {
+              "total_unique_outliers": 6,
+              "consensus_percentage": 9.230769230769232
+            }
+          },
+          "author_ratings_count": {
+            "field": "author_ratings_count",
+            "total_values": 65,
+            "missing_values": "0",
+            "outliers": {
+              "zscore": {
+                "count": 2,
+                "percentage": 3.076923076923077,
+                "indices": [
+                  4,
+                  22
+                ],
+                "values": [
+                  3147263,
+                  1388218
+                ]
+              },
+              "iqr": {
+                "count": 10,
+                "percentage": 15.384615384615385,
+                "indices": [
+                  4,
+                  13,
+                  22,
+                  23,
+                  49,
+                  56,
+                  64,
+                  67,
+                  76,
+                  78
+                ],
+                "values": [
+                  3147263,
+                  226023,
+                  1388218,
+                  98730,
+                  106009,
+                  82329,
+                  87841,
+                  100316,
+                  78734,
+                  107303
+                ],
+                "bounds": {
+                  "lower": -34439.5,
+                  "upper": 59652.5
+                }
+              },
+              "percentile": {
+                "count": 2,
+                "percentage": 3.076923076923077,
+                "indices": [
+                  4,
+                  48
+                ],
+                "values": [
+                  3147263,
+                  23
+                ],
+                "bounds": {
+                  "p1": 28.76,
+                  "p99": 2021474.199999999
+                }
+              }
+            },
+            "statistics": {
+              "mean": 90881.32307692307,
+              "median": 4665.0,
+              "std": 422485.7775348815,
+              "min": 23.0,
+              "max": 3147263.0,
+              "q1": 845.0,
+              "q3": 24368.0
+            },
+            "consensus": {
+              "total_unique_outliers": 11,
+              "consensus_percentage": 16.923076923076923
+            }
+          }
+        },
+        "specialized_analyses": {
+          "publication_year": {
+            "field": "publication_year",
+            "total_valid_years": 65,
+            "missing_years": "0",
+            "year_range": {
+              "min": 2001,
+              "max": 2017,
+              "span": 16
+            },
+            "decade_distribution": {
+              "1800s": 0,
+              "1900s": 0,
+              "2000s": 9,
+              "2010s": 56,
+              "2020s": 0
+            },
+            "anomalies": {}
+          },
+          "ratings": {
+            "average_rating": {
+              "total_valid": 65,
+              "missing": "0",
+              "range": {
+                "min": 3.190000057220459,
+                "max": 4.570000171661377
+              },
+              "anomalies": {}
+            },
+            "ratings_count": {
+              "total_valid": 65,
+              "missing": "0",
+              "statistics": {
+                "mean": 1172.246153846154,
+                "median": 148.0,
+                "std": 4023.753133855448
+              },
+              "anomalies": {}
+            },
+            "text_reviews_count": {
+              "total_valid": 65,
+              "missing": "0",
+              "statistics": {
+                "mean": 89.01538461538462,
+                "median": 24.0,
+                "std": 179.7663841896348
+              },
+              "anomalies": {}
+            }
+          },
+          "page_count": {
+            "error": "num_pages field not found"
+          }
+        },
+        "categorical_analysis": {
+          "genres": {
+            "total_values": 65,
+            "missing_values": "0",
+            "unique_values": 16,
+            "top_values": {
+              "fiction,romance": 8,
+              "fiction,history, historical fiction, biography,romance": 8,
+              "fantasy, paranormal,fiction,romance": 7,
+              "fantasy, paranormal,fiction,mystery, thriller, crime,romance": 7,
+              "romance": 7,
+              "fiction,mystery, thriller, crime,romance": 6,
+              "fiction,romance,young-adult": 6,
+              "fantasy, paranormal,fiction,history, historical fiction, biography,romance": 4,
+              "fantasy, paranormal,fiction,romance,young-adult": 3,
+              "fantasy, paranormal,romance": 2
+            },
+            "anomalies": {}
+          },
+          "author_name": {
+            "total_values": 65,
+            "missing_values": "0",
+            "unique_values": 64,
+            "top_values": {
+              "J.B. Lynn": 2,
+              "A.C. Katt": 1,
+              "Alexandra Iff": 1,
+              "Alex Beecroft": 1,
+              "Alianne Donnelly": 1,
+              "Amy Lane": 1,
+              "Anna Campbell": 1,
+              "Ali McNamara": 1,
+              "Barbara Freethy": 1,
+              "Barbara L.B. Storey": 1
+            },
+            "anomalies": {}
+          },
+          "series_title": {
+            "total_values": 65,
+            "missing_values": "19",
+            "unique_values": 45,
+            "top_values": {
+              "Confessions of a Slightly Neurotic Hitwoman": 2,
+              "Badboy Rockers": 1,
+              "Bigler County": 1,
+              "Billionaire": 1,
+              "Atlantic Divide": 1,
+              "Broken": 1,
+              "Cajun": 1,
+              "Captured by a Dragon-Shifter": 1,
+              "Calendar Boys": 1,
+              "Chambers Trilogy": 1
+            },
+            "anomalies": {}
+          },
+          "decade": {
+            "total_values": 65,
+            "missing_values": "0",
+            "unique_values": 2,
+            "top_values": {
+              "2010": 56,
+              "2000": 9
+            },
+            "anomalies": {}
+          },
+          "book_length_category": {
+            "total_values": 65,
+            "missing_values": "0",
+            "unique_values": 4,
+            "top_values": {
+              "Medium": 33,
+              "Short": 26,
+              "Long": 5,
+              "Very Long": 1
+            },
+            "anomalies": {}
+          },
+          "rating_category": {
+            "total_values": 65,
+            "missing_values": "0",
+            "unique_values": 4,
+            "top_values": {
+              "Good": 42,
+              "Excellent": 23,
+              "Fair": 0,
+              "Poor": 0
+            },
+            "anomalies": {}
+          },
+          "popularity_category": {
+            "total_values": 65,
+            "missing_values": "0",
+            "unique_values": 4,
+            "top_values": {
+              "Low": 17,
+              "Medium": 16,
+              "High": 16,
+              "Very High": 16
+            },
+            "anomalies": {}
+          }
+        },
+        "summary": {
+          "total_outliers_detected": 48,
+          "fields_with_outliers": 5,
+          "critical_anomalies": 0,
+          "data_quality_score": 70.0,
+          "recommendations": [
+            "High outlier rate - consider data quality investigation"
+          ]
+        },
+        "execution_time_seconds": 0.0463109016418457
+      }
+    },
+    "step4_treatment": {
+      "name": "Outlier Treatment",
+      "status": "completed",
+      "results": {
+        "treatment_timestamp": "20250904_223745",
+        "dataset_info": {
+          "original_shape": [
+            65,
+            28
+          ],
+          "original_memory_mb": 0.15297698974609375,
+          "original_columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean",
+            "series_id_missing_flag",
+            "series_title_missing_flag",
+            "series_works_count_missing_flag",
+            "title_duplicate_flag",
+            "author_id_duplicate_flag",
+            "decade",
+            "book_length_category",
+            "rating_category",
+            "popularity_category"
+          ]
+        },
+        "publication_year_treatment": {
+          "treatment_type": "publication_year_filtering",
+          "original_shape": [
+            65,
+            28
+          ],
+          "treated_shape": [
+            65,
+            28
+          ],
+          "books_removed": 0,
+          "removal_percentage": 0.0,
+          "year_bounds_applied": {
+            "min_year": 2000,
+            "max_year": 2017
+          },
+          "treatment_timestamp": "20250904_223745"
+        },
+        "conservative_treatment": {
+          "treatment_type": "conservative_documentation",
+          "fields_analyzed": [
+            "average_rating_weighted_mean",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "author_ratings_count"
+          ],
+          "outliers_documented": {
+            "average_rating_weighted_mean": {
+              "field": "average_rating_weighted_mean",
+              "total_values": 65,
+              "missing_values": "0",
+              "statistics": {
+                "mean": 3.8853845596313477,
+                "median": 3.8399999141693115,
+                "std": 0.34586432576179504,
+                "min": 3.190000057220459,
+                "max": 4.570000171661377
+              }
+            },
+            "ratings_count_sum": {
+              "field": "ratings_count_sum",
+              "total_values": 65,
+              "missing_values": "0",
+              "statistics": {
+                "mean": 1172.246153846154,
+                "median": 148.0,
+                "std": 4023.753133855448,
+                "min": 7.0,
+                "max": 30574.0
+              }
+            },
+            "text_reviews_count_sum": {
+              "field": "text_reviews_count_sum",
+              "total_values": 65,
+              "missing_values": "0",
+              "statistics": {
+                "mean": 89.01538461538462,
+                "median": 24.0,
+                "std": 179.7663841896348,
+                "min": 2.0,
+                "max": 1137.0
+              }
+            },
+            "author_ratings_count": {
+              "field": "author_ratings_count",
+              "total_values": 65,
+              "missing_values": "0",
+              "statistics": {
+                "mean": 90881.32307692307,
+                "median": 4665.0,
+                "std": 422485.7775348815,
+                "min": 23.0,
+                "max": 3147263.0
+              }
+            }
+          },
+          "no_action_taken": "Outliers documented but no data modification performed"
+        },
+        "final_dataset_info": {
+          "final_shape": [
+            65,
+            28
+          ],
+          "final_memory_mb": 0.15297698974609375,
+          "final_columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean",
+            "series_id_missing_flag",
+            "series_title_missing_flag",
+            "series_works_count_missing_flag",
+            "title_duplicate_flag",
+            "author_id_duplicate_flag",
+            "decade",
+            "book_length_category",
+            "rating_category",
+            "popularity_category"
+          ],
+          "data_type_preservation": "Maintained (pickle format)"
+        },
+        "treatment_summary": {
+          "total_books_removed": 0,
+          "removal_percentage": 0.0,
+          "final_books_retained": 65,
+          "treatment_strategy": {
+            "publication_year": "moderate (removal)",
+            "other_fields": "conservative (documentation only)"
+          },
+          "data_integrity": "Maintained - only publication year anomalies removed",
+          "execution_time": "0:00:00.017374"
+        }
+      }
+    },
+    "step5": {
+      "name": "Data Type Optimization & Persistence",
+      "status": "completed",
+      "results": {
+        "optimization_timestamp": "20250904_223745",
+        "initial_analysis": {
+          "total_columns": 28,
+          "current_memory_mb": 0.15297698974609375,
+          "data_type_distribution": {
+            "int32": 5,
+            "float32": 5,
+            "int64": 5,
+            "object": 4,
+            "int16": 1,
+            "category": 1
+          },
+          "optimization_opportunities": {
+            "series_id_missing_flag": {
+              "current": "int64",
+              "target": "int16",
+              "type": "numerical"
+            },
+            "series_title_missing_flag": {
+              "current": "int64",
+              "target": "int16",
+              "type": "numerical"
+            },
+            "series_works_count_missing_flag": {
+              "current": "int64",
+              "target": "int16",
+              "type": "numerical"
+            },
+            "title_duplicate_flag": {
+              "current": "int64",
+              "target": "int16",
+              "type": "numerical"
+            },
+            "author_id_duplicate_flag": {
+              "current": "int64",
+              "target": "int16",
+              "type": "numerical"
+            }
+          },
+          "already_optimized": [
+            "work_id (int32)",
+            "publication_year (int16)",
+            "language_codes_en (category)",
+            "num_pages_median (float32)",
+            "genres (category)",
+            "author_id (int32)",
+            "author_name (category)",
+            "author_average_rating (float32)",
+            "author_ratings_count (int32)",
+            "series_id (float32)",
+            "series_title (category)",
+            "series_works_count (float32)",
+            "ratings_count_sum (int32)",
+            "text_reviews_count_sum (int32)",
+            "average_rating_weighted_mean (float32)",
+            "decade (category)",
+            "book_length_category (category)",
+            "rating_category (category)",
+            "popularity_category (category)"
+          ]
+        },
+        "numerical_optimizations": {
+          "optimizations_applied": 5,
+          "optimizations_failed": 0,
+          "memory_before_mb": 0.15297698974609375,
+          "details": {
+            "work_id": {
+              "from": "int32",
+              "to": "int32",
+              "status": "already_optimized"
+            },
+            "publication_year": {
+              "from": "int16",
+              "to": "int16",
+              "status": "already_optimized"
+            },
+            "author_id": {
+              "from": "int32",
+              "to": "int32",
+              "status": "already_optimized"
+            },
+            "author_ratings_count": {
+              "from": "int32",
+              "to": "int32",
+              "status": "already_optimized"
+            },
+            "ratings_count_sum": {
+              "from": "int32",
+              "to": "int32",
+              "status": "already_optimized"
+            },
+            "text_reviews_count_sum": {
+              "from": "int32",
+              "to": "int32",
+              "status": "already_optimized"
+            },
+            "series_id_missing_flag": {
+              "from": "int64",
+              "to": "int16",
+              "status": "success"
+            },
+            "series_title_missing_flag": {
+              "from": "int64",
+              "to": "int16",
+              "status": "success"
+            },
+            "series_works_count_missing_flag": {
+              "from": "int64",
+              "to": "int16",
+              "status": "success"
+            },
+            "title_duplicate_flag": {
+              "from": "int64",
+              "to": "int16",
+              "status": "success"
+            },
+            "author_id_duplicate_flag": {
+              "from": "int64",
+              "to": "int16",
+              "status": "success"
+            }
+          },
+          "memory_after_mb": 0.15111732482910156,
+          "memory_saved_mb": 0.0018596649169921875
+        },
+        "categorical_optimizations": {
+          "optimizations_applied": 0,
+          "optimizations_failed": 0,
+          "memory_before_mb": 0.15111732482910156,
+          "details": {
+            "genres": {
+              "from": "category",
+              "to": "category",
+              "status": "already_optimized",
+              "unique_values": 16
+            },
+            "author_name": {
+              "from": "category",
+              "to": "category",
+              "status": "already_optimized",
+              "unique_values": 64
+            },
+            "series_title": {
+              "from": "category",
+              "to": "category",
+              "status": "already_optimized",
+              "unique_values": 45
+            },
+            "decade": {
+              "from": "category",
+              "to": "category",
+              "status": "already_optimized",
+              "unique_values": 2
+            },
+            "book_length_category": {
+              "from": "category",
+              "to": "category",
+              "status": "already_optimized",
+              "unique_values": 4
+            },
+            "rating_category": {
+              "from": "category",
+              "to": "category",
+              "status": "already_optimized",
+              "unique_values": 2
+            },
+            "popularity_category": {
+              "from": "category",
+              "to": "category",
+              "status": "already_optimized",
+              "unique_values": 4
+            },
+            "language_codes_en": {
+              "from": "category",
+              "to": "category",
+              "status": "already_optimized",
+              "unique_values": 8
+            }
+          },
+          "memory_after_mb": 0.15111732482910156,
+          "memory_saved_mb": 0.0
+        },
+        "float_optimizations": {
+          "optimizations_applied": 0,
+          "optimizations_failed": 0,
+          "memory_before_mb": 0.15111732482910156,
+          "details": {
+            "average_rating_weighted_mean": {
+              "from": "float32",
+              "to": "float32",
+              "status": "already_optimized"
+            },
+            "author_average_rating": {
+              "from": "float32",
+              "to": "float32",
+              "status": "already_optimized"
+            },
+            "num_pages_median": {
+              "from": "float32",
+              "to": "float32",
+              "status": "already_optimized"
+            },
+            "series_id": {
+              "from": "float32",
+              "to": "float32",
+              "status": "already_optimized"
+            },
+            "series_works_count": {
+              "from": "float32",
+              "to": "float32",
+              "status": "already_optimized"
+            }
+          },
+          "memory_after_mb": 0.15111732482910156,
+          "memory_saved_mb": 0.0
+        },
+        "validation_results": {
+          "total_columns": 28,
+          "optimized_columns": 24,
+          "failed_optimizations": 0,
+          "validation_details": {
+            "work_id": {
+              "expected": "int32",
+              "actual": "int32",
+              "status": "\u2705 Optimized"
+            },
+            "publication_year": {
+              "expected": "int16",
+              "actual": "int16",
+              "status": "\u2705 Optimized"
+            },
+            "author_id": {
+              "expected": "int32",
+              "actual": "int32",
+              "status": "\u2705 Optimized"
+            },
+            "author_ratings_count": {
+              "expected": "int32",
+              "actual": "int32",
+              "status": "\u2705 Optimized"
+            },
+            "ratings_count_sum": {
+              "expected": "int32",
+              "actual": "int32",
+              "status": "\u2705 Optimized"
+            },
+            "text_reviews_count_sum": {
+              "expected": "int32",
+              "actual": "int32",
+              "status": "\u2705 Optimized"
+            },
+            "series_id_missing_flag": {
+              "expected": "int16",
+              "actual": "int16",
+              "status": "\u2705 Optimized"
+            },
+            "series_title_missing_flag": {
+              "expected": "int16",
+              "actual": "int16",
+              "status": "\u2705 Optimized"
+            },
+            "series_works_count_missing_flag": {
+              "expected": "int16",
+              "actual": "int16",
+              "status": "\u2705 Optimized"
+            },
+            "title_duplicate_flag": {
+              "expected": "int16",
+              "actual": "int16",
+              "status": "\u2705 Optimized"
+            },
+            "author_id_duplicate_flag": {
+              "expected": "int16",
+              "actual": "int16",
+              "status": "\u2705 Optimized"
+            },
+            "genres": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            },
+            "author_name": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            },
+            "series_title": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            },
+            "decade": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            },
+            "book_length_category": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            },
+            "rating_category": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            },
+            "popularity_category": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            },
+            "language_codes_en": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            },
+            "average_rating_weighted_mean": {
+              "expected": "float32",
+              "actual": "float32",
+              "status": "\u2705 Optimized"
+            },
+            "author_average_rating": {
+              "expected": "float32",
+              "actual": "float32",
+              "status": "\u2705 Optimized"
+            },
+            "num_pages_median": {
+              "expected": "float32",
+              "actual": "float32",
+              "status": "\u2705 Optimized"
+            },
+            "series_id": {
+              "expected": "float32",
+              "actual": "float32",
+              "status": "\u2705 Optimized"
+            },
+            "series_works_count": {
+              "expected": "float32",
+              "actual": "float32",
+              "status": "\u2705 Optimized"
+            }
+          },
+          "memory_usage_mb": 0.15111732482910156
+        },
+        "final_dataset_info": {
+          "final_shape": [
+            65,
+            28
+          ],
+          "final_memory_mb": 0.1534137725830078,
+          "final_columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean",
+            "series_id_missing_flag",
+            "series_title_missing_flag",
+            "series_works_count_missing_flag",
+            "title_duplicate_flag",
+            "author_id_duplicate_flag",
+            "decade",
+            "book_length_category",
+            "rating_category",
+            "popularity_category"
+          ],
+          "saved_files": {
+            "parquet": "outputs/data_type_optimization/cleaned_romance_novels_step5_optimized_20250904_223745.parquet",
+            "pickle": "outputs/data_type_optimization/cleaned_romance_novels_step5_optimized_20250904_223745.pickle"
+          },
+          "data_type_preservation": "Optimized and preserved"
+        },
+        "optimization_summary": {
+          "total_optimizations_applied": 5,
+          "total_optimizations_failed": 0,
+          "success_rate": 100.0,
+          "memory_saved_mb": 0.0018596649169921875,
+          "memory_reduction_percentage": 1.2156500922647249,
+          "execution_time": "0:00:00.060834",
+          "recommendations": [
+            "Memory usage reduced by 0.00 MB (1.2%)",
+            "Use parquet format for type preservation and efficient storage"
+          ]
+        }
+      }
+    },
+    "step6": {
+      "name": "Final Quality Validation & Certification",
+      "status": "completed",
+      "results": {
+        "validation_timestamp": "20250904_223745",
+        "dataset_info": {
+          "shape": [
+            65,
+            28
+          ],
+          "memory_mb": 0.15587329864501953,
+          "columns": [
+            "work_id",
+            "book_id_list_en",
+            "title",
+            "publication_year",
+            "language_codes_en",
+            "num_pages_median",
+            "description",
+            "popular_shelves",
+            "genres",
+            "author_id",
+            "author_name",
+            "author_average_rating",
+            "author_ratings_count",
+            "series_id",
+            "series_title",
+            "series_works_count",
+            "ratings_count_sum",
+            "text_reviews_count_sum",
+            "average_rating_weighted_mean",
+            "series_id_missing_flag",
+            "series_title_missing_flag",
+            "series_works_count_missing_flag",
+            "title_duplicate_flag",
+            "author_id_duplicate_flag",
+            "decade",
+            "book_length_category",
+            "rating_category",
+            "popularity_category"
+          ]
+        },
+        "pipeline_validation": {
+          "step1_3": {
+            "step": "1-3",
+            "description": "Initial Cleaning (Duplicate Removal, Missing Values, Data Types)",
+            "checks": {
+              "duplicate_removal": {
+                "total_records": 65,
+                "duplicate_flags_present": true,
+                "duplicate_flags_values": {
+                  "title_duplicate_flag": {
+                    "total": "0",
+                    "percentage": 0.0
+                  },
+                  "author_id_duplicate_flag": {
+                    "total": "2",
+                    "percentage": 3.076923076923077
+                  }
+                }
+              },
+              "missing_value_treatment": {
+                "total_columns": 28,
+                "columns_with_missing": 3,
+                "missing_value_summary": {
+                  "series_id": {
+                    "missing_count": "19",
+                    "missing_percentage": 29.230769230769234
+                  },
+                  "series_title": {
+                    "missing_count": "19",
+                    "missing_percentage": 29.230769230769234
+                  },
+                  "series_works_count": {
+                    "missing_count": "19",
+                    "missing_percentage": 29.230769230769234
+                  }
+                }
+              },
+              "data_type_validation": {
+                "total_columns": 28,
+                "optimized_data_types": 23,
+                "data_type_distribution": {
+                  "int16": 6,
+                  "int32": 5,
+                  "float32": 5,
+                  "category": 7
+                },
+                "optimization_status": {
+                  "publication_year": {
+                    "expected": "int16",
+                    "actual": "int16",
+                    "status": "\u2705 Optimized"
+                  },
+                  "work_id": {
+                    "expected": "int32",
+                    "actual": "int32",
+                    "status": "\u2705 Optimized"
+                  },
+                  "genres": {
+                    "expected": "category",
+                    "actual": "category",
+                    "status": "\u2705 Optimized"
+                  },
+                  "author_name": {
+                    "expected": "category",
+                    "actual": "category",
+                    "status": "\u2705 Optimized"
+                  }
+                }
+              }
+            },
+            "overall_status": "success"
+          },
+          "step4": {
+            "step": "4",
+            "description": "Outlier Detection & Treatment",
+            "checks": {
+              "publication_year_treatment": {
+                "field_present": true,
+                "year_range": {
+                  "min": 2001,
+                  "max": 2017,
+                  "target_min": 2000,
+                  "target_max": 2017,
+                  "within_bounds": "True"
+                },
+                "treatment_effectiveness": {
+                  "books_before_2000": 0,
+                  "books_after_2017": 0,
+                  "total_out_of_bounds": 0,
+                  "treatment_success": true
+                }
+              },
+              "conservative_treatment": {
+                "outlier_fields_present": 4,
+                "outlier_analysis_ready": true
+              },
+              "data_integrity": {
+                "total_records": 65,
+                "expected_records": 80657,
+                "record_count_match": false,
+                "no_data_loss": true
+              }
+            },
+            "overall_status": "failed"
+          },
+          "step5": {
+            "step": "5",
+            "description": "Data Type Optimization & Persistence",
+            "checks": {
+              "data_type_optimization": {
+                "total_columns": 28,
+                "optimized_columns": 23,
+                "optimization_distribution": {
+                  "int16": 6,
+                  "int32": 5,
+                  "float32": 5,
+                  "category": 7
+                },
+                "specific_optimizations": {
+                  "num_pages_median": {
+                    "expected": "float32",
+                    "actual": "float32",
+                    "status": "\u2705 Optimized"
+                  },
+                  "author_average_rating": {
+                    "expected": "float32",
+                    "actual": "float32",
+                    "status": "\u2705 Optimized"
+                  },
+                  "average_rating_weighted_mean": {
+                    "expected": "float32",
+                    "actual": "float32",
+                    "status": "\u2705 Optimized"
+                  }
+                }
+              },
+              "type_preservation": {
+                "categorical_preserved": 6,
+                "numerical_preserved": 6,
+                "preservation_status": {
+                  "genres": "\u2705 Preserved",
+                  "author_name": "\u2705 Preserved",
+                  "series_title": "\u2705 Preserved",
+                  "decade": "\u274c Not Preserved",
+                  "book_length_category": "\u2705 Preserved",
+                  "rating_category": "\u2705 Preserved",
+                  "popularity_category": "\u2705 Preserved",
+                  "work_id": "\u2705 Preserved",
+                  "publication_year": "\u2705 Preserved",
+                  "author_id": "\u2705 Preserved",
+                  "author_ratings_count": "\u2705 Preserved",
+                  "ratings_count_sum": "\u2705 Preserved",
+                  "text_reviews_count_sum": "\u2705 Preserved"
+                }
+              },
+              "storage_efficiency": {
+                "current_memory_mb": 0.15587329864501953,
+                "expected_memory_mb": 182.66,
+                "memory_efficiency": {
+                  "memory_match": "False",
+                  "memory_difference": -182.50412670135498,
+                  "efficiency_status": "\u26a0\ufe0f Inefficient"
+                },
+                "storage_format": "parquet"
+              }
+            },
+            "overall_status": "failed"
+          }
+        },
+        "quality_score": {
+          "overall_score": 40.0,
+          "component_scores": {
+            "step1_3": 100.0,
+            "step4": 0.0,
+            "step5": 0.0
+          },
+          "quality_gates": {
+            "completeness": {
+              "threshold": 95.0,
+              "achieved": 100.0,
+              "passed": true
+            },
+            "consistency": {
+              "threshold": 90.0,
+              "achieved": 0.0,
+              "passed": false
+            },
+            "integrity": {
+              "threshold": 98.0,
+              "achieved": 0.0,
+              "passed": false
+            },
+            "optimization": {
+              "threshold": 95.0,
+              "achieved": 0.0,
+              "passed": false
+            },
+            "overall": {
+              "threshold": 90.0,
+              "achieved": 40.0,
+              "passed": false
+            }
+          },
+          "recommendations": [
+            "Improve consistency: Current 0.0%, Target 90.0%",
+            "Improve integrity: Current 0.0%, Target 98.0%",
+            "Improve optimization: Current 0.0%, Target 95.0%",
+            "Improve overall: Current 40.0%, Target 90.0%",
+            "\u26a0\ufe0f Pipeline quality needs significant improvements before production use"
+          ]
+        },
+        "final_certification": {
+          "certification_id": "DQ_CERT_20250904_223745",
+          "certification_date": "2025-09-04T22:37:45.569453",
+          "pipeline_version": "1.0",
+          "dataset_info": {
+            "name": "Romance Novel NLP Research Dataset",
+            "version": "Step 6 Final",
+            "shape": [
+              65,
+              28
+            ],
+            "memory_mb": 0.15587329864501953,
+            "columns": [
+              "work_id",
+              "book_id_list_en",
+              "title",
+              "publication_year",
+              "language_codes_en",
+              "num_pages_median",
+              "description",
+              "popular_shelves",
+              "genres",
+              "author_id",
+              "author_name",
+              "author_average_rating",
+              "author_ratings_count",
+              "series_id",
+              "series_title",
+              "series_works_count",
+              "ratings_count_sum",
+              "text_reviews_count_sum",
+              "average_rating_weighted_mean",
+              "series_id_missing_flag",
+              "series_title_missing_flag",
+              "series_works_count_missing_flag",
+              "title_duplicate_flag",
+              "author_id_duplicate_flag",
+              "decade",
+              "book_length_category",
+              "rating_category",
+              "popularity_category"
+            ]
+          },
+          "pipeline_summary": {
+            "total_steps": 6,
+            "completed_steps": 6,
+            "completion_percentage": 100.0,
+            "overall_status": "Complete"
+          },
+          "quality_certification": {
+            "overall_score": 40.0,
+            "quality_level": "Needs Improvement",
+            "certification_status": "Not Certified",
+            "quality_gates_passed": 1,
+            "total_quality_gates": 5
+          },
+          "step_validation_summary": {
+            "step1_3": {
+              "status": "success",
+              "description": "Initial Cleaning (Duplicate Removal, Missing Values, Data Types)",
+              "key_achievements": [
+                "Duplicate detection implemented",
+                "Data types optimized"
+              ]
+            },
+            "step4": {
+              "status": "failed",
+              "description": "Outlier Detection & Treatment",
+              "key_achievements": [
+                "Publication year anomalies treated",
+                "Outlier analysis documented"
+              ]
+            },
+            "step5": {
+              "status": "failed",
+              "description": "Data Type Optimization & Persistence",
+              "key_achievements": [
+                "Data types fully optimized"
+              ]
+            }
+          },
+          "recommendations": [
+            "Improve consistency: Current 0.0%, Target 90.0%",
+            "Improve integrity: Current 0.0%, Target 98.0%",
+            "Improve optimization: Current 0.0%, Target 95.0%",
+            "Improve overall: Current 40.0%, Target 90.0%",
+            "\u26a0\ufe0f Pipeline quality needs significant improvements before production use"
+          ],
+          "next_steps": [
+            "Significant quality improvements required",
+            "Review and fix failed pipeline steps",
+            "Re-run complete pipeline after fixes"
+          ]
+        },
+        "execution_summary": {
+          "total_steps_validated": 3,
+          "successful_steps": 1,
+          "execution_time": "0:00:00.037860"
+        }
+      }
+    }
+  },
+  "execution_summary": {
+    "total_execution_time_seconds": 0.292238712310791,
+    "total_steps_completed": 7,
+    "pipeline_status": "completed_successfully",
+    "dataset_type": "sample",
+    "final_outputs": {
+      "step1_output": "outputs/missing_values_cleaning/romance_novels_step1_missing_values_treated_20250904_223745.pkl",
+      "step2_output": "outputs/duplicate_detection/romance_novels_step2_duplicates_resolved_20250904_223745.pkl",
+      "step3_output": "outputs/data_type_validation/romance_novels_step3_data_types_validated_20250904_223745.pkl",
+      "step4_output": "outputs/outlier_detection/cleaned_romance_novels_step4_treated_20250904_223745.pkl",
+      "step5_output": "outputs/data_type_optimization/cleaned_romance_novels_step5_optimized_20250904_223745.parquet",
+      "step6_output": "outputs/data_type_optimization/cleaned_romance_novels_step5_optimized_20250904_223745.parquet"
+    }
+  },
+  "final_outputs": {}
+}

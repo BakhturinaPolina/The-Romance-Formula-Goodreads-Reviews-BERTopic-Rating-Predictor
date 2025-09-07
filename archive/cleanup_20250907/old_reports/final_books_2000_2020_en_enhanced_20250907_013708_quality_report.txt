@@ -1,0 +1,18 @@
+OPTIMIZED CSV BUILDER QUALITY REPORT
+==================================================
+
+Generated: 2025-09-07 01:37:22
+Output file: final_books_2000_2020_en_enhanced_20250907_013708.csv
+
+QUALITY METRICS:
+--------------------
+works_processed: 127305
+works_skipped: 8454
+works_with_ratings: 127207
+
+DATA CONVERSION ISSUES:
+-------------------------
+publication_year: 101800 nulls introduced
+num_pages: 137584 nulls introduced
+
+VALIDATION ERRORS: 0

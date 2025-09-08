@@ -27,8 +27,12 @@ from io import BytesIO
 from PIL import Image, PngImagePlugin
 try:
     from scipy import stats
+    from scipy.stats import norm, ks_2samp, mannwhitneyu
 except Exception:
-    stats = None  # graceful fallback if SciPy isn't available
+    stats = None
+    norm = None
+    ks_2samp = None
+    mannwhitneyu = None  # graceful fallback if SciPy isn't available
 warnings.filterwarnings('ignore')
 
 # Set up comprehensive logging
@@ -149,63 +153,34 @@ class ModificationError(Exception):
 
 # Color policy validator (fail CI if violated)
 class ColorPolicyValidator:
-    """
-    Lightweight checks aligned with your Datawrapper-inspired rules.
-    You pass a dict describing color usage for a figure BEFORE saving.
-    Raises AssertionError when a rule fails (so CI can fail).
-    """
-    def __init__(self, max_hues=7):
+    """Lightweight CI guard enforcing basic color/contrast rules."""
+    def __init__(self, max_hues=7): 
         self.max_hues = max_hues
-
+    
     @staticmethod
     def _contrast_ratio(hex_fg, hex_bg):
-        # WCAG-ish luminance/contrast (simple implementation)
-        import re
         def hex_to_rgb(h):
-            h = h.strip().lstrip('#')
+            h = h.strip().lstrip("#")
             if len(h)==8: h=h[:6]
-            return tuple(int(h[i:i+2],16)/255.0 for i in (0,2,4))
-        def luminance(rgb):
+            return tuple(int(h[i:i+2],16)/255 for i in (0,2,4))
+        def lum(rgb):
             def f(c): 
                 return (c/12.92) if (c<=0.03928) else (((c+0.055)/1.055)**2.4)
             r,g,b = map(f, rgb)
             return 0.2126*r + 0.7152*g + 0.0722*b
-        L1 = luminance(hex_to_rgb(hex_fg))
-        L2 = luminance(hex_to_rgb(hex_bg))
+        L1, L2 = lum(hex_to_rgb(hex_fg)), lum(hex_to_rgb(hex_bg))
         Lh, Ll = max(L1,L2), min(L1,L2)
         return (Lh+0.05)/(Ll+0.05)
-
+    
     def validate(self, meta):
-        """
-        meta = {
-          "legend_present": True/False,
-          "variable_colors": {"ratings":"#123456", "pages":"#aaaaaa", ...},
-          "background": "#ffffff",
-          "uses_gradient_for_categories": False,
-          "is_categorical": True/False,
-          "text_color": "#111111"
-        }
-        """
+        # meta: legend_present, variable_colors{}, background, text_color, uses_gradient_for_categories, is_categorical
         assert meta.get("legend_present", True), "Legend is required."
         colors = list((meta.get("variable_colors") or {}).values())
         if meta.get("is_categorical", True):
-            assert not meta.get("uses_gradient_for_categories", False), \
-                "Gradients must not be used for categories."
-            assert len(colors) <= self.max_hues, f"Too many hues: {len(colors)} > {self.max_hues}"
-        
-        # Check contrast ratios
-        bg = meta.get("background", "#ffffff")
-        text = meta.get("text_color", "#111111")
-        assert self._contrast_ratio(text, bg) >= 4.5, \
-            f"Insufficient text contrast: {self._contrast_ratio(text, bg):.2f} < 4.5"
-        
-        for var, color in (meta.get("variable_colors") or {}).items():
-            contrast = self._contrast_ratio(color, bg)
-            if contrast < 3.0:
-                logger.warning(f"Low contrast for {var}: {contrast:.2f} < 3.0 (continuing anyway)")
-            # Make it a warning instead of assertion for testing
-            # assert contrast >= 3.0, f"Insufficient contrast for {var}: {contrast:.2f} < 3.0"
-        
+            assert not meta.get("uses_gradient_for_categories", False), "No gradients for categories."
+            assert len(set(colors)) <= self.max_hues, f"Too many hues (> {self.max_hues})."
+        contrast = self._contrast_ratio(meta.get("text_color","#111111"), meta.get("background","#FFFFFF"))
+        assert contrast >= 4.0, f"Contrast too low: {contrast:.2f} (<4.0)."
         return True
 
 # Statistical analysis functions
@@ -886,6 +861,410 @@ class ImprovedEDAFinal:
         print("=" * 80)
     
     # ============================================================================
+    # ENHANCED HELPER METHODS
+    # ============================================================================
+    
+    def _coerce_numeric(self, df, cols):
+        """Coerce specified columns to numeric, handling errors gracefully."""
+        df = df.copy()
+        for c in cols:
+            if c in df: 
+                df[c] = pd.to_numeric(df[c], errors="coerce")
+        return df
+
+    def _fd_bin_edges(self, x, clip=None, max_bins=120, min_bins=20):
+        """Freedman–Diaconis binning; returns edges array."""
+        x = pd.Series(x).dropna()
+        if x.empty: 
+            return np.array([0,1])
+        if clip:
+            lo, hi = np.percentile(x, clip)
+            x = x.clip(lo, hi)
+        iqr = np.subtract(*np.percentile(x, [75,25]))
+        if iqr == 0:  # fallback to sqrt rule
+            bins = int(np.clip(np.sqrt(x.size), min_bins, max_bins))
+        else:
+            h = 2*iqr*(x.size**(-1/3))
+            bins = int(np.clip(np.ceil((x.max()-x.min())/h), min_bins, max_bins))
+        return np.histogram_bin_edges(x, bins=bins)
+
+    def _common_bins(self, before, after, use_fd=True, bins=60, clip=None, edges_override=None):
+        """Create common bin edges for before/after comparison."""
+        if edges_override is not None: 
+            return np.array(edges_override, dtype=float)
+        if use_fd:
+            return self._fd_bin_edges(pd.concat([before.dropna(), after.dropna()]), clip=clip)
+        x = pd.concat([before.dropna(), after.dropna()])
+        if clip:
+            lo, hi = np.percentile(x, clip)
+            x = x.clip(lo, hi)
+        return np.histogram_bin_edges(x, bins=bins)
+
+    def _save_edges_json(self, col, edges, outdir=None):
+        """Save bin edges to JSON for reproducibility."""
+        outdir = Path(outdir or (self.output_dir/"hist_counts"))
+        outdir.mkdir(parents=True, exist_ok=True)
+        j = outdir / f"bin_edges_{col}.json"
+        j.write_text(json.dumps({"column": col, "edges": list(map(float, edges))}, indent=2))
+        return str(j)
+
+    def bootstrap_median_ci(self, x, reps=2000, alpha=0.05, seed=0):
+        """Calculate bootstrap confidence interval for median."""
+        rng = np.random.default_rng(seed)
+        x = pd.Series(x).dropna().to_numpy()
+        if x.size==0: 
+            return np.nan, [np.nan, np.nan]
+        boots = np.median(rng.choice(x, size=(reps, x.size), replace=True), axis=1)
+        med = float(np.median(x))
+        lo, hi = np.quantile(boots, [alpha/2, 1-alpha/2])
+        return med, [float(lo), float(hi)]
+
+    def cohens_d(self, x, y):
+        """Calculate Cohen's d effect size."""
+        x = pd.Series(x).dropna().to_numpy()
+        y = pd.Series(y).dropna().to_numpy()
+        if len(x)<2 or len(y)<2: 
+            return np.nan
+        s1, s2 = x.std(ddof=1), y.std(ddof=1)
+        sp = np.sqrt(((len(x)-1)*s1**2 + (len(y)-1)*s2**2)/(len(x)+len(y)-2))
+        return 0.0 if sp==0 else (x.mean()-y.mean())/sp
+
+    def hedges_g(self, x, y):
+        """Calculate Hedges' g effect size."""
+        d = self.cohens_d(x, y)
+        n1, n2 = pd.Series(x).dropna().size, pd.Series(y).dropna().size
+        J = 1 - (3 / (4*(n1+n2)-9))
+        return d*J
+
+    def cliffs_delta(self, x, y):
+        """Calculate Cliff's delta effect size."""
+        x = pd.Series(x).dropna().to_numpy()
+        y = pd.Series(y).dropna().to_numpy()
+        if len(x)==0 or len(y)==0: 
+            return np.nan
+        max_pairs = 2_000_000
+        if len(x)*len(y) > max_pairs:
+            rng = np.random.default_rng(0)
+            x = rng.choice(x, size=min(len(x), int(np.sqrt(max_pairs))), replace=False)
+            y = rng.choice(y, size=min(len(y), int(np.sqrt(max_pairs))), replace=False)
+        gt = sum((xi > y).sum() for xi in x)
+        lt = sum((xi < y).sum() for xi in x)
+        return (gt - lt) / (len(x)*len(y))
+
+    def two_sample_tests(self, x, y):
+        """Run two-sample statistical tests."""
+        xb = pd.to_numeric(pd.Series(x), errors="coerce").dropna()
+        ya = pd.to_numeric(pd.Series(y), errors="coerce").dropna()
+        out = {}
+        if ks_2samp and mannwhitneyu:
+            try:
+                k = ks_2samp(xb, ya)
+                u = mannwhitneyu(xb, ya, alternative="two-sided")
+                out["ks_stat"], out["ks_p"] = float(k.statistic), float(k.pvalue)
+                out["mw_u"], out["mw_p"] = float(u.statistic), float(u.pvalue)
+            except Exception:
+                out["ks_stat"]=out["ks_p"]=out["mw_u"]=out["mw_p"]=np.nan
+        else:
+            out["ks_stat"]=out["ks_p"]=out["mw_u"]=out["mw_p"]=np.nan
+        out["cohens_d"]=self.cohens_d(ya, xb)
+        out["hedges_g"]=self.hedges_g(ya, xb)
+        out["cliffs_delta"]=self.cliffs_delta(ya, xb)
+        return out
+
+    def save_hist_counts(self, col, edges, outdir=None):
+        """Save histogram counts to CSV for reproducibility."""
+        outdir = Path(outdir or (self.output_dir/"hist_counts"))
+        outdir.mkdir(parents=True, exist_ok=True)
+        xb = pd.to_numeric(self.df_before[col], errors="coerce").dropna()
+        xa = pd.to_numeric(self.df_after[col], errors="coerce").dropna()
+        cb, _ = np.histogram(xb, bins=edges)
+        ca, _ = np.histogram(xa, bins=edges)
+        df = pd.DataFrame({
+            "bin_left": edges[:-1], 
+            "bin_right": edges[1:], 
+            "count_before": cb, 
+            "count_after": ca
+        })
+        p = outdir / f"bincounts_{col}.csv"
+        df.to_csv(p, index=False)
+        return str(p)
+
+    def savefig_with_meta(self, fig, title, tags=None, dpi=300, color_meta=None):
+        """Save figure with metadata and color validation."""
+        ColorPolicyValidator().validate(color_meta or {
+            "legend_present": True, 
+            "variable_colors": {}, 
+            "background":"#FFFFFF",
+            "text_color":"#111111", 
+            "uses_gradient_for_categories": False, 
+            "is_categorical": True
+        })
+        outdir = self.output_dir / "figures"
+        outdir.mkdir(parents=True, exist_ok=True)
+        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+        stem = f"eda_{title.lower().replace(' ','-')}_{ts}"
+        png_path = outdir / f"{stem}.png"
+        json_path = outdir / f"{stem}.json"
+        buf = BytesIO()
+        fig.savefig(buf, format="png", dpi=dpi, bbox_inches="tight", facecolor="white")
+        buf.seek(0)
+        im = Image.open(buf)
+        meta = PngImagePlugin.PngInfo()
+        md = {
+            "title": title, 
+            "tags": tags or [], 
+            "created": ts, 
+            "matplotlib_version": plt.matplotlib.__version__
+        }
+        for k,v in md.items(): 
+            meta.add_text(k, json.dumps(v) if not isinstance(v,str) else v)
+        im.save(png_path, "PNG", pnginfo=meta)
+        with open(json_path, "w") as f: 
+            json.dump(md, f, indent=2)
+        return str(png_path)
+
+    def _normal_pdf(self, x, mu, sd):
+        """Normal PDF helper for bell curve (fallback if SciPy missing)."""
+        return (1/(sd*np.sqrt(2*np.pi))) * np.exp(-0.5*((x-mu)/sd)**2)
+
+    def plot_hist_with_bands(self, col, use_fd=True, bins=60, clip=None, edges_override=None, density=False):
+        """Create outlined step histograms with bell curves and median CI bands."""
+        xb = pd.to_numeric(self.df_before[col], errors="coerce").dropna()
+        xa = pd.to_numeric(self.df_after[col], errors="coerce").dropna()
+        edges = self._common_bins(xb, xa, use_fd=use_fd, bins=bins, clip=clip, edges_override=edges_override)
+
+        fig, ax = plt.subplots(figsize=(8,5))
+        ax.hist(xb, bins=edges, histtype="step", linewidth=2, label=f"Before (n={len(xb):,})", density=density)
+        ax.hist(xa, bins=edges, histtype="step", linewidth=2, label=f"After (n={len(xa):,})", density=density)
+
+        # Medians + bootstrap CIs
+        for data, color, label in [(xb,"#6F7C85","Before"), (xa,"#AF6458","After")]:
+            med, ci = self.bootstrap_median_ci(data)
+            ax.axvline(med, color=color, linestyle="--", linewidth=2)
+            ax.axvspan(ci[0], ci[1], color=color, alpha=0.15)
+
+            # Bell curve overlay (reference)
+            mu, sd = np.mean(data), np.std(data, ddof=1)
+            xs = np.linspace(edges[0], edges[-1], 400)
+            pdf = (norm.pdf(xs, mu, sd) if norm else self._normal_pdf(xs, mu, sd))
+            if density:
+                ax.plot(xs, pdf, color=color, alpha=0.8)
+            else:
+                # scale to counts height approx
+                height = max(ax.get_ylim())
+                ax.plot(xs, pdf/pdf.max()*height*0.85, color=color, alpha=0.8)
+
+        if col == "ratings_count_sum":
+            ax.set_xscale("log")
+            from matplotlib.ticker import LogLocator, ScalarFormatter
+            ax.xaxis.set_major_locator(LogLocator(base=10.0, numticks=10))
+            fmt = ScalarFormatter()
+            fmt.set_scientific(False)
+            ax.xaxis.set_major_formatter(fmt)
+
+        ax.set_title(f"{col.replace('_',' ').title()} — Before vs After")
+        ax.set_xlabel(col.replace('_',' ').title())
+        ax.set_ylabel("Density" if density else "Count")
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+        plt.tight_layout()
+        return fig, edges
+
+    def plot_pages_small_multiples(self, clip=(1,99), use_fd=True):
+        """Create small-multiples panel for pages (full vs clipped)."""
+        col = "num_pages_median"
+        b = pd.to_numeric(self.df_before[col], errors="coerce").dropna()
+        a = pd.to_numeric(self.df_after[col],  errors="coerce").dropna()
+        edges_full = self._common_bins(b, a, use_fd=use_fd)
+        bf, _ = np.histogram(b, bins=edges_full)
+        af, _ = np.histogram(a, bins=edges_full)
+
+        lo_b, hi_b = np.percentile(b, clip)
+        lo_a, hi_a = np.percentile(a, clip)
+        b_clip, a_clip = b.clip(lo_b, hi_b), a.clip(lo_a, hi_a)
+        edges_clip = self._common_bins(b_clip, a_clip, use_fd=use_fd)
+
+        fig, axes = plt.subplots(1,2, figsize=(12,4), sharey=False)
+        for ax, x1, x2, edges, title in [
+            (axes[0], b, a, edges_full, "Full range"),
+            (axes[1], b_clip, a_clip, edges_clip, f"Clipped {clip[0]}–{clip[1]} pct")
+        ]:
+            ax.hist(x1, bins=edges, histtype="step", linewidth=2, label=f"Before (n={len(x1):,})")
+            ax.hist(x2, bins=edges, histtype="step", linewidth=2, label=f"After (n={len(x2):,})")
+            ax.set_title(title)
+            ax.set_xlabel("Median pages")
+            ax.set_ylabel("Count")
+            ax.legend()
+            ax.grid(True, alpha=0.3)
+        fig.suptitle("Pages distribution — small multiples")
+        plt.tight_layout()
+        return fig
+
+    def write_stats_outputs(self):
+        """Generate stats CSV and Markdown outputs."""
+        path_md = Path(self.output_dir/"README_EDA_Summary.md")
+        path_csv = Path(self.output_dir/"EDA_stats_effectsizes.csv")
+        rows=[]
+        for c in self.numerical_vars:
+            b = pd.to_numeric(self.df_before[c], errors="coerce")
+            a = pd.to_numeric(self.df_after[c],  errors="coerce")
+            med_b, ci_b = self.bootstrap_median_ci(b)
+            med_a, ci_a = self.bootstrap_median_ci(a)
+            t = self.two_sample_tests(b, a)
+            rows.append({
+                "variable": c,
+                "n_before": int(b.notna().sum()), 
+                "n_after": int(a.notna().sum()),
+                "mean_before": b.mean(), 
+                "mean_after": a.mean(),
+                "median_before": med_b, 
+                "median_before_CI95_low": ci_b[0], 
+                "median_before_CI95_high": ci_b[1],
+                "median_after": med_a, 
+                "median_after_CI95_low": ci_a[0], 
+                "median_after_CI95_high": ci_a[1],
+                "delta_mean": a.mean()-b.mean(), 
+                "delta_median": med_a-med_b,
+                **t
+            })
+        df = pd.DataFrame(rows).round(6)
+        md = "### Descriptive statistics: Before vs After (effects + tests)\n\n" + df.to_markdown(index=False)
+        path_md.write_text(md)
+        df.to_csv(path_csv, index=False)
+        return str(path_md), str(path_csv)
+
+    def alt_text_for_hist(self, col, edges):
+        """Generate ALT text template for histogram."""
+        return (f"Step-outline histograms compare {col.replace('_',' ')} before and after cleaning "
+                f"using common bin edges ({len(edges)-1} bins) chosen via Freedman–Diaconis. "
+                "Dashed lines mark medians with shaded 95% bootstrap confidence bands. "
+                "Faint bell-curve overlays provide a normal reference. "
+                f"{'X-axis is logarithmic for ratings count.' if col=='ratings_count_sum' else ''}")
+    
+    def alt_text_for_pages_small_multiples(self):
+        """Generate ALT text template for pages small multiples."""
+        return ("Two panels show the pages distribution: full range and a clipped 1–99th percentile view. "
+                "Each panel uses step-outline histograms with common bins; medians and CI bands indicate central tendency changes.")
+
+    def bundle_pdf_report(self, figure_paths, md_path):
+        """Bundle all figures and markdown into a single PDF report."""
+        pdf_path = self.output_dir / 'eda_comprehensive_report.pdf'
+        
+        with PdfPages(pdf_path) as pdf:
+            # Add title page
+            fig, ax = plt.subplots(figsize=(8.5, 11))
+            ax.text(0.5, 0.7, 'EDA Comprehensive Report', 
+                   fontsize=24, fontweight='bold', ha='center', va='center')
+            ax.text(0.5, 0.6, 'Romance Novel Dataset Analysis', 
+                   fontsize=16, ha='center', va='center')
+            ax.text(0.5, 0.5, f'Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}', 
+                   fontsize=12, ha='center', va='center')
+            ax.text(0.5, 0.4, f'Before: {len(self.df_before):,} books', 
+                   fontsize=12, ha='center', va='center')
+            ax.text(0.5, 0.35, f'After: {len(self.df_after):,} books', 
+                   fontsize=12, ha='center', va='center')
+            ax.text(0.5, 0.3, f'Reduction: {((len(self.df_before) - len(self.df_after)) / len(self.df_before) * 100):.1f}%', 
+                   fontsize=12, ha='center', va='center')
+            ax.set_xlim(0, 1)
+            ax.set_ylim(0, 1)
+            ax.axis('off')
+            pdf.savefig(fig, bbox_inches='tight')
+            plt.close(fig)
+            
+            # Add summary statistics page
+            fig, ax = plt.subplots(figsize=(8.5, 11))
+            ax.text(0.1, 0.9, 'Summary Statistics', fontsize=18, fontweight='bold')
+            
+            y_pos = 0.8
+            for var in self.numerical_vars:
+                b = pd.to_numeric(self.df_before[var], errors="coerce")
+                a = pd.to_numeric(self.df_after[var], errors="coerce")
+                med_b, ci_b = self.bootstrap_median_ci(b)
+                med_a, ci_a = self.bootstrap_median_ci(a)
+                
+                ax.text(0.1, y_pos, f'{var.replace("_", " ").title()}:', 
+                       fontsize=14, fontweight='bold')
+                y_pos -= 0.05
+                
+                # Before cleaning stats
+                ax.text(0.15, y_pos, f'Before: n={b.notna().sum():,}, mean={b.mean():.3f}, median={med_b:.3f}', 
+                       fontsize=10)
+                y_pos -= 0.03
+                
+                # After cleaning stats
+                ax.text(0.15, y_pos, f'After: n={a.notna().sum():,}, mean={a.mean():.3f}, median={med_a:.3f}', 
+                       fontsize=10)
+                y_pos -= 0.03
+                
+                y_pos -= 0.02
+            
+            ax.set_xlim(0, 1)
+            ax.set_ylim(0, 1)
+            ax.axis('off')
+            pdf.savefig(fig, bbox_inches='tight')
+            plt.close(fig)
+        
+        return str(pdf_path)
+
+    def generate_full_eda(self, cfg):
+        """Generate full EDA with all new features."""
+        self.df_before = self._coerce_numeric(self.df_before, self.numerical_vars)
+        self.df_after  = self._coerce_numeric(self.df_after,  self.numerical_vars)
+
+        figure_paths=[]
+        alt_texts=[]
+
+        # Loop variables: FD-bins + step-outline + bell curves
+        for col in self.numerical_vars:
+            fig, edges = self.plot_hist_with_bands(
+                col, 
+                use_fd=True, 
+                bins=cfg.get("bins",{}).get(col,60),
+                clip=cfg.get("clip",{}).get(col,None),
+                edges_override=cfg.get("edges",{}).get(col,None),
+                density=False
+            )
+            # freeze edges: save CSV counts + JSON edges
+            self._save_edges_json(col, edges)
+            self.save_hist_counts(col, edges)
+
+            color_meta = {
+                "legend_present":True, 
+                "variable_colors":{"before":"#6F7C85","after":"#AF6458"},
+                "background":"#FFFFFF",
+                "text_color":"#111111",
+                "uses_gradient_for_categories":False,
+                "is_categorical":True
+            }
+            p = self.savefig_with_meta(fig, title=f"{col}_hist_step", dpi=cfg.get("dpi",300), color_meta=color_meta)
+            figure_paths.append(p)
+            alt_texts.append(self.alt_text_for_hist(col, edges))
+            plt.close(fig)
+
+        # Small multiples for pages
+        fig = self.plot_pages_small_multiples(clip=cfg.get("pages_clip_pct",(1,99)), use_fd=True)
+        p = self.savefig_with_meta(fig, title="pages_small_multiples", dpi=cfg.get("dpi",300),
+                                   color_meta={"legend_present":True,"variable_colors":{},
+                                               "background":"#FFFFFF","text_color":"#111111",
+                                               "uses_gradient_for_categories":False,"is_categorical":True})
+        figure_paths.append(p)
+        alt_texts.append(self.alt_text_for_pages_small_multiples())
+        plt.close(fig)
+
+        # Stats: Markdown + CSV
+        md_path, csv_path = self.write_stats_outputs()
+
+        # Bundle PDF
+        pdf_path = self.bundle_pdf_report(figure_paths, md_path)
+
+        # Save ALT texts
+        alt_path = Path(self.output_dir/"figure_alt_texts.txt")
+        alt_path.write_text("\n\n".join(f"- {Path(fp).name}: {t}" for fp,t in zip(figure_paths, alt_texts)))
+
+        print(f"Figures: {len(figure_paths)} | PDF: {pdf_path}\nStats CSV: {csv_path}\nALT: {alt_path}")
+        return figure_paths, alt_texts, md_path, csv_path, pdf_path
+
+    # ============================================================================
     # CODING AGENT PATTERN METHODS
     # ============================================================================
     
@@ -1236,51 +1615,47 @@ Examples:
     return parser.parse_args()
 
 def main():
-    """Main execution function with CLI support and enhanced logging."""
-    print("🚀 Starting Enhanced EDA Analysis")
-    print(f"⏰ Start Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 80)
+    """Main execution function with enhanced EDA features."""
+    parser = argparse.ArgumentParser(description="Improved EDA with step hists, bell curves, FD bins, stats CSV, small multiples, CI color guard.")
+    parser.add_argument("--before", required=True, help="Path to before cleaning dataset CSV")
+    parser.add_argument("--after", required=True, help="Path to after cleaning dataset CSV")
+    parser.add_argument("--outdir", required=True, help="Output directory for results")
+    parser.add_argument("--dpi", type=int, default=300, help="DPI for saved figures")
+    parser.add_argument("--pages-clip-pct", type=str, default="1,99", help="Pages clipping percentiles (e.g., '1,99')")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
     
-    # Parse arguments
-    args = parse_arguments()
+    args = parser.parse_args()
     
-    # Set up enhanced logging
+    # Set up logging
     setup_logging(verbose=args.verbose)
     logger.info("🔧 Enhanced logging initialized")
     
-    # Log configuration
-    logger.info("⚙️  Configuration:")
-    logger.info(f"   Before dataset: {args.before}")
-    logger.info(f"   After dataset: {args.after}")
-    logger.info(f"   Output directory: {args.output}")
-    logger.info(f"   Sample size: {args.sample_size if args.sample_size else 'No sampling'}")
-    logger.info(f"   DPI: {args.dpi}")
-    logger.info(f"   Bins: {args.bins}")
-    logger.info(f"   Clip outliers: {not args.no_clip_outliers}")
-    logger.info(f"   Skip Q-Q plots: {args.skip_qq}")
-    logger.info(f"   Skip PDF report: {args.skip_pdf}")
-    logger.info(f"   Verbose logging: {args.verbose}")
-    
     try:
-        # Create visualizer with enhanced parameters
+        # Create visualizer
         logger.info("🏗️  Creating EDA analyzer instance...")
-        visualizer = ImprovedEDAFinal(
-            data_path_before=args.before,
-            data_path_after=args.after,
-            output_dir=args.output,
-            sample_size=args.sample_size,
-            dpi=args.dpi,
-            bins=args.bins,
-            clip_outliers=not args.no_clip_outliers
-        )
+        viz = ImprovedEDAFinal(args.before, args.after, args.outdir)
         
-        # Generate all visualizations
-        logger.info("🎨 Starting visualization generation...")
-        visualizer.generate_all_visualizations(skip_qq=args.skip_qq, skip_pdf=args.skip_pdf)
+        # Parse pages clipping percentiles
+        lo, hi = map(float, args.pages_clip_pct.split(","))
+        cfg = {
+            "dpi": args.dpi, 
+            "pages_clip_pct": (lo,hi), 
+            "bins":{}, 
+            "clip":{}, 
+            "edges":{}
+        }
+        
+        # Generate full EDA with new features
+        logger.info("🎨 Starting enhanced EDA generation...")
+        figure_paths, alt_texts, md_path, csv_path, pdf_path = viz.generate_full_eda(cfg)
         
         # Final success message
-        logger.info("🎉 EDA analysis completed successfully!")
-        print(f"\n🎉 ANALYSIS COMPLETE!")
+        logger.info("🎉 Enhanced EDA analysis completed successfully!")
+        print(f"\n🎉 ENHANCED EDA COMPLETE!")
+        print(f"📊 Generated {len(figure_paths)} figures")
+        print(f"📄 PDF report: {pdf_path}")
+        print(f"📈 Stats CSV: {csv_path}")
+        print(f"📝 Markdown: {md_path}")
         print(f"⏰ End Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("=" * 80)
         

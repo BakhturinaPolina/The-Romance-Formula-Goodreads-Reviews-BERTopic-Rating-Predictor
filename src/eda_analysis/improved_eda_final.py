@@ -1128,7 +1128,15 @@ class ImprovedEDAFinal:
                 **t
             })
         df = pd.DataFrame(rows).round(6)
-        md = "### Descriptive statistics: Before vs After (effects + tests)\n\n" + df.to_markdown(index=False)
+        
+        # Generate markdown with fallback for tabulate dependency
+        try:
+            md = "### Descriptive statistics: Before vs After (effects + tests)\n\n" + df.to_markdown(index=False)
+        except ImportError:
+            # Fallback to simple text table if tabulate is not available
+            md = "### Descriptive statistics: Before vs After (effects + tests)\n\n"
+            md += df.to_string(index=False)
+        
         path_md.write_text(md)
         df.to_csv(path_csv, index=False)
         return str(path_md), str(path_csv)

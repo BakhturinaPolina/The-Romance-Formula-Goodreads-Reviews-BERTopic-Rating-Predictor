@@ -23,6 +23,7 @@ import time
 from typing import Dict, List, Any, Optional
 import argparse
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.ticker import LogLocator, ScalarFormatter
 from io import BytesIO
 from PIL import Image, PngImagePlugin
 try:
@@ -864,6 +865,88 @@ class ImprovedEDAFinal:
     # ENHANCED HELPER METHODS
     # ============================================================================
     
+    # store a single y-limit across all figs (0..N with N = max(n_before, n_after))
+    def _compute_global_ylim(self):
+        self.n_before_total = int(len(self.df_before))
+        self.n_after_total  = int(len(self.df_after))
+        self.N_global = int(max(self.n_before_total, self.n_after_total))
+        self.y_global = (0, self.N_global)
+
+    def _apply_common_ylim(self, ax, add_percent_axis=True):
+        ax.set_ylim(*self.y_global)
+        ax.set_ylabel("Count")
+        if add_percent_axis:
+            ax2 = ax.twinx()
+            ax2.set_ylim(*self.y_global)
+            ticks = np.linspace(0, self.N_global, 5)
+            ax2.set_yticks(ticks)
+            ax2.set_yticklabels([f"{t/self.N_global:.0%}" for t in ticks])
+            ax2.set_ylabel("Share of books")
+            ax2.grid(False)
+
+    # secondary X axis on top showing log10(x) for the ratings histogram
+    def _add_log10_secondary_axis(self, ax):
+        def fwd(x):  # data -> log10
+            x = np.asarray(x)
+            x = np.where(x<=0, np.nan, x)
+            return np.log10(x)
+        def inv(y):  # log10 -> data
+            return 10**np.asarray(y)
+        ax_top = ax.secondary_xaxis("top", functions=(fwd, inv))
+        ax_top.set_xlabel("log10(Total ratings)")
+        # integer ticks for log10 scale, matching the visible domain
+        lo, hi = ax.get_xlim()
+        ticks = np.arange(np.floor(np.log10(max(lo, 1))), np.ceil(np.log10(hi))+1)
+        ax_top.set_xticks(ticks)
+
+    # annotate counts or percents inside/above bars (for clipped panel)
+    def _annotate_hist(self, ax, counts, edges, mode="percent", min_pct=0.03):
+        centers = (edges[:-1] + edges[1:]) / 2
+        for c, x in zip(counts, centers):
+            if c <= 0: 
+                continue
+            pct = c / self.N_global
+            if mode == "percent" and pct < min_pct:
+                continue
+            txt = f"{pct:.0%}" if mode == "percent" else f"{c:,}"
+            ax.text(x, c, txt, ha="center", va="bottom", fontsize=8, rotation=0, clip_on=True)
+
+    # save a small config with N and y-limits for reproducibility
+    def _save_axes_config(self, name):
+        cfg_dir = self.output_dir / "configs"
+        cfg_dir.mkdir(parents=True, exist_ok=True)
+        cfg = {
+            "name": name,
+            "n_before": self.n_before_total,
+            "n_after": self.n_after_total,
+            "y_limit": list(self.y_global),
+            "created": datetime.now().isoformat(timespec="seconds")
+        }
+        p = cfg_dir / f"{name}_axes_config.json"
+        p.write_text(json.dumps(cfg, indent=2))
+        return str(p)
+
+    # simple color audit printed to logs (contrast of text vs background, and the two series colors)
+    def audit_colors(self, text="#111111", background="#FFFFFF", before="#4C78A8", after="#E45756"):
+        def hex_to_rgb(h):
+            h = h.strip().lstrip("#")
+            if len(h)==8: h=h[:6]
+            return tuple(int(h[i:i+2],16)/255 for i in (0,2,4))
+        def luminance(rgb):
+            def f(c): return (c/12.92) if (c<=0.03928) else (((c+0.055)/1.055)**2.4)
+            r,g,b = map(f, rgb); return 0.2126*r + 0.7152*g + 0.0722*b
+        def contrast(a,b):
+            L1, L2 = luminance(hex_to_rgb(a)), luminance(hex_to_rgb(b))
+            Lh, Ll = max(L1,L2), min(L1,L2)
+            return (Lh+0.05)/(Ll+0.05)
+        ct_text = contrast(text, background)
+        ct_before = contrast(before, background)
+        ct_after  = contrast(after,  background)
+        print(f"[Color audit] contrast(text, bg)={ct_text:.2f}; before vs bg={ct_before:.2f}; after vs bg={ct_after:.2f}")
+        # minimal CI guard: ensure ≥4:1 for small text and main lines
+        assert ct_text >= 4.0, "Contrast too low for text"
+        assert ct_before >= 3.0 and ct_after >= 3.0, "Series color contrast is low"  # lighter threshold for lines
+    
     def _coerce_numeric(self, df, cols):
         """Coerce specified columns to numeric, handling errors gracefully."""
         df = df.copy()
@@ -1027,6 +1110,126 @@ class ImprovedEDAFinal:
         """Normal PDF helper for bell curve (fallback if SciPy missing)."""
         return (1/(sd*np.sqrt(2*np.pi))) * np.exp(-0.5*((x-mu)/sd)**2)
 
+    # a) Histograms: force y 0..N across all figures; keep step outlines; NO third color overlay in the year plot.
+    def plot_hist_simple(self, col, edges=None, log_x=False, title=None):
+        xb = pd.to_numeric(self.df_before[col], errors="coerce").dropna()
+        xa = pd.to_numeric(self.df_after[col],  errors="coerce").dropna()
+
+        # compute or reuse shared edges (your FD or fixed edges logic can stay outside)
+        if edges is None:
+            xs = pd.concat([xb, xa])
+            if log_x:
+                xmin = max(xs[xs>0].min(), 1)
+                xmax = xs.max()
+                edges = np.logspace(np.log10(xmin), np.log10(xmax), 60)
+            else:
+                edges = np.histogram_bin_edges(xs, bins=60)
+
+        fig, ax = plt.subplots(figsize=(8,5))
+        # step outlines
+        cb, _ = np.histogram(xb, bins=edges)
+        ca, _ = np.histogram(xa, bins=edges)
+        ax.step(edges[:-1], cb, where="post", lw=2, label=f"Before (n={len(xb):,})")
+        ax.step(edges[:-1], ca, where="post", lw=2, label=f"After (n={len(xa):,})")
+
+        if log_x:
+            ax.set_xscale("log")
+            ax.xaxis.set_major_locator(LogLocator(base=10, numticks=8))
+            fmt = ScalarFormatter(); fmt.set_scientific(False); ax.xaxis.set_major_formatter(fmt)
+            self._add_log10_secondary_axis(ax)
+
+        ax.set_title(title or f"{col.replace('_',' ').title()} — Before vs After")
+        self._apply_common_ylim(ax, add_percent_axis=True)  # <- 0..N across ALL figures
+        ax.grid(True, alpha=0.3); ax.legend()
+        plt.tight_layout()
+        return fig, edges, (cb, ca)
+
+    # b) Pages small-multiples: label bins in the clipped panel (percents by default)
+    def plot_pages_small_multiples(self, clip=(5,95)):
+        col = "num_pages_median"
+        b = pd.to_numeric(self.df_before[col], errors="coerce").dropna()
+        a = pd.to_numeric(self.df_after[col],  errors="coerce").dropna()
+
+        # full range edges
+        edges_full = np.histogram_bin_edges(pd.concat([b,a]), bins=60)
+
+        # clipped
+        lo, hi = np.percentile(a, clip)
+        b_clip = b.clip(*np.percentile(b, clip))
+        a_clip = a.clip(lo, hi)
+        edges_clip = np.histogram_bin_edges(pd.concat([b_clip, a_clip]), bins=40)
+
+        fig, axes = plt.subplots(1,2, figsize=(12,4))
+
+        # left: full
+        ax = axes[0]
+        cb, _ = np.histogram(b, bins=edges_full)
+        ca, _ = np.histogram(a, bins=edges_full)
+        ax.step(edges_full[:-1], cb, where="post", lw=2, label=f"Before (n={len(b):,})")
+        ax.step(edges_full[:-1], ca, where="post", lw=2, label=f"After (n={len(a):,})")
+        ax.set_title("Full range"); ax.set_xlabel("Median pages"); self._apply_common_ylim(ax); ax.legend(); ax.grid(True, alpha=0.3)
+
+        # right: clipped + labels
+        ax = axes[1]
+        cb2, _ = np.histogram(b_clip, bins=edges_clip)
+        ca2, _ = np.histogram(a_clip, bins=edges_clip)
+        ax.step(edges_clip[:-1], cb2, where="post", lw=2, label=f"Before (n={len(b_clip):,})")
+        ax.step(edges_clip[:-1], ca2, where="post", lw=2, label=f"After (n={len(a_clip):,})")
+        ax.axvline(lo, ls=":", lw=1.2); ax.axvline(hi, ls=":", lw=1.2)
+        ax.set_title(f"Clipped {clip[0]}–{clip[1]} pct"); ax.set_xlabel("Median pages"); self._apply_common_ylim(ax); ax.legend(); ax.grid(True, alpha=0.3)
+
+        # add labels for the AFTER series bins (percents), suppress tiny ones
+        self._annotate_hist(ax, ca2, edges_clip, mode="percent", min_pct=0.03)
+
+        fig.suptitle("Pages distribution — small multiples")
+        plt.tight_layout()
+        return fig
+
+    # c) Publication year facets (no third color) with integer ticks
+    def plot_year_facets(self, step=1):
+        col = "publication_year"
+        b = pd.to_numeric(self.df_before[col], errors="coerce").dropna().astype(int)
+        a = pd.to_numeric(self.df_after[col],  errors="coerce").dropna().astype(int)
+        year_min, year_max = int(min(b.min(), a.min())), int(max(b.max(), a.max()))
+        edges = np.arange(year_min-0.5, year_max+1.5, step=1)
+
+        fig, axes = plt.subplots(1,2, figsize=(12,4), sharey=True)
+        for ax, x, title in [(axes[0], b, "Before"), (axes[1], a, "After")]:
+            c, _ = np.histogram(x, bins=edges)
+            ax.step(edges[:-1], c, where="post", lw=2)
+            self._apply_common_ylim(ax)
+            ax.set_title(title)
+            ax.set_xlabel("Publication year")
+            ax.set_xticks(np.arange(year_min, year_max+1, step))
+            ax.set_xticklabels([str(y) for y in np.arange(year_min, year_max+1, step)])
+            ax.grid(True, alpha=0.3)
+        fig.suptitle("Publication year — small multiples (integer ticks)")
+        plt.tight_layout()
+        return fig
+
+    # d) Simple CDF (ECDF) plots with Y in 0..1
+    def plot_cdf(self, col, log_x=False):
+        def ecdf(x):
+            x = np.sort(pd.Series(x).dropna().to_numpy())
+            y = np.arange(1, x.size+1)/x.size
+            return x, y
+        xb = pd.to_numeric(self.df_before[col], errors="coerce")
+        xa = pd.to_numeric(self.df_after[col],  errors="coerce")
+        x1, y1 = ecdf(xb); x2, y2 = ecdf(xa)
+        fig, ax = plt.subplots(figsize=(8,5))
+        ax.step(x1, y1, where="post", lw=2, label=f"Before (n={xb.notna().sum():,})")
+        ax.step(x2, y2, where="post", lw=2, label=f"After (n={xa.notna().sum():,})")
+        if log_x:
+            ax.set_xscale("log")
+            ax.xaxis.set_major_locator(LogLocator(base=10, numticks=8))
+            fmt = ScalarFormatter(); fmt.set_scientific(False); ax.xaxis.set_major_formatter(fmt)
+            self._add_log10_secondary_axis(ax)
+        ax.set_ylim(0, 1); ax.set_ylabel("Cumulative share (0–1)")
+        ax.set_title(f"CDF — {col.replace('_',' ').title()}")
+        ax.grid(True, alpha=0.3); ax.legend()
+        plt.tight_layout()
+        return fig
+
     def plot_hist_with_bands(self, col, use_fd=True, bins=60, clip=None, edges_override=None, density=False):
         """Create outlined step histograms with bell curves and median CI bands."""
         xb = pd.to_numeric(self.df_before[col], errors="coerce").dropna()
@@ -1099,6 +1302,43 @@ class ImprovedEDAFinal:
         fig.suptitle("Pages distribution — small multiples")
         plt.tight_layout()
         return fig
+
+    def write_markdown_summary(self):
+        """Generate simple descriptive markdown summary."""
+        path_md = Path(self.output_dir/"README_EDA_Summary.md")
+        rows=[]
+        for c in self.numerical_vars:
+            b = pd.to_numeric(self.df_before[c], errors="coerce")
+            a = pd.to_numeric(self.df_after[c],  errors="coerce")
+            rows.append({
+                "variable": c,
+                "n_before": int(b.notna().sum()), 
+                "n_after": int(a.notna().sum()),
+                "mean_before": b.mean(), 
+                "mean_after": a.mean(),
+                "median_before": b.median(), 
+                "median_after": a.median(),
+                "p50_before": b.quantile(0.5),
+                "p90_before": b.quantile(0.9),
+                "p99_before": b.quantile(0.99),
+                "p50_after": a.quantile(0.5),
+                "p90_after": a.quantile(0.9),
+                "p99_after": a.quantile(0.99),
+                "skew_before": b.skew(),
+                "skew_after": a.skew()
+            })
+        df = pd.DataFrame(rows).round(3)
+        
+        # Generate markdown with fallback for tabulate dependency
+        try:
+            md = "### Descriptive statistics: Before vs After\n\n" + df.to_markdown(index=False)
+        except ImportError:
+            # Fallback to simple text table if tabulate is not available
+            md = "### Descriptive statistics: Before vs After\n\n"
+            md += df.to_string(index=False)
+        
+        path_md.write_text(md)
+        return str(path_md)
 
     def write_stats_outputs(self):
         """Generate stats CSV and Markdown outputs."""
@@ -1215,62 +1455,68 @@ class ImprovedEDAFinal:
         return str(pdf_path)
 
     def generate_full_eda(self, cfg):
-        """Generate full EDA with all new features."""
+        """Generate full EDA with simple descriptive features."""
+        # coerce numerics and compute global 0..N
         self.df_before = self._coerce_numeric(self.df_before, self.numerical_vars)
         self.df_after  = self._coerce_numeric(self.df_after,  self.numerical_vars)
+        self._compute_global_ylim()
+        self.audit_colors()  # prints contrast ratios to logs; asserts minimal thresholds
+        self._save_axes_config("global")
 
-        figure_paths=[]
-        alt_texts=[]
+        figure_paths = []
 
-        # Loop variables: FD-bins + step-outline + bell curves
-        for col in self.numerical_vars:
-            fig, edges = self.plot_hist_with_bands(
-                col, 
-                use_fd=True, 
-                bins=cfg.get("bins",{}).get(col,60),
-                clip=cfg.get("clip",{}).get(col,None),
-                edges_override=cfg.get("edges",{}).get(col,None),
-                density=False
-            )
-            # freeze edges: save CSV counts + JSON edges
-            self._save_edges_json(col, edges)
-            self.save_hist_counts(col, edges)
+        # a) Histograms (year: linear; pages: linear; ratings: log; rating mean: linear)
+        for col, logflag in [
+            ("publication_year", False),
+            ("num_pages_median", False),
+            ("ratings_count_sum", True),
+            ("average_rating_weighted_mean", False),
+        ]:
+            fig, edges, counts = self.plot_hist_simple(col, edges=None, log_x=logflag,
+                                                       title=f"{col.replace('_',' ').title()} — Before vs After")
+            p = self.savefig_with_meta(fig, title=f"{col}_hist_step", dpi=cfg.get("dpi",300),
+                                       color_meta={"legend_present":True,"variable_colors":{"before":"#4C78A8","after":"#E45756"},
+                                                   "background":"#FFFFFF","text_color":"#111111",
+                                                   "uses_gradient_for_categories":False,"is_categorical":True})
+            figure_paths.append(p); plt.close(fig)
+            # Save axes config per figure
+            self._save_axes_config(f"{col}_hist_step")
 
-            color_meta = {
-                "legend_present":True, 
-                "variable_colors":{"before":"#6F7C85","after":"#AF6458"},
-                "background":"#FFFFFF",
-                "text_color":"#111111",
-                "uses_gradient_for_categories":False,
-                "is_categorical":True
-            }
-            p = self.savefig_with_meta(fig, title=f"{col}_hist_step", dpi=cfg.get("dpi",300), color_meta=color_meta)
-            figure_paths.append(p)
-            alt_texts.append(self.alt_text_for_hist(col, edges))
-            plt.close(fig)
-
-        # Small multiples for pages
-        fig = self.plot_pages_small_multiples(clip=cfg.get("pages_clip_pct",(1,99)), use_fd=True)
+        # b) Pages small-multiples with bin labels
+        fig = self.plot_pages_small_multiples(clip=(5,95))
         p = self.savefig_with_meta(fig, title="pages_small_multiples", dpi=cfg.get("dpi",300),
-                                   color_meta={"legend_present":True,"variable_colors":{},
+                                   color_meta={"legend_present":True,"variable_colors":{"before":"#4C78A8","after":"#E45756"},
                                                "background":"#FFFFFF","text_color":"#111111",
                                                "uses_gradient_for_categories":False,"is_categorical":True})
-        figure_paths.append(p)
-        alt_texts.append(self.alt_text_for_pages_small_multiples())
-        plt.close(fig)
+        figure_paths.append(p); plt.close(fig); self._save_axes_config("pages_small_multiples")
 
-        # Stats: Markdown + CSV
-        md_path, csv_path = self.write_stats_outputs()
+        # c) Publication year facets (no third color)
+        fig = self.plot_year_facets(step=1)
+        p = self.savefig_with_meta(fig, title="publication_year_facets", dpi=cfg.get("dpi",300),
+                                   color_meta={"legend_present":True,"variable_colors":{"before":"#4C78A8","after":"#E45756"},
+                                               "background":"#FFFFFF","text_color":"#111111",
+                                               "uses_gradient_for_categories":False,"is_categorical":True})
+        figure_paths.append(p); plt.close(fig); self._save_axes_config("publication_year_facets")
 
-        # Bundle PDF
+        # d) CDFs (ratings log, others linear)
+        for col, logflag in [
+            ("ratings_count_sum", True),
+            ("num_pages_median", False),
+            ("average_rating_weighted_mean", False),
+        ]:
+            fig = self.plot_cdf(col, log_x=logflag)
+            p = self.savefig_with_meta(fig, title=f"{col}_cdf", dpi=cfg.get("dpi",300),
+                                       color_meta={"legend_present":True,"variable_colors":{"before":"#4C78A8","after":"#E45756"},
+                                                   "background":"#FFFFFF","text_color":"#111111",
+                                                   "uses_gradient_for_categories":False,"is_categorical":True})
+            figure_paths.append(p); plt.close(fig); self._save_axes_config(f"{col}_cdf")
+
+        # bundle as you already do (PDF + markdown)
+        # keep only descriptive statistics in the markdown table (n, mean, median, p50/p90/p99, skew).
+        md_path = self.write_markdown_summary()  # ensure it is descriptive-only
         pdf_path = self.bundle_pdf_report(figure_paths, md_path)
-
-        # Save ALT texts
-        alt_path = Path(self.output_dir/"figure_alt_texts.txt")
-        alt_path.write_text("\n\n".join(f"- {Path(fp).name}: {t}" for fp,t in zip(figure_paths, alt_texts)))
-
-        print(f"Figures: {len(figure_paths)} | PDF: {pdf_path}\nStats CSV: {csv_path}\nALT: {alt_path}")
-        return figure_paths, alt_texts, md_path, csv_path, pdf_path
+        print(f"Saved PDF: {pdf_path}")
+        return figure_paths, md_path
 
     # ============================================================================
     # CODING AGENT PATTERN METHODS
@@ -1623,16 +1869,15 @@ Examples:
     return parser.parse_args()
 
 def main():
-    """Main execution function with enhanced EDA features."""
-    parser = argparse.ArgumentParser(description="Improved EDA with step hists, bell curves, FD bins, stats CSV, small multiples, CI color guard.")
-    parser.add_argument("--before", required=True, help="Path to before cleaning dataset CSV")
-    parser.add_argument("--after", required=True, help="Path to after cleaning dataset CSV")
-    parser.add_argument("--outdir", required=True, help="Output directory for results")
-    parser.add_argument("--dpi", type=int, default=300, help="DPI for saved figures")
-    parser.add_argument("--pages-clip-pct", type=str, default="1,99", help="Pages clipping percentiles (e.g., '1,99')")
-    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
-    
-    args = parser.parse_args()
+    """Main execution function with simple descriptive EDA features."""
+    import argparse
+    ap = argparse.ArgumentParser(description="Simple descriptive EDA with pinned 0..N Y, log10 secondary axis, labels, configs, facets, and CDFs.")
+    ap.add_argument("--before", required=True, help="Path to before cleaning dataset CSV")
+    ap.add_argument("--after", required=True, help="Path to after cleaning dataset CSV")
+    ap.add_argument("--outdir", required=True, help="Output directory for results")
+    ap.add_argument("--dpi", type=int, default=300, help="DPI for saved figures")
+    ap.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
+    args = ap.parse_args()
     
     # Set up logging
     setup_logging(verbose=args.verbose)
@@ -1643,26 +1888,14 @@ def main():
         logger.info("🏗️  Creating EDA analyzer instance...")
         viz = ImprovedEDAFinal(args.before, args.after, args.outdir)
         
-        # Parse pages clipping percentiles
-        lo, hi = map(float, args.pages_clip_pct.split(","))
-        cfg = {
-            "dpi": args.dpi, 
-            "pages_clip_pct": (lo,hi), 
-            "bins":{}, 
-            "clip":{}, 
-            "edges":{}
-        }
-        
-        # Generate full EDA with new features
-        logger.info("🎨 Starting enhanced EDA generation...")
-        figure_paths, alt_texts, md_path, csv_path, pdf_path = viz.generate_full_eda(cfg)
+        # Generate full EDA with simple descriptive features
+        logger.info("🎨 Starting simple descriptive EDA generation...")
+        figure_paths, md_path = viz.generate_full_eda(cfg={"dpi": args.dpi})
         
         # Final success message
-        logger.info("🎉 Enhanced EDA analysis completed successfully!")
-        print(f"\n🎉 ENHANCED EDA COMPLETE!")
+        logger.info("🎉 Simple descriptive EDA analysis completed successfully!")
+        print(f"\n🎉 SIMPLE DESCRIPTIVE EDA COMPLETE!")
         print(f"📊 Generated {len(figure_paths)} figures")
-        print(f"📄 PDF report: {pdf_path}")
-        print(f"📈 Stats CSV: {csv_path}")
         print(f"📝 Markdown: {md_path}")
         print(f"⏰ End Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("=" * 80)

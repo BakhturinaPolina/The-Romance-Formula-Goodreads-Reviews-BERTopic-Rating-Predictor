@@ -266,7 +266,7 @@ def summarize_clusters(token_cluster: dict[str, int],
     return pd.DataFrame(rows).sort_values(["size","cluster_id"], ascending=[False, True])
 
 def cluster_cohesion_metrics(filtered_parquet: Path, token_cluster: dict[str, int], batch_size: int = 500_000) -> pd.DataFrame:
-    """Compute cluster cohesion metrics: min/mean/max sim, triangle rate."""
+    """Compute cluster cohesion metrics: min/mean/max sim, triangle rate, size."""
     dsobj = ds.dataset(str(filtered_parquet), format="parquet")
     scanner = dsobj.scanner(columns=["token_a","token_b","cosine_sim"], batch_size=batch_size)
     
@@ -282,6 +282,11 @@ def cluster_cohesion_metrics(filtered_parquet: Path, token_cluster: dict[str, in
             if cid_a is not None and cid_a == cid_b:
                 cluster_edges[cid_a].append((a_str, b_str, sim))
     
+    # Compute cluster sizes
+    cluster_sizes = defaultdict(int)
+    for token, cid in token_cluster.items():
+        cluster_sizes[cid] += 1
+    
     # Compute cohesion metrics
     rows = []
     for cid, edges in cluster_edges.items():
@@ -291,6 +296,7 @@ def cluster_cohesion_metrics(filtered_parquet: Path, token_cluster: dict[str, in
         min_sim = min(sims)
         mean_sim = sum(sims) / len(sims)
         max_sim = max(sims)
+        size = cluster_sizes[cid]
         
         # Triangle rate calculation
         pairs_set = set((a, b) for a, b, _ in edges)
@@ -312,6 +318,7 @@ def cluster_cohesion_metrics(filtered_parquet: Path, token_cluster: dict[str, in
         
         rows.append({
             "cluster_id": cid,
+            "size": size,
             "edges": len(edges),
             "min_sim": min_sim,
             "mean_sim": mean_sim,
@@ -412,6 +419,79 @@ def save_artifacts(cfg: Config,
     paths["meta"].write_text(json.dumps(meta, indent=2))
     p(f"✅ Saved: {paths['clusters_map'].name}, {paths['clusters_summary'].name}, {paths['clusters_edges_sample'].name}")
 
+# ----------------------- Graph Refinement Integration -------------------------------
+
+def cmd_graph_build(in_candidates: Path, out_dir: Path, 
+                   base_threshold: float = 0.60, k: int = 5, 
+                   mutual_nn: bool = True, max_degree: int = 50,
+                   adaptive_short_len: int = 5, adaptive_short_thr: float = 0.80) -> None:
+    """Build a clean, dense graph from raw candidates using top-k + mutual-NN + hub caps."""
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parent))
+    from graph_refine import GraphBuildCfg, build_clean_graph
+    
+    cfg = GraphBuildCfg(
+        base_threshold=base_threshold, k=k, mutual_nn=mutual_nn, max_degree=max_degree,
+        adaptive_short_len=adaptive_short_len, adaptive_short_thr=adaptive_short_thr
+    )
+    
+    head("GRAPH REFINEMENT")
+    p(f"Building clean graph with top-k={k}, mutual-NN={mutual_nn}, max-degree={max_degree}")
+    
+    # Load candidates
+    candidates = pd.read_parquet(in_candidates)
+    p(f"Loaded {len(candidates):,} candidate pairs")
+    
+    # Build clean graph
+    clean_graph = build_clean_graph(candidates, cfg)
+    p(f"Built clean graph: {len(clean_graph):,} edges")
+    
+    # Save
+    out_path = out_dir / "pairs_clean_graph.parquet"
+    clean_graph.to_parquet(out_path, index=False)
+    p(f"✅ Saved clean graph to {out_path}")
+    log_memory()
+
+def cmd_size_aware_quality(cohesion_path: Path, out_dir: Path,
+                          pair_min_sim: float = 0.85, small_min_sim: float = 0.75,
+                          small_min_tri: float = 0.33, big_min_sim: float = 0.70,
+                          big_min_mean: float = 0.78, big_min_tri: float = 0.20) -> None:
+    """Apply size-aware quality flags to cluster cohesion metrics."""
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parent))
+    from graph_refine import QualityCfg, size_aware_flags, split_clusters_by_size
+    
+    head("SIZE-AWARE QUALITY ASSESSMENT")
+    
+    # Load data
+    coh = pd.read_parquet(cohesion_path)
+    token_map = pd.read_parquet(out_dir / "clusters_token_map.parquet")
+    
+    # Apply size-aware quality criteria
+    qc = QualityCfg(pair_min_sim, small_min_sim, small_min_tri, big_min_sim, big_min_mean, big_min_tri)
+    flagged = size_aware_flags(coh, qc)
+    
+    # Split by size
+    pairs, multi, pair_tokens, multi_tokens = split_clusters_by_size(flagged, token_map)
+    
+    # Save results
+    flagged.to_parquet(out_dir / "clusters_flagged_size_aware.parquet", index=False)
+    pairs.to_parquet(out_dir / "clusters_pairs.parquet", index=False)
+    multi.to_parquet(out_dir / "clusters_multi.parquet", index=False)
+    pair_tokens.to_parquet(out_dir / "clusters_pairs_tokens.parquet", index=False)
+    multi_tokens.to_parquet(out_dir / "clusters_multi_tokens.parquet", index=False)
+    
+    # Report
+    good_clusters = (~flagged["is_flagged"]).sum()
+    p(f"✅ Size-aware quality assessment complete:")
+    p(f"   Total clusters: {len(flagged):,}")
+    p(f"   Good clusters: {good_clusters:,} ({good_clusters/len(flagged)*100:.1f}%)")
+    p(f"   Pairs: {len(pairs):,}")
+    p(f"   Multi-token: {len(multi):,}")
+    log_memory()
+
 # ----------------------- Commands -------------------------------
 
 def cmd_stats(in_pairs: Path, threshold: float = 0.50, min_len: int = 3, max_rank: int | None = None) -> None:
@@ -493,6 +573,73 @@ def cli_all(
     max_rank: int | None = typer.Option(None),
 ):
     cmd_all(in_pairs, out_dir, threshold, min_len, max_rank)
+
+@app.command("graph-build")
+def cli_graph_build(
+    in_candidates: Path = typer.Argument(...),
+    out_dir: Path = typer.Argument(...),
+    base_threshold: float = typer.Option(0.60),
+    k: int = typer.Option(5),
+    mutual_nn: bool = typer.Option(True),
+    max_degree: int = typer.Option(50),
+    adaptive_short_len: int = typer.Option(5),
+    adaptive_short_thr: float = typer.Option(0.80),
+):
+    """Build a clean, dense graph from raw candidates using top-k + mutual-NN + hub caps."""
+    cmd_graph_build(in_candidates, out_dir, base_threshold, k, mutual_nn, max_degree, adaptive_short_len, adaptive_short_thr)
+
+@app.command("size-aware-quality")
+def cli_size_aware_quality(
+    cohesion_path: Path = typer.Argument(...),
+    out_dir: Path = typer.Argument(...),
+    pair_min_sim: float = typer.Option(0.85),
+    small_min_sim: float = typer.Option(0.75),
+    small_min_tri: float = typer.Option(0.33),
+    big_min_sim: float = typer.Option(0.70),
+    big_min_mean: float = typer.Option(0.78),
+    big_min_tri: float = typer.Option(0.20),
+):
+    """Apply size-aware quality flags to cluster cohesion metrics."""
+    cmd_size_aware_quality(cohesion_path, out_dir, pair_min_sim, small_min_sim, small_min_tri, big_min_sim, big_min_mean, big_min_tri)
+
+@app.command("refined-all")
+def cli_refined_all(
+    in_candidates: Path = typer.Argument(...),
+    out_dir: Path = typer.Argument(...),
+    base_threshold: float = typer.Option(0.60),
+    k: int = typer.Option(5),
+    mutual_nn: bool = typer.Option(True),
+    max_degree: int = typer.Option(50),
+    adaptive_short_thr: float = typer.Option(0.80),
+    pair_min_sim: float = typer.Option(0.85),
+    small_min_sim: float = typer.Option(0.75),
+    small_min_tri: float = typer.Option(0.33),
+    big_min_sim: float = typer.Option(0.70),
+    big_min_mean: float = typer.Option(0.78),
+    big_min_tri: float = typer.Option(0.20),
+):
+    """Run the complete refined pipeline: graph build + cluster + size-aware quality."""
+    cfg = Config(in_pairs=in_candidates, out_dir=out_dir, base_threshold=base_threshold).ensure()
+    
+    # Step 1: Build clean graph
+    cmd_graph_build(in_candidates, out_dir, base_threshold, k, mutual_nn, max_degree, 5, adaptive_short_thr)
+    
+    # Step 2: Cluster on clean graph (skip filtering since graph is already clean)
+    head("CLUSTER ON CLEAN GRAPH")
+    token_cluster, sample_edges = build_clusters(out_dir / "pairs_clean_graph.parquet", sample_per_cluster=5)
+    
+    # Step 3: Compute quality metrics
+    head("CLUSTER QUALITY METRICS")
+    cohesion_metrics = cluster_cohesion_metrics(out_dir / "pairs_clean_graph.parquet", token_cluster)
+    
+    # Step 4: Save basic artifacts
+    save_artifacts(cfg, token_cluster, sample_edges, cohesion_metrics, None)
+    
+    # Step 5: Apply size-aware quality assessment
+    cmd_size_aware_quality(out_dir / "cluster_cohesion_metrics.parquet", out_dir, 
+                          pair_min_sim, small_min_sim, small_min_tri, big_min_sim, big_min_mean, big_min_tri)
+    
+    head("REFINED PIPELINE COMPLETE")
 
 @app.command("diagnose")
 def cli_diagnose(

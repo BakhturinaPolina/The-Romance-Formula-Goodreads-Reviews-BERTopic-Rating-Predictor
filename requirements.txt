@@ -7,3 +7,9 @@ tqdm>=4.64.0
 
 # Jupyter for analysis (if needed)
 jupyter>=1.0.0
+
+# Deduplication pipeline dependencies
+pyarrow>=15.0.0  # for parquet file handling
+duckdb>=0.9.0    # for efficient SQL queries on parquet
+typer[all]>=0.9.0  # for CLI interface
+psutil>=5.9.0    # for memory monitoring

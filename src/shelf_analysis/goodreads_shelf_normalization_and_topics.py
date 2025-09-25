@@ -596,10 +596,22 @@ def run_topics(csv_path: str, norm_map_path: str, outdir: str, tcfg: TopicConfig
 
     # Per-document topics
     topics, probs = model.transform(docs)
+    
+    # Handle probability arrays properly
+    if probs is not None and len(probs) > 0:
+        if hasattr(probs[0], '__len__') and len(probs[0]) > 1:
+            # If probs is array of arrays, take max probability
+            prob_values = [float(max(p)) if p is not None and len(p) > 0 else None for p in probs]
+        else:
+            # If probs is array of scalars
+            prob_values = [float(p) if p is not None else None for p in probs]
+    else:
+        prob_values = [None] * len(topics)
+    
     topics_df = pd.DataFrame({
         'work_id': df.get('work_id', pd.Series(range(len(df)))),
         'topic': topics,
-        'prob': [float(p) if p is not None else None for p in probs],
+        'prob': prob_values,
     })
     topics_df.to_csv(os.path.join(outdir, 'book_topics.csv'), index=False)
 
@@ -657,7 +669,19 @@ def create_app(model_dir: str = None):
         if _state['model'] is None:
             return {"error": "Model not loaded. Call /fit first or set BERTOPIC_MODEL_DIR."}
         topics, probs = _state['model'].transform(body.docs)
-        return {"topics": [int(t) for t in topics], "probs": [float(p) if p is not None else None for p in probs]}
+        
+        # Handle probability arrays properly
+        if probs is not None and len(probs) > 0:
+            if hasattr(probs[0], '__len__') and len(probs[0]) > 1:
+                # If probs is array of arrays, take max probability
+                prob_values = [float(max(p)) if p is not None and len(p) > 0 else None for p in probs]
+            else:
+                # If probs is array of scalars
+                prob_values = [float(p) if p is not None else None for p in probs]
+        else:
+            prob_values = [None] * len(topics)
+        
+        return {"topics": [int(t) for t in topics], "probs": prob_values}
 
     @app.get('/topics')
     def topics():

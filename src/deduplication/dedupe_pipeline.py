@@ -419,18 +419,99 @@ def save_artifacts(cfg: Config,
     paths["meta"].write_text(json.dumps(meta, indent=2))
     p(f"✅ Saved: {paths['clusters_map'].name}, {paths['clusters_summary'].name}, {paths['clusters_edges_sample'].name}")
 
-# ----------------------- Graph Refinement Integration -------------------------------
+# ----------------------- Graph Refinement -------------------------------
+
+@dataclass(frozen=True)
+class GraphBuildCfg:
+    base_threshold: float = 0.60      # low floor for candidate graph
+    k: int = 5                        # top-k per token
+    mutual_nn: bool = True
+    max_degree: int = 50              # hub cap
+    adaptive_short_len: int = 5
+    adaptive_short_thr: float = 0.80  # len<adaptive_short_len uses this thr
+    require_triangle: bool = False    # optional local consistency
+    min_jaccard: float = 0.05         # neighbor overlap threshold if used
+
+def _adaptive_thr(tok: str, cfg: GraphBuildCfg) -> float:
+    return cfg.adaptive_short_thr if len(tok) < cfg.adaptive_short_len else cfg.base_threshold
+
+def _topk_per_token(df: pd.DataFrame, k: int) -> pd.DataFrame:
+    # Expect columns: token_a, token_b, cosine_sim, rank (optional)
+    # Keep top-k by cosine per token_a; if 'rank' exists, break ties.
+    order_cols = ["token_a", "cosine_sim"]
+    asc = [True, False]
+    if "rank" in df.columns:
+        order_cols.append("rank"); asc.append(True)
+    g = df.sort_values(order_cols, ascending=asc).groupby("token_a").head(k)
+    return g
+
+def _mutual_nn(edges: pd.DataFrame) -> pd.DataFrame:
+    # Keep edges where (a in top-k of b) and (b in top-k of a)
+    # Compute both directions membership
+    ab = edges[["token_a","token_b"]].astype("string")
+    ba = ab.rename(columns={"token_a":"token_b","token_b":"token_a"})
+    key = pd.Series(np.arange(len(ab)), name="eid")
+    abk = pd.concat([ab, key], axis=1)
+    joined = abk.merge(ba, on=["token_a","token_b"], how="inner")
+    return edges.loc[joined["eid"].unique()]
+
+def _cap_hubs(edges: pd.DataFrame, max_degree: int) -> pd.DataFrame:
+    deg = pd.concat([edges["token_a"], edges["token_b"]]).astype("string").value_counts()
+    bad = set(deg[deg > max_degree].index)
+    mask = ~edges["token_a"].isin(bad) & ~edges["token_b"].isin(bad)
+    return edges[mask].copy()
+
+def _triangle_filter(edges: pd.DataFrame, min_jaccard: float) -> pd.DataFrame:
+    # Keep edges whose endpoints share neighbors (Jaccard > min_jaccard)
+    a = edges["token_a"].astype("string").to_numpy()
+    b = edges["token_b"].astype("string").to_numpy()
+    tokens = pd.unique(np.concatenate([a,b]))
+    idx = {t:i for i,t in enumerate(tokens)}
+    neigh = [set() for _ in range(len(tokens))]
+    for x,y in zip(a,b):
+        ix,iy = idx[x], idx[y]
+        neigh[ix].add(iy); neigh[iy].add(ix)
+    keep_mask = []
+    for x,y in zip(a,b):
+        nx, ny = neigh[idx[x]], neigh[idx[y]]
+        inter = len(nx & ny); union = len(nx | ny) or 1
+        keep_mask.append((inter/union) >= min_jaccard)
+    return edges[pd.Series(keep_mask, index=edges.index)]
+
+def build_clean_graph(candidates: pd.DataFrame, cfg: GraphBuildCfg) -> pd.DataFrame:
+    """Build a clean, dense graph from raw candidates using top-k + mutual-NN + hub caps."""
+    df = candidates.copy()
+    df[["token_a","token_b"]] = df[["token_a","token_b"]].astype("string")
+    
+    # Adaptive threshold (per-endpoint max)
+    thr_a = df["token_a"].map(lambda x: _adaptive_thr(x, cfg))
+    thr_b = df["token_b"].map(lambda x: _adaptive_thr(x, cfg))
+    thr = np.maximum(thr_a.to_numpy(dtype=float), thr_b.to_numpy(dtype=float))
+    df = df[df["cosine_sim"].astype(float).to_numpy() >= thr].copy()
+
+    # Densify with top-k per endpoint, then mutual-NN (optional)
+    topk_a = _topk_per_token(df, cfg.k)
+    topk_b = _topk_per_token(df.rename(columns={"token_a":"token_b","token_b":"token_a"}), cfg.k)
+    topk_b = topk_b.rename(columns={"token_a":"token_b","token_b":"token_a"})
+    edges = pd.concat([topk_a, topk_b], ignore_index=True).drop_duplicates(subset=["token_a","token_b","cosine_sim"])
+
+    if cfg.mutual_nn:
+        edges = _mutual_nn(edges)
+
+    # Hub cap
+    edges = _cap_hubs(edges, cfg.max_degree)
+
+    # Optional triangle/Jaccard
+    if cfg.require_triangle:
+        edges = _triangle_filter(edges, cfg.min_jaccard)
+
+    return edges.sort_values(["token_a","cosine_sim"], ascending=[True, False]).reset_index(drop=True)
 
 def cmd_graph_build(in_candidates: Path, out_dir: Path, 
                    base_threshold: float = 0.60, k: int = 5, 
                    mutual_nn: bool = True, max_degree: int = 50,
                    adaptive_short_len: int = 5, adaptive_short_thr: float = 0.80) -> None:
     """Build a clean, dense graph from raw candidates using top-k + mutual-NN + hub caps."""
-    import sys
-    from pathlib import Path
-    sys.path.append(str(Path(__file__).parent))
-    from graph_refine import GraphBuildCfg, build_clean_graph
-    
     cfg = GraphBuildCfg(
         base_threshold=base_threshold, k=k, mutual_nn=mutual_nn, max_degree=max_degree,
         adaptive_short_len=adaptive_short_len, adaptive_short_thr=adaptive_short_thr
@@ -453,16 +534,58 @@ def cmd_graph_build(in_candidates: Path, out_dir: Path,
     p(f"✅ Saved clean graph to {out_path}")
     log_memory()
 
+# ----------------------- Size-aware Quality Assessment -------------------------------
+
+@dataclass(frozen=True)
+class QualityCfg:
+    pair_min_sim: float = 0.85
+    small_min_sim: float = 0.75
+    small_min_tri: float = 0.33
+    big_min_sim: float = 0.70
+    big_min_mean: float = 0.78
+    big_min_tri: float = 0.20
+
+def size_aware_flags(coh: pd.DataFrame, qc: QualityCfg) -> pd.DataFrame:
+    """Apply size-aware quality criteria to cluster cohesion metrics."""
+    # coh must contain: cluster_id, size, min_sim, mean_sim, triangle_rate
+    s = coh.copy()
+    s["flag_reason"] = ""
+    
+    # pairs (size == 2): accept if min_sim >= threshold
+    is_pair = s["size"] == 2
+    s.loc[is_pair & (s["min_sim"] < qc.pair_min_sim), "flag_reason"] = "pair_min_sim"
+    
+    # small clusters (3..5): require min_sim AND triangle_rate
+    small = (s["size"] >= 3) & (s["size"] <= 5)
+    s.loc[small & (s["min_sim"] < qc.small_min_sim), "flag_reason"] += ("|min_sim" if s.loc[small, "flag_reason"].ne("").any() else "min_sim")
+    s.loc[small & (s["triangle_rate"] < qc.small_min_tri), "flag_reason"] += ("|triangle" if s.loc[small, "flag_reason"].ne("").any() else "triangle")
+    
+    # big clusters (>5): require min_sim AND mean_sim AND triangle_rate
+    big = s["size"] > 5
+    s.loc[big & (s["min_sim"] < qc.big_min_sim), "flag_reason"] += ("|min_sim" if s.loc[big, "flag_reason"].ne("").any() else "min_sim")
+    s.loc[big & (s["mean_sim"] < qc.big_min_mean), "flag_reason"] += ("|mean_sim" if s.loc[big, "flag_reason"].ne("").any() else "mean_sim")
+    s.loc[big & (s["triangle_rate"] < qc.big_min_tri), "flag_reason"] += ("|triangle" if s.loc[big, "flag_reason"].ne("").any() else "triangle")
+    
+    s["flag_reason"] = s["flag_reason"].str.strip("|")
+    s["is_flagged"] = s["flag_reason"].ne("")
+    return s
+
+def split_clusters_by_size(coh: pd.DataFrame, token_map: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Split clusters into pairs (size=2) and multi-token clusters (size>=3)."""
+    pairs = coh[coh["size"] == 2].copy()
+    multi = coh[coh["size"] >= 3].copy()
+    
+    # Get token mappings for each type
+    pair_tokens = token_map[token_map["cluster_id"].isin(pairs["cluster_id"])]
+    multi_tokens = token_map[token_map["cluster_id"].isin(multi["cluster_id"])]
+    
+    return pairs, multi, pair_tokens, multi_tokens
+
 def cmd_size_aware_quality(cohesion_path: Path, out_dir: Path,
                           pair_min_sim: float = 0.85, small_min_sim: float = 0.75,
                           small_min_tri: float = 0.33, big_min_sim: float = 0.70,
                           big_min_mean: float = 0.78, big_min_tri: float = 0.20) -> None:
     """Apply size-aware quality flags to cluster cohesion metrics."""
-    import sys
-    from pathlib import Path
-    sys.path.append(str(Path(__file__).parent))
-    from graph_refine import QualityCfg, size_aware_flags, split_clusters_by_size
-    
     head("SIZE-AWARE QUALITY ASSESSMENT")
     
     # Load data
@@ -491,6 +614,141 @@ def cmd_size_aware_quality(cohesion_path: Path, out_dir: Path,
     p(f"   Pairs: {len(pairs):,}")
     p(f"   Multi-token: {len(multi):,}")
     log_memory()
+
+# ----------------------- Graph Growth -------------------------------
+
+@dataclass(frozen=True)
+class GraphGrowCfg:
+    min_sim: float = 0.75               # safety floor to preserve precision
+    min_support: int = 2                # need edges to ≥2 cluster tokens
+    require_triangle: bool = True       # at least one triangle with cluster
+    attach_k_per_node: int = 2          # keep only top-k attachments per new node
+    max_new_nodes_per_cluster: int = 10 # growth guardrail
+    iterations: int = 1                 # 1–2 passes recommended
+
+def _normalize_edges(df: pd.DataFrame) -> pd.DataFrame:
+    out = df.copy()
+    out = out.rename(columns={"cosine_sim":"cosine_sim"})
+    out[["token_a","token_b"]] = out[["token_a","token_b"]].astype("string")
+    out["cosine_sim"] = out["cosine_sim"].astype(float)
+    return out[["token_a","token_b","cosine_sim"]]
+
+def _build_adjacency(candidates: pd.DataFrame, min_sim: float) -> tuple[dict[str, dict[str,float]], set[tuple[str,str]]]:
+    """Adjacency by token with sims, plus undirected edge set for triangle checks (why: O(1) lookups)."""
+    cand = _normalize_edges(candidates)
+    cand = cand[cand["cosine_sim"] >= min_sim].copy()
+    adj: dict[str, dict[str,float]] = defaultdict(dict)
+    es: set[tuple[str,str]] = set()
+    for a,b,s in cand.itertuples(index=False, name=None):
+        if a == b: 
+            continue
+        # keep best sim per direction
+        if (b not in adj[a]) or (s > adj[a][b]):
+            adj[a][b] = s
+        if (a not in adj[b]) or (s > adj[b][a]):
+            adj[b][a] = s
+        es.add((a,b)); es.add((b,a))
+    return adj, es
+
+def _uf_build(edges: pd.DataFrame) -> dict[str,int]:
+    parent: dict[str,str] = {}
+    rank: dict[str,int] = {}
+    def find(x: str) -> str:
+        if x not in parent: parent[x]=x; rank[x]=0; return x
+        if parent[x]!=x: parent[x]=find(parent[x])
+        return parent[x]
+    def union(a: str, b: str) -> None:
+        ra, rb = find(a), find(b)
+        if ra==rb: return
+        if rank[ra]<rank[rb]: parent[ra]=rb
+        elif rank[ra]>rank[rb]: parent[rb]=ra
+        else: parent[rb]=ra; rank[ra]+=1
+    for a,b,_ in _normalize_edges(edges).itertuples(index=False, name=None):
+        union(a,b)
+    root_to_id: dict[str,int] = {}
+    tok_to_cid: dict[str,int] = {}
+    next_id = 1
+    for t in list(parent.keys()):
+        r = find(t)
+        if r not in root_to_id:
+            root_to_id[r]=next_id; next_id+=1
+        tok_to_cid[t]=root_to_id[r]
+    return tok_to_cid
+
+def _tri_possible(nei: set[str], edge_set: set[tuple[str,str]]) -> bool:
+    """Require at least one triangle among the neighbors (why: blocks chainy attachments)."""
+    if len(nei) < 2:
+        return False
+    lst = list(nei)
+    for i in range(len(lst)):
+        for j in range(i+1, len(lst)):
+            u, v = lst[i], lst[j]
+            if (u,v) in edge_set or (v,u) in edge_set:
+                return True
+    return False
+
+def _grow_once(seed_edges: pd.DataFrame,
+               candidates: pd.DataFrame,
+               cfg: GraphGrowCfg) -> tuple[pd.DataFrame, int]:
+    seeds = _normalize_edges(seed_edges)
+    adj, e_set = _build_adjacency(candidates, cfg.min_sim)
+    # current clusters
+    cid = _uf_build(seeds)
+    clusters: dict[int, set[str]] = defaultdict(set)
+    for t, c in cid.items():
+        clusters[c].add(t)
+
+    # candidates neighboring clusters
+    new_edges: list[tuple[str,str,float]] = []
+    added_nodes_total = 0
+
+    for c, toks in clusters.items():
+        toks = set(toks)
+        # gather 1-hop neighbors outside the cluster
+        out_nei: dict[str, list[tuple[str,float]]] = defaultdict(list)
+        for u in toks:
+            for v, s in adj.get(u, {}).items():
+                if v not in toks:
+                    out_nei[v].append((u, s))
+        # score and attach new nodes
+        added_nodes = 0
+        for x, supports in sorted(out_nei.items(), key=lambda kv: (-len(kv[1]), -max(s for _,s in kv[1]))):
+            if added_nodes >= cfg.max_new_nodes_per_cluster:
+                break
+            # support tokens inside cluster
+            support_tokens = {u for (u, _) in supports}
+            if len(support_tokens) < cfg.min_support:
+                continue
+            if cfg.require_triangle and not _tri_possible(support_tokens, e_set):
+                continue
+            # choose strongest attachments to cluster (top-k)
+            supports_sorted = sorted(supports, key=lambda us: -us[1])[:cfg.attach_k_per_node]
+            for u, s in supports_sorted:
+                new_edges.append((x, u, s))
+            toks.add(x)  # expand
+            added_nodes += 1
+            added_nodes_total += 1
+
+    if not new_edges:
+        return seeds, 0
+
+    grown = pd.concat(
+        [seeds, pd.DataFrame(new_edges, columns=["token_a","token_b","cosine_sim"])],
+        ignore_index=True
+    ).drop_duplicates(["token_a","token_b"], keep="first")
+    return grown, added_nodes_total
+
+def grow_by_triangles(clean_graph: pd.DataFrame,
+                      candidates: pd.DataFrame,
+                      cfg: GraphGrowCfg) -> pd.DataFrame:
+    """Iteratively add high-confidence nodes that create triangles with seed clusters."""
+    graph = _normalize_edges(clean_graph)
+    for _ in range(cfg.iterations):
+        graph2, added = _grow_once(graph, candidates, cfg)
+        if added == 0:
+            break
+        graph = graph2
+    return graph
 
 # ----------------------- Commands -------------------------------
 
@@ -640,6 +898,72 @@ def cli_refined_all(
                           pair_min_sim, small_min_sim, small_min_tri, big_min_sim, big_min_mean, big_min_tri)
     
     head("REFINED PIPELINE COMPLETE")
+
+@app.command("refined-grow")
+def cli_refined_grow(
+    in_candidates: Path = typer.Argument(..., help="Full candidate pairs parquet"),
+    out_dir: Path = typer.Argument(..., help="Output directory"),
+    # seed graph params
+    base_threshold: float = typer.Option(0.60),
+    k: int = typer.Option(8),
+    mutual_nn: bool = typer.Option(True),
+    max_degree: int = typer.Option(100),
+    adaptive_short_thr: float = typer.Option(0.80),
+    # growth params
+    grow_min_sim: float = typer.Option(0.75),
+    grow_min_support: int = typer.Option(2),
+    grow_require_triangle: bool = typer.Option(True),
+    grow_attach_k: int = typer.Option(2),
+    grow_max_new_per_cluster: int = typer.Option(10),
+    grow_iterations: int = typer.Option(1),
+    # quality params (same defaults as your size-aware)
+    pair_min_sim: float = typer.Option(0.85),
+    small_min_sim: float = typer.Option(0.75),
+    small_min_tri: float = typer.Option(0.33),
+    big_min_sim: float = typer.Option(0.70),
+    big_min_mean: float = typer.Option(0.78),
+    big_min_tri: float = typer.Option(0.20),
+):
+    """
+    Build a clean seed graph, then grow clusters via triangle-based attachment and assess quality.
+    """
+    out_dir.mkdir(parents=True, exist_ok=True)
+    cfg = Config(in_pairs=in_candidates, out_dir=out_dir, base_threshold=base_threshold).ensure()
+
+    # 1) Seed graph
+    cmd_graph_build(in_candidates, out_dir, base_threshold, k, mutual_nn, max_degree, 5, adaptive_short_thr)
+    clean_path = out_dir / "pairs_clean_graph.parquet"
+    clean = pd.read_parquet(clean_path)
+
+    # 2) Triangle growth from full candidates
+    head("TRIANGLE-BASED GROWTH")
+    candidates = pd.read_parquet(in_candidates)
+    gcfg = GraphGrowCfg(
+        min_sim=grow_min_sim,
+        min_support=grow_min_support,
+        require_triangle=grow_require_triangle,
+        attach_k_per_node=grow_attach_k,
+        max_new_nodes_per_cluster=grow_max_new_per_cluster,
+        iterations=grow_iterations,
+    )
+    grown = grow_by_triangles(clean, candidates, gcfg)
+    grown_path = out_dir / "pairs_grown_graph.parquet"
+    grown.to_parquet(grown_path, index=False)
+    print(f"✅ Saved grown graph to {grown_path}")
+
+    # 3) Cluster + metrics on grown graph
+    head("CLUSTER ON GROWN GRAPH")
+    token_cluster, sample_edges = build_clusters(grown_path, sample_per_cluster=5)
+
+    head("CLUSTER QUALITY METRICS")
+    cohesion = cluster_cohesion_metrics(grown_path, token_cluster)
+    save_artifacts(cfg, token_cluster, sample_edges, cohesion, None)
+
+    # 4) Size-aware flags
+    cmd_size_aware_quality(out_dir / "cluster_cohesion_metrics.parquet", out_dir,
+                           pair_min_sim, small_min_sim, small_min_tri, big_min_sim, big_min_mean, big_min_tri)
+
+    head("REFINED-GROW PIPELINE COMPLETE")
 
 @app.command("diagnose")
 def cli_diagnose(

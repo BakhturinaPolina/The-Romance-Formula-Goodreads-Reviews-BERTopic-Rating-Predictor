@@ -32,16 +32,47 @@ This archive contains unneeded code from the `src/deduplication/` module that ha
 - **Current Status**: Superseded by `README_COMPLETE.md` which provides complete pipeline documentation
 - **Replacement**: Use `README_COMPLETE.md` for all documentation needs
 
+### 4. `graph_refine.py`
+**Reason for Archival**: Functionality consolidated into main pipeline
+- **Original Purpose**: Graph building and refinement algorithms with size-aware quality assessment
+- **Current Status**: All functionality consolidated into `dedupe_pipeline.py`
+- **Replacement**: Use `python dedupe_pipeline.py graph-build` and `python dedupe_pipeline.py size-aware-quality`
+- **Key Functions Moved**:
+  - `GraphBuildCfg` → consolidated into main pipeline
+  - `build_clean_graph()` → consolidated into main pipeline
+  - `QualityCfg` → consolidated into main pipeline
+  - `size_aware_flags()` → consolidated into main pipeline
+
+### 5. `graph_grow.py`
+**Reason for Archival**: Functionality consolidated into main pipeline
+- **Original Purpose**: Triangle-based cluster growth algorithms
+- **Current Status**: All functionality consolidated into `dedupe_pipeline.py`
+- **Replacement**: Use `python dedupe_pipeline.py refined-grow`
+- **Key Functions Moved**:
+  - `GraphGrowCfg` → consolidated into main pipeline
+  - `grow_by_triangles()` → consolidated into main pipeline
+  - `_grow_once()` → consolidated into main pipeline
+
+### 6. `grow_runner.py`
+**Reason for Archival**: Functionality consolidated into main pipeline
+- **Original Purpose**: Growth pipeline runner with CLI interface
+- **Current Status**: All functionality consolidated into `dedupe_pipeline.py`
+- **Replacement**: Use `python dedupe_pipeline.py refined-grow`
+- **Key Functions Moved**:
+  - `refined_grow()` → consolidated as `cli_refined_grow` in main pipeline
+
 ## Current Active Components
 
 The following files remain in `src/deduplication/` as the active, maintained codebase:
 
 ### Core Pipeline
-- `dedupe_pipeline.py` - Main pipeline with all commands and integrated diagnostics
-- `graph_refine.py` - Graph building and refinement algorithms
-- `graph_grow.py` - Triangle-based cluster growth algorithms
-- `grow_runner.py` - Growth pipeline runner
-- `mapping_export.py` - Frequency-based medoid export and normalization
+- `dedupe_pipeline.py` - **Consolidated main pipeline** with all functionality:
+  - Basic filtering and clustering
+  - Graph building and refinement algorithms
+  - Triangle-based cluster growth algorithms
+  - Size-aware quality assessment
+  - All CLI commands and diagnostics
+- `mapping_export.py` - Frequency-based medoid export and normalization (kept separate due to distinct functionality)
 
 ### Documentation
 - `README_COMPLETE.md` - Comprehensive documentation for the complete pipeline
@@ -71,7 +102,10 @@ archive/deduplication_archive_20250925_023350/
 ├── ARCHIVE_SUMMARY.md           # This file
 ├── post_cluster_diagnostics.py  # Standalone diagnostic tool (functionality integrated)
 ├── example_usage.py             # Demo/example script (superseded by documentation)
-└── README.md                    # Basic documentation (superseded by README_COMPLETE.md)
+├── README.md                    # Basic documentation (superseded by README_COMPLETE.md)
+├── graph_refine.py              # Graph building algorithms (consolidated into main pipeline)
+├── graph_grow.py                # Triangle-based growth algorithms (consolidated into main pipeline)
+└── grow_runner.py               # Growth pipeline runner (consolidated into main pipeline)
 ```
 
 ## Restoration

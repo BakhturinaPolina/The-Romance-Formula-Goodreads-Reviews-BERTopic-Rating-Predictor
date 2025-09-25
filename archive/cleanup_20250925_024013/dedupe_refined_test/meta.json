@@ -1,0 +1,29 @@
+{
+  "config": {
+    "in_pairs": "data/intermediate/token_pairs_sample.parquet",
+    "out_dir": "outputs/dedupe_refined_test",
+    "db_path": null,
+    "base_threshold": 0.6,
+    "min_len": 3,
+    "max_rank": null,
+    "block_numeric": true,
+    "noise_regexes": [
+      "^zz+"
+    ],
+    "hist_bin_start": 0.45,
+    "hist_bin_end": 1.0,
+    "hist_bin_step": 0.01,
+    "sample_edges_per_cluster": 5,
+    "batch_size": 250000
+  },
+  "stats": {},
+  "artifacts": {
+    "filtered_pairs": "outputs/dedupe_refined_test/pairs_filtered.parquet",
+    "clusters_map": "outputs/dedupe_refined_test/clusters_token_map.parquet",
+    "clusters_summary": "outputs/dedupe_refined_test/clusters_summary.parquet",
+    "clusters_edges_sample": "outputs/dedupe_refined_test/clusters_edges_samples.parquet",
+    "meta": "outputs/dedupe_refined_test/meta.json",
+    "cohesion_metrics": "outputs/dedupe_refined_test/cluster_cohesion_metrics.parquet"
+  },
+  "generated_at": 1758776666.7996564
+}

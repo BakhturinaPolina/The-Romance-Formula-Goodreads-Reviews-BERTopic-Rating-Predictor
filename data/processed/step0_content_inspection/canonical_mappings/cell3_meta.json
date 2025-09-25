@@ -1,0 +1,39 @@
+{
+  "timestamp": "2025-09-24 19:13:37",
+  "parameters": {
+    "min_token_length": 1,
+    "max_token_length": 100,
+    "ngram_range": [
+      3,
+      5
+    ],
+    "min_df": 2,
+    "max_features": 400000,
+    "k_neighbors": 25,
+    "edit_distance_threshold": 10,
+    "sample_size": 5000
+  },
+  "counts": {
+    "total_canonical_shelves": 254778,
+    "empty_tokens_removed": 1,
+    "length_filtered_removed": 0,
+    "final_canonical_tokens": 254777,
+    "tokens_with_df": 254777,
+    "candidate_edges": 3927005
+  },
+  "timings": {
+    "vectorization_time": 24.50526714324951,
+    "ann_build_time": 0.024033546447753906,
+    "retrieval_time": 1142.7200450897217,
+    "edge_assembly_time": 79.39194202423096,
+    "total_time": 1246.64128780365
+  },
+  "cell2_config_hash": "13bafae4",
+  "shelves_column_used": "shelves_str",
+  "files_created": [
+    "canonical_shelf_df.parquet",
+    "tfidf_vectorizer_13bafae4.pkl",
+    "shelves_nn_candidates.parquet",
+    "shelves_nn_candidates_sample.csv"
+  ]
+}

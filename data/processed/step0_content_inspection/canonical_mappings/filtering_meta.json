@@ -1,0 +1,65 @@
+{
+  "timestamp": "2025-09-24 20:28:23",
+  "filtering_rules": {
+    "token_filters": {
+      "min_length": 2,
+      "max_length": 40,
+      "min_df": 2,
+      "noise_patterns": [
+        [
+          "^0+(\\s|$)",
+          "leading_zeros"
+        ],
+        [
+          "^z{3,}",
+          "repeated_z"
+        ],
+        [
+          "^\\d{2,4}(\\s|$)",
+          "year_only"
+        ],
+        [
+          "^[0-9 ]+[a-z]?[0-9 ]*$",
+          "mixed_garbage"
+        ]
+      ]
+    },
+    "edge_filters": {
+      "cosine_sim_threshold": 0.4,
+      "cosine_sim_strong_threshold": 0.6,
+      "edit_distance_threshold": 5,
+      "edit_distance_max": 10,
+      "cosine_sim_high_threshold": 0.8,
+      "df_ratio_threshold": 0.05
+    },
+    "quality_thresholds": {
+      "high_quality": {
+        "cosine_sim": 0.5,
+        "edit_distance": 3,
+        "df_ratio": 0.1
+      },
+      "medium_quality": {
+        "cosine_sim": 0.4,
+        "edit_distance": 7
+      }
+    }
+  },
+  "filtering_results": {
+    "original_tokens": 254470,
+    "valid_tokens": 134177,
+    "token_filter_breakdown": {
+      "passed": 134177,
+      "df": 113651,
+      "noise_leading_zeros": 794,
+      "noise_year_only": 5481,
+      "noise_mixed_garbage": 242,
+      "length": 36,
+      "noise_repeated_z": 89
+    },
+    "original_edges": 3927005,
+    "final_edges": 405955,
+    "edges_filtered_out": 3521050,
+    "retention_rate": 10.337521851894763
+  },
+  "quality_distribution": {
+    "medium": 

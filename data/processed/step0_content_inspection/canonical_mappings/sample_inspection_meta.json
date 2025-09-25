@@ -1,0 +1,77 @@
+{
+  "timestamp": "2025-09-24 20:27:01",
+  "sample_file": "../../data/processed/step0_content_inspection/canonical_mappings/shelves_nn_candidates_sample.csv",
+  "sample_size": 5000,
+  "schema_validation": {
+    "passed": true,
+    "expected_columns": [
+      "token_a",
+      "token_b",
+      "cosine_sim",
+      "edit_distance",
+      "len_a",
+      "len_b",
+      "df_a",
+      "df_b",
+      "df_ratio"
+    ],
+    "actual_columns": [
+      "token_a",
+      "token_b",
+      "cosine_sim",
+      "edit_distance",
+      "len_a",
+      "len_b",
+      "df_a",
+      "df_b",
+      "df_ratio"
+    ],
+    "missing_columns": [],
+    "extra_columns": []
+  },
+  "edge_cases": {
+    "low_cosine_count": 193,
+    "low_edit_low_cosine_count": 141,
+    "low_df_ratio_count": 677
+  },
+  "quality_assessment": {
+    "high_quality_pairs": 357,
+    "medium_quality_pairs": 542,
+    "low_quality_pairs": 3648,
+    "potential_false_positives": 898,
+    "high_quality_percentage": 7.140000000000001,
+    "false_positive_percentage": 17.96
+  },
+  "statistics": {
+    "cosine_sim_stats": {
+      "count": 5000.0,
+      "mean": 0.5125919637084008,
+      "std": 0.1786371032168078,
+      "min": 0.0,
+      "25%": 0.37995575368404383,
+      "50%": 0.5167922675609589,
+      "75%": 0.6419231593608856,
+      "max": 1.0
+    },
+    "edit_distance_stats": {
+      "count": 5000.0,
+      "mean": 7.2798,
+      "std": 4.214292824757502,
+      "min": 0.0,
+      "25%": 4.0,
+      "50%": 7.0,
+      "75%": 10.0,
+      "max": 31.0
+    },
+    "df_ratio_stats": {
+      "count": 5000.0,
+      "mean": 0.4095889699251964,
+      "std": 0.33555753804407223,
+      "min": 3.229452607782981e-05,
+      "25%": 0.1111111111111111,
+      "50%": 0.3333333333333333,
+      "75%": 0.6407142857142858,
+      "max": 1.0
+    }
+  }
+}

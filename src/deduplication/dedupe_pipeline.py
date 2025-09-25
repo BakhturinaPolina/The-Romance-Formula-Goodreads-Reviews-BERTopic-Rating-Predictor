@@ -229,15 +229,20 @@ def build_clusters(filtered_parquet: Path, sample_per_cluster: int, batch_size: 
             root_to_id[r] = next_id; next_id += 1
         token_cluster[tok] = root_to_id[r]
 
+    # FIXED: Sample edges directly from filtered parquet, ensuring threshold compliance
     edge_samples: dict[int, list[tuple[str, str, float]]] = defaultdict(list)
     scanner = dsobj.scanner(columns=["token_a","token_b","cosine_sim"], batch_size=batch_size)
     for batch in scanner.to_batches():
         df = batch.to_pandas()
         for a, b, s in zip(df["token_a"], df["token_b"], df["cosine_sim"]):
-            cid = token_cluster.get(str(a))
-            lst = edge_samples[cid]
-            if len(lst) < sample_per_cluster:  # respect cfg
-                lst.append((str(a), str(b), float(s)))
+            a_str, b_str, sim = str(a), str(b), float(s)
+            cid_a = token_cluster.get(a_str)
+            cid_b = token_cluster.get(b_str)
+            # Only sample if both tokens are in the same cluster (intra-cluster edges)
+            if cid_a is not None and cid_a == cid_b:
+                lst = edge_samples[cid_a]
+                if len(lst) < sample_per_cluster:  # respect cfg
+                    lst.append((a_str, b_str, sim))
     return token_cluster, edge_samples
 
 def summarize_clusters(token_cluster: dict[str, int],
@@ -260,11 +265,113 @@ def summarize_clusters(token_cluster: dict[str, int],
         })
     return pd.DataFrame(rows).sort_values(["size","cluster_id"], ascending=[False, True])
 
+def cluster_cohesion_metrics(filtered_parquet: Path, token_cluster: dict[str, int], batch_size: int = 500_000) -> pd.DataFrame:
+    """Compute cluster cohesion metrics: min/mean/max sim, triangle rate."""
+    dsobj = ds.dataset(str(filtered_parquet), format="parquet")
+    scanner = dsobj.scanner(columns=["token_a","token_b","cosine_sim"], batch_size=batch_size)
+    
+    # Collect intra-cluster edges
+    cluster_edges: dict[int, list[tuple[str, str, float]]] = defaultdict(list)
+    for batch in scanner.to_batches():
+        df = batch.to_pandas()
+        for a, b, s in zip(df["token_a"], df["token_b"], df["cosine_sim"]):
+            a_str, b_str, sim = str(a), str(b), float(s)
+            cid_a = token_cluster.get(a_str)
+            cid_b = token_cluster.get(b_str)
+            # Only count intra-cluster edges
+            if cid_a is not None and cid_a == cid_b:
+                cluster_edges[cid_a].append((a_str, b_str, sim))
+    
+    # Compute cohesion metrics
+    rows = []
+    for cid, edges in cluster_edges.items():
+        if not edges:
+            continue
+        sims = [sim for _, _, sim in edges]
+        min_sim = min(sims)
+        mean_sim = sum(sims) / len(sims)
+        max_sim = max(sims)
+        
+        # Triangle rate calculation
+        pairs_set = set((a, b) for a, b, _ in edges)
+        tokens = set()
+        for a, b, _ in edges:
+            tokens.add(a); tokens.add(b)
+        
+        # Build adjacency
+        neigh = {t: set() for t in tokens}
+        for a, b in pairs_set:
+            neigh[a].add(b); neigh[b].add(a)
+        
+        # Count triangles
+        triangles = 0
+        for a, b in pairs_set:
+            if len(neigh[a].intersection(neigh[b])) > 0:
+                triangles += 1
+        triangle_rate = triangles / len(pairs_set) if pairs_set else 0.0
+        
+        rows.append({
+            "cluster_id": cid,
+            "edges": len(edges),
+            "min_sim": min_sim,
+            "mean_sim": mean_sim,
+            "max_sim": max_sim,
+            "triangle_rate": triangle_rate
+        })
+    
+    return pd.DataFrame(rows).sort_values(["min_sim", "triangle_rate"], ascending=[True, True])
+
+def flag_low_quality_clusters(coh_df: pd.DataFrame, min_sim_threshold: float = 0.62, min_triangle_rate: float = 0.10) -> pd.DataFrame:
+    """Flag clusters with low cohesion metrics."""
+    bad = coh_df[
+        (coh_df["min_sim"] < min_sim_threshold) | 
+        (coh_df["triangle_rate"] < min_triangle_rate)
+    ].sort_values(["min_sim", "triangle_rate"])
+    return bad
+
 # ----------------------- Artifacts -------------------------------
+
+def mutual_nearest_neighbors(filtered_parquet: Path, k: int = 5, batch_size: int = 500_000) -> pd.DataFrame:
+    """Keep only edges where both tokens are in each other's top-k nearest neighbors."""
+    dsobj = ds.dataset(str(filtered_parquet), format="parquet")
+    scanner = dsobj.scanner(columns=["token_a","token_b","cosine_sim"], batch_size=batch_size)
+    
+    # Get top-k neighbors for each token
+    top_k_neighbors: dict[str, set[str]] = defaultdict(set)
+    
+    for batch in scanner.to_batches():
+        df = batch.to_pandas()
+        for token, group in df.groupby("token_a"):
+            top_k = group.nlargest(k, "cosine_sim")["token_b"].tolist()
+            top_k_neighbors[str(token)].update(str(b) for b in top_k)
+        
+        for token, group in df.groupby("token_b"):
+            top_k = group.nlargest(k, "cosine_sim")["token_a"].tolist()
+            top_k_neighbors[str(token)].update(str(a) for a in top_k)
+    
+    # Keep only mutual nearest neighbors
+    mutual_edges = []
+    scanner = dsobj.scanner(columns=["token_a","token_b","cosine_sim"], batch_size=batch_size)
+    for batch in scanner.to_batches():
+        df = batch.to_pandas()
+        for _, row in df.iterrows():
+            a, b = str(row["token_a"]), str(row["token_b"])
+            if (a in top_k_neighbors.get(b, set()) and 
+                b in top_k_neighbors.get(a, set())):
+                mutual_edges.append({
+                    "token_a": a,
+                    "token_b": b, 
+                    "cosine_sim": float(row["cosine_sim"]),
+                    "rank": row.get("rank", 0)
+                })
+    
+    return pd.DataFrame(mutual_edges)
 
 def save_artifacts(cfg: Config,
                    token_cluster: dict[str, int],
-                   edge_samples: dict[int, list[tuple[str,str,float]]]) -> None:
+                   edge_samples: dict[int, list[tuple[str,str,float]]],
+                   cohesion_metrics: pd.DataFrame | None = None,
+                   low_quality_clusters: pd.DataFrame | None = None) -> None:
     paths = {
         "filtered_pairs": cfg.out_dir / "pairs_filtered.parquet",
         "clusters_map": cfg.out_dir / "clusters_token_map.parquet",
@@ -281,6 +388,19 @@ def save_artifacts(cfg: Config,
     rows = [{"cluster_id": cid, "token_a": a, "token_b": b, "cosine_sim": s}
             for cid, lst in edge_samples.items() for (a,b,s) in lst]
     pd.DataFrame(rows).to_parquet(paths["clusters_edges_sample"], index=False)
+
+    # Save additional quality metrics if provided
+    if cohesion_metrics is not None:
+        cohesion_path = cfg.out_dir / "cluster_cohesion_metrics.parquet"
+        cohesion_metrics.to_parquet(cohesion_path, index=False)
+        paths["cohesion_metrics"] = cohesion_path
+        p(f"✅ Saved: {cohesion_path.name}")
+
+    if low_quality_clusters is not None and len(low_quality_clusters) > 0:
+        low_quality_path = cfg.out_dir / "clusters_flagged_low_quality.parquet"
+        low_quality_clusters.to_parquet(low_quality_path, index=False)
+        paths["low_quality_clusters"] = low_quality_path
+        p(f"✅ Saved: {low_quality_path.name} ({len(low_quality_clusters)} flagged clusters)")
 
     # JSON-safe meta (Paths→str; regex strings already JSON-safe)
     meta = {
@@ -309,7 +429,13 @@ def cmd_cluster(filtered_pairs: Path, out_dir: Path) -> None:
     cfg = Config(in_pairs=filtered_pairs, out_dir=out_dir).ensure()
     head("CLUSTER (Union-Find)")
     token_cluster, sample_edges = build_clusters(filtered_pairs, sample_per_cluster=cfg.sample_edges_per_cluster)
-    save_artifacts(cfg, token_cluster, sample_edges)
+    
+    # Compute quality metrics
+    head("CLUSTER QUALITY METRICS")
+    cohesion_metrics = cluster_cohesion_metrics(filtered_pairs, token_cluster)
+    low_quality = flag_low_quality_clusters(cohesion_metrics)
+    
+    save_artifacts(cfg, token_cluster, sample_edges, cohesion_metrics, low_quality)
     log_memory()
 
 def cmd_all(in_pairs: Path, out_dir: Path, threshold: float = 0.50, min_len: int = 3, max_rank: int | None = None) -> None:
@@ -319,7 +445,13 @@ def cmd_all(in_pairs: Path, out_dir: Path, threshold: float = 0.50, min_len: int
     head("RE-CLUSTER ON FILTERED")
     token_cluster, sample_edges = build_clusters(cfg.out_dir / "pairs_filtered.parquet",
                                                  sample_per_cluster=cfg.sample_edges_per_cluster)
-    save_artifacts(cfg, token_cluster, sample_edges)
+    
+    # Compute quality metrics
+    head("CLUSTER QUALITY METRICS")
+    cohesion_metrics = cluster_cohesion_metrics(cfg.out_dir / "pairs_filtered.parquet", token_cluster)
+    low_quality = flag_low_quality_clusters(cohesion_metrics)
+    
+    save_artifacts(cfg, token_cluster, sample_edges, cohesion_metrics, low_quality)
     head("DONE")
 
 # ----------------------- CLI ------------------------------------
@@ -361,6 +493,137 @@ def cli_all(
     max_rank: int | None = typer.Option(None),
 ):
     cmd_all(in_pairs, out_dir, threshold, min_len, max_rank)
+
+@app.command("diagnose")
+def cli_diagnose(
+    out_dir: Path = typer.Argument(...),
+    threshold: float = typer.Option(0.50),
+    min_sim_threshold: float = typer.Option(0.62),
+    min_triangle_rate: float = typer.Option(0.10),
+):
+    """Diagnose cluster quality and validate edge samples."""
+    head("DIAGNOSTIC ANALYSIS")
+    
+    # Load existing outputs
+    pairs_path = out_dir / "pairs_filtered.parquet"
+    if not pairs_path.exists():
+        p(f"❌ {pairs_path} not found. Run 'filter' command first.")
+        return
+    
+    samples_path = out_dir / "clusters_edges_samples.parquet"
+    if not samples_path.exists():
+        p(f"❌ {samples_path} not found. Run 'cluster' command first.")
+        return
+    
+    # Load data
+    pairs = pd.read_parquet(pairs_path)
+    samples = pd.read_parquet(samples_path)
+    cmap = pd.read_parquet(out_dir / "clusters_token_map.parquet")
+    
+    # Validate samples
+    head("VALIDATE EDGE SAMPLES")
+    invalid = validate_samples_against_filtered(pairs, samples, threshold)
+    if len(invalid):
+        p(f"❌ Found {len(invalid)} invalid samples:")
+        print(invalid.head(10))
+    else:
+        p("✅ All sample edges are valid and meet threshold.")
+    
+    # Rebuild samples
+    head("REBUILD EDGE SAMPLES")
+    new_samples = rebuild_edge_samples_from_filtered(pairs, cmap, sample_per_cluster=5)
+    new_samples.to_parquet(out_dir / "clusters_edges_samples_fixed.parquet", index=False)
+    p(f"✅ Rebuilt {len(new_samples)} edge samples")
+    
+    # Cluster quality
+    head("CLUSTER QUALITY METRICS")
+    cohesion = cluster_cohesion_metrics(pairs_path, dict(zip(cmap["token"], cmap["cluster_id"])))
+    low_quality = flag_low_quality_clusters(cohesion, min_sim_threshold, min_triangle_rate)
+    
+    cohesion.to_parquet(out_dir / "cluster_cohesion_metrics.parquet", index=False)
+    if len(low_quality) > 0:
+        low_quality.to_parquet(out_dir / "clusters_flagged_low_quality.parquet", index=False)
+        p(f"⚠️  Flagged {len(low_quality)} low-quality clusters")
+    else:
+        p("✅ No low-quality clusters found")
+    
+    log_memory()
+
+@app.command("prune")
+def cli_prune(
+    filtered_pairs: Path = typer.Argument(...),
+    out_dir: Path = typer.Argument(...),
+    min_sim: float = typer.Option(0.65),
+    require_triangle: bool = typer.Option(True),
+    k: int = typer.Option(5),
+):
+    """Prune weak edges and apply mutual nearest neighbor filtering."""
+    head("PRUNE WEAK EDGES")
+    
+    # Load data
+    pairs = pd.read_parquet(filtered_pairs)
+    cmap = pd.read_parquet(out_dir / "clusters_token_map.parquet")
+    
+    # Apply mutual nearest neighbor filtering
+    head("MUTUAL NEAREST NEIGHBORS")
+    mutual_pairs = mutual_nearest_neighbors(filtered_pairs, k=k)
+    p(f"Mutual NN filtering: {len(pairs):,} → {len(mutual_pairs):,} edges")
+    
+    # Save pruned pairs
+    mutual_pairs.to_parquet(out_dir / "pairs_mutual_nn.parquet", index=False)
+    p(f"✅ Saved mutual NN pairs to {out_dir / 'pairs_mutual_nn.parquet'}")
+    
+    # Re-cluster on pruned data
+    head("RE-CLUSTER ON PRUNED DATA")
+    token_cluster, sample_edges = build_clusters(out_dir / "pairs_mutual_nn.parquet", sample_per_cluster=5)
+    cohesion_metrics = cluster_cohesion_metrics(out_dir / "pairs_mutual_nn.parquet", token_cluster)
+    low_quality = flag_low_quality_clusters(cohesion_metrics)
+    
+    save_artifacts(Config(in_pairs=filtered_pairs, out_dir=out_dir), 
+                   token_cluster, sample_edges, cohesion_metrics, low_quality)
+    
+    log_memory()
+
+def validate_samples_against_filtered(pairs: pd.DataFrame, samples: pd.DataFrame, threshold: float) -> pd.DataFrame:
+    """Validate that all edge samples exist in filtered pairs and meet threshold."""
+    # Normalize types
+    pairs = pairs.astype({"token_a":"string","token_b":"string"})
+    samples = samples.astype({"token_a":"string","token_b":"string"})
+
+    # Join both (both directions)
+    key_cols = ["token_a","token_b","cosine_sim"]
+    merged = samples.merge(pairs[key_cols], on=["token_a","token_b","cosine_sim"], how="left", indicator=True)
+    
+    # Try swapped direction for any that didn't match
+    if (merged["_merge"] != "both").any():
+        swapped = samples.rename(columns={"token_a":"token_b","token_b":"token_a"})
+        merged2 = merged.loc[merged["_merge"]!="both"].drop(columns=["_merge"]).merge(
+            pairs[key_cols], on=["token_a","token_b","cosine_sim"], how="left", indicator=True
+        )
+        merged.loc[merged["_merge"]!="both","_merge"] = merged2["_merge"].values
+
+    # Find invalid samples (not in filtered pairs OR below threshold)
+    invalid = merged[(merged["_merge"]!="both") | (merged["cosine_sim"] < threshold)].copy()
+    return invalid[["cluster_id","token_a","token_b","cosine_sim","_merge"]].sort_values("cosine_sim")
+
+def rebuild_edge_samples_from_filtered(pairs: pd.DataFrame, cmap: pd.DataFrame, sample_per_cluster: int = 5) -> pd.DataFrame:
+    """Rebuild edge samples directly from filtered pairs, ensuring threshold compliance."""
+    # Map any edge to cluster via token_a (both tokens must fall in same cluster for connected components)
+    cmap = cmap.astype({"token":"string"})
+    pairs = pairs.astype({"token_a":"string","token_b":"string"})
+    
+    # Join edges with cluster mappings
+    m = pairs.merge(cmap.rename(columns={"token":"token_a","cluster_id":"cid_a"}), on="token_a", how="left")
+    m = m.merge(cmap.rename(columns={"token":"token_b","cluster_id":"cid_b"}), on="token_b", how="left")
+    
+    # Keep only edges within same cluster
+    m = m[m["cid_a"].notna() & (m["cid_a"] == m["cid_b"])]
+    m["cluster_id"] = m["cid_a"].astype("int64")
+
+    # Take top-k strongest edges per cluster for auditing
+    m = m.sort_values(["cluster_id","cosine_sim"], ascending=[True, False])
+    sampled = m.groupby("cluster_id").head(sample_per_cluster).reset_index(drop=True)
+    return sampled[["cluster_id","token_a","token_b","cosine_sim"]]
 
 if __name__ == "__main__":
     app()

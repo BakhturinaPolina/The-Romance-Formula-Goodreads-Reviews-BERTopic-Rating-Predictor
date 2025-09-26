@@ -112,7 +112,56 @@ def load_audit_context(audit_dir: Path,
 # ---------- leakage filters ----------
 def is_noncontent(shelf: str) -> Optional[str]:
     """Return category name if matches a leakage pattern; else None."""
-    # No filtering - all shelves are considered content
+    s = shelf.strip().lower()
+    
+    # Reading status patterns
+    reading_status = {
+        'to-read', 'to read', 'tbr', 'want-to-read', 'want to read', 'wtr',
+        'currently-reading', 'currently reading', 'reading', 'cr',
+        'read', 'finished', 'done', 'completed',
+        'dnf', 'did-not-finish', 'did not finish', 'abandoned',
+        'on-hold', 'on hold', 'paused', 'suspended'
+    }
+    
+    # Ownership/collection patterns  
+    ownership = {
+        'owned', 'have', 'have-it', 'have it', 'bought', 'purchased',
+        'library', 'borrowed', 'borrow', 'lent', 'loan',
+        'kindle', 'ebook', 'e-book', 'audiobook', 'audio-book',
+        'hardcover', 'paperback', 'mass-market', 'mass market',
+        'wishlist', 'wish-list', 'want', 'want-it', 'want it'
+    }
+    
+    # Date/reading challenge patterns
+    date_patterns = {
+        '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025',
+        'january', 'february', 'march', 'april', 'may', 'june',
+        'july', 'august', 'september', 'october', 'november', 'december',
+        'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec',
+        'summer', 'winter', 'spring', 'fall', 'autumn'
+    }
+    
+    # Pure punctuation/dash runs
+    if re.match(r'^[-_\.\s]+$', s) or len(s) <= 2:
+        return 'punctuation'
+    
+    # Check exact matches
+    if s in reading_status:
+        return 'reading_status'
+    if s in ownership:
+        return 'ownership'
+    if s in date_patterns:
+        return 'date_pattern'
+    
+    # Check patterns with dashes/underscores normalized
+    s_norm = re.sub(r'[-_\s]+', '-', s)
+    if s_norm in reading_status or s_norm in ownership:
+        return 'reading_status' if s_norm in reading_status else 'ownership'
+    
+    # Check if starts with common prefixes
+    if any(s.startswith(prefix) for prefix in ['to-', 'want-', 'have-', 'currently-']):
+        return 'reading_status'
+    
     return None
 
 # ---------- canonicalization (2.1.A) ----------
@@ -273,14 +322,38 @@ def run_pipeline(ctx: AuditContext,
     noncontent_flag = {}      # raw -> category or None
     canon_counts = Counter()  # canon -> freq
 
+    # Track canonicalization statistics
+    canon_stats = {
+        "as_is": 0,
+        "casefold": 0,
+        "sep_normalize": 0,
+        "punct_trim": 0,
+        "noncontent_filtered": 0
+    }
+    
     for raw in shelves_sorted:
         leak = is_noncontent(raw)
         key = canon_key(raw)
         reason = []
+        
+        # Track specific transformations
         if key != raw:
-            reason.append("casefold/sep/punct")
+            if raw.lower() != key:
+                reason.append("casefold")
+                canon_stats["casefold"] += 1
+            if re.sub(r'[-_]+', ' ', raw) != raw:
+                reason.append("sep_normalize")
+                canon_stats["sep_normalize"] += 1
+            if re.sub(r'^[\W_]+|[\W_]+$', '', raw) != raw:
+                reason.append("punct_trim")
+                canon_stats["punct_trim"] += 1
+        else:
+            canon_stats["as_is"] += 1
+            
         if leak:
             noncontent_flag[raw] = leak
+            canon_stats["noncontent_filtered"] += 1
+            
         canon_map[raw] = key
         canon_reason[raw] = ";".join(reason) if reason else "as_is"
         canon_counts[key] += counts[raw]
@@ -292,6 +365,7 @@ def run_pipeline(ctx: AuditContext,
             "canon": key,
             "noncontent_category": leak,
             "count": counts[raw],
+            "transformation": ";".join(reason) if reason else "as_is"
         }
         logf.write(json.dumps(rec) + "\n")
 
@@ -310,18 +384,56 @@ def run_pipeline(ctx: AuditContext,
 
     seg_records = []  # for CSV
     seg_vocab = set()
+    
+    # Track segmentation statistics
+    seg_stats = {
+        "total_processed": 0,
+        "has_whitespace": 0,
+        "too_short": 0,
+        "common_word": 0,
+        "not_camel_or_concat": 0,
+        "camel_case": 0,
+        "lowercase_concat": 0,
+        "guard1_failed": 0,
+        "guard2_failed": 0,
+        "zipf_failed": 0,
+        "accepted": 0
+    }
 
     def maybe_segment(canon: str) -> Tuple[List[str], bool, bool, bool]:
         """Return (segments, accepted, guard1, guard2)"""
-        # keep an uppercase copy to detect CamelCase
         original = canon
+        seg_stats["total_processed"] += 1
+        
+        # Gate 1: Must have no whitespace
+        if " " in original:
+            seg_stats["has_whitespace"] += 1
+            return [original], False, False, False
+            
+        # Gate 2: Must be length >= 6
+        if len(original) < 6:
+            seg_stats["too_short"] += 1
+            return [original], False, False, False
+            
+        # Gate 3: Check if already a common word (Zipf >= 3.0)
+        if WORDFREQ_AVAILABLE and zipf_frequency(original.lower(), "en") >= zipf_min:
+            seg_stats["common_word"] += 1
+            return [original], False, False, False
+            
+        # Gate 4: Must be CamelCase OR all-lowercase concatenation
         looks_camel = bool(CAMEL_HIT.search(original))
-        looks_concat = bool(LOWER_CONCAT.fullmatch(original.replace(" ", "")))
+        looks_concat = bool(LOWER_CONCAT.fullmatch(original))
+        
+        if not (looks_camel or looks_concat):
+            seg_stats["not_camel_or_concat"] += 1
+            return [original], False, False, False
 
         pieces = [original]
         if looks_camel:
             pieces = camel_split(original)
-        elif looks_concat and " " not in original:
+            seg_stats["camel_case"] += 1
+        elif looks_concat:
+            seg_stats["lowercase_concat"] += 1
             # DP over lowercased string with wordfreq costs
             s = original.lower()
             n = len(s)
@@ -356,7 +468,24 @@ def run_pipeline(ctx: AuditContext,
         guard1 = any(p.lower() in standalone for p in pieces)
         guard2 = lexicon_ok([p.lower() for p in pieces], zipf_min=zipf_min, domain_lex=domain_lex)
 
+        # Accept rule: keep split iff it yields >=2 tokens AND each has Zipf >= 3.0
         accepted = guard1 and guard2 and len(pieces) > 1
+        if accepted and WORDFREQ_AVAILABLE:
+            # Double-check each piece meets Zipf threshold
+            for piece in pieces:
+                if zipf_frequency(piece.lower(), "en") < zipf_min:
+                    accepted = False
+                    seg_stats["zipf_failed"] += 1
+                    break
+        
+        # Track guard failures
+        if not guard1:
+            seg_stats["guard1_failed"] += 1
+        if not guard2:
+            seg_stats["guard2_failed"] += 1
+        if accepted:
+            seg_stats["accepted"] += 1
+                    
         segs = [p.lower() for p in pieces] if accepted else [original]
 
         return segs, accepted, guard1, guard2
@@ -383,38 +512,106 @@ def run_pipeline(ctx: AuditContext,
         }) + "\n")
 
     # 5) Alias candidate suggestions (2.1.B), run on segmented forms (post-split)
-    # Build blocked buckets by first token and trigram hash
-    def block_key(s: str) -> Tuple[str, str]:
-        first = s.split(" ", 1)[0] if s else ""
-        tri = "".join(sorted(set([s[i:i+3] for i in range(max(0, len(s)-2))])))
-        return first[:4], tri[:32]
+    # Robust blocking: Q-gram index + sorted-neighborhood windowing
+    
+    def qgram_signature(s: str, q: int = 3) -> Set[str]:
+        """Generate Q-gram signature for blocking."""
+        s = s.lower().strip()
+        if len(s) < q:
+            return {s}
+        return {s[i:i+q] for i in range(len(s) - q + 1)}
+    
+    def sorted_neighborhood_pairs(items: List[str], window: int = 50) -> Iterable[Tuple[str, str]]:
+        """Generate pairs within sorted neighborhood window."""
+        sorted_items = sorted(items)
+        for i in range(len(sorted_items)):
+            for j in range(i+1, min(i+window+1, len(sorted_items))):
+                yield sorted_items[i], sorted_items[j]
+    
+    def canopy_clustering(items: List[str], loose_thresh: float = 0.8, tight_thresh: float = 0.9) -> List[List[str]]:
+        """Simple canopy clustering for blocking."""
+        canopies = []
+        remaining = set(items)
+        
+        while remaining:
+            # Pick a random item as canopy center
+            center = remaining.pop()
+            canopy = [center]
+            
+            # Add items within loose threshold
+            to_remove = set()
+            for item in remaining:
+                j3 = jaccard_char_ngrams(center, item, n=3)
+                if j3 >= loose_thresh:
+                    canopy.append(item)
+                    to_remove.add(item)
+            
+            remaining -= to_remove
+            canopies.append(canopy)
+        
+        return canopies
 
     canon_list = [r["segments"] if r["accepted"] else r["shelf_canon"] for r in seg_records]
     canon_list = list(dict.fromkeys(canon_list))  # preserve order, uniq
-    buckets = defaultdict(list)
+    
+    LOG.info("Building alias candidates from %d canonical shelves...", len(canon_list))
+    
+    # Method 1: Q-gram blocking
+    qgram_buckets = defaultdict(list)
     for s in canon_list:
-        buckets[block_key(s)].append(s)
-
-    def pairwise(iterable: List[str]) -> Iterable[Tuple[str, str]]:
-        for b in buckets.values():
-            m = len(b)
-            for i in range(m):
-                si = b[i]
-                for j in range(i+1, m):
-                    sj = b[j]
-                    # Quick length gate
-                    if abs(len(si) - len(sj)) > 2:
-                        continue
-                    yield si, sj
-
+        sig = qgram_signature(s, q=3)
+        # Use first few q-grams as bucket key
+        key = tuple(sorted(list(sig))[:5])  # Use first 5 q-grams
+        qgram_buckets[key].append(s)
+    
+    # Method 2: Sorted neighborhood (for similar-length items)
+    length_buckets = defaultdict(list)
+    for s in canon_list:
+        length_buckets[len(s)].append(s)
+    
+    # Method 3: Canopy clustering (for high-similarity groups)
+    canopies = canopy_clustering(canon_list, loose_thresh=0.7, tight_thresh=0.85)
+    
     alias_rows = []
-    for a, b in pairwise(canon_list):
-        jw = jaro_winkler_similarity(a, b)
-        ed = damerau_levenshtein_distance(a, b)
-        j3 = jaccard_char_ngrams(a, b, n=3)
-        if (jw >= jw_thr and ed <= ed_max) or (jw >= (jw_thr - 0.02) and j3 >= j3_thr):
-            # No filtering - all shelves are content
-            decision = "suggest"
+    seen_pairs = set()
+    
+    # Process Q-gram buckets
+    for bucket in qgram_buckets.values():
+        if len(bucket) < 2:
+            continue
+        for a, b in sorted_neighborhood_pairs(bucket, window=20):
+            if (a, b) in seen_pairs or (b, a) in seen_pairs:
+                continue
+            seen_pairs.add((a, b))
+            
+            # Quick length gate
+            if abs(len(a) - len(b)) > 3:
+                continue
+                
+            jw = jaro_winkler_similarity(a, b)
+            ed = damerau_levenshtein_distance(a, b)
+            j3 = jaccard_char_ngrams(a, b, n=3)
+            
+            # Tiered thresholds
+            if len(a) <= 6 and len(b) <= 6:
+                # Short strings: Damerau-Levenshtein <= 1
+                if ed <= 1:
+                    decision = "suggest"
+                else:
+                    continue
+            elif len(a) <= 12 and len(b) <= 12:
+                # Mid-length: Jaro-Winkler >= 0.92
+                if jw >= 0.92:
+                    decision = "suggest"
+                else:
+                    continue
+            else:
+                # Long strings: token_set_ratio >= 95 (approximated with j3)
+                if j3 >= 0.95:
+                    decision = "suggest"
+                else:
+                    continue
+            
             alias_rows.append({
                 "shelf_a": a, "shelf_b": b,
                 "jw": round(jw, 4), "edit": int(ed), "jaccard3": round(j3, 4),
@@ -425,6 +622,49 @@ def run_pipeline(ctx: AuditContext,
                 "a": a, "b": b, "jw": jw, "ed": int(ed), "j3": j3,
                 "decision": decision
             }) + "\n")
+    
+    # Process length buckets (for similar-length items)
+    for length, bucket in length_buckets.items():
+        if len(bucket) < 2:
+            continue
+        for a, b in sorted_neighborhood_pairs(bucket, window=30):
+            if (a, b) in seen_pairs or (b, a) in seen_pairs:
+                continue
+            seen_pairs.add((a, b))
+            
+            jw = jaro_winkler_similarity(a, b)
+            ed = damerau_levenshtein_distance(a, b)
+            j3 = jaccard_char_ngrams(a, b, n=3)
+            
+            # Apply same tiered thresholds
+            if len(a) <= 6 and len(b) <= 6:
+                if ed <= 1:
+                    decision = "suggest"
+                else:
+                    continue
+            elif len(a) <= 12 and len(b) <= 12:
+                if jw >= 0.92:
+                    decision = "suggest"
+                else:
+                    continue
+            else:
+                if j3 >= 0.95:
+                    decision = "suggest"
+                else:
+                    continue
+            
+            alias_rows.append({
+                "shelf_a": a, "shelf_b": b,
+                "jw": round(jw, 4), "edit": int(ed), "jaccard3": round(j3, 4),
+                "decision_hint": decision
+            })
+            logf.write(json.dumps({
+                "stage": "alias",
+                "a": a, "b": b, "jw": jw, "ed": int(ed), "j3": j3,
+                "decision": decision
+            }) + "\n")
+    
+    LOG.info("Generated %d alias candidate pairs", len(alias_rows))
 
     # 6) Write artifacts (2.3)
     out_canon = outdir / "shelf_canonical.csv"
@@ -477,6 +717,14 @@ def run_pipeline(ctx: AuditContext,
         "dependencies": {
             "rapidfuzz_available": RAPIDFUZZ_AVAILABLE,
             "wordfreq_available": WORDFREQ_AVAILABLE
+        },
+        "statistics": {
+            "canonicalization": canon_stats,
+            "segmentation": seg_stats,
+            "alias_candidates": len(alias_rows),
+            "total_shelves_processed": len(shelves_sorted),
+            "unique_canonical": len(canon_counts),
+            "compression_ratio": len(canon_counts) / len(shelves_sorted) if shelves_sorted else 0.0
         }
     }
     logf.write(json.dumps(footer) + "\n")
@@ -492,8 +740,8 @@ def main():
     p.add_argument("--parsed-parquet", type=Path, default=None,
                    help="Parsed parquet from Step 1 (overrides audit hint)")
     p.add_argument("--outdir", type=Path, default=Path("shelf_norm_outputs"))
-    p.add_argument("--n-top-shelves", type=int, default=None,
-                   help="Optional: limit to top-K shelves by frequency for aliasing/segmentation")
+    p.add_argument("--n-top-shelves", type=int, default=100000,
+                   help="Limit to top-K shelves by frequency for aliasing/segmentation (default: 100k)")
     p.add_argument("--jw-threshold", type=float, default=0.94)
     p.add_argument("--j3-threshold", type=float, default=0.80)
     p.add_argument("--edit-max", type=int, default=1)

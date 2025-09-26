@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 """
-02_diagnostics_explore.py
 Deep-dive diagnostics for Shelf Normalization outputs.
 
 Inputs (produced by Step 2):
@@ -21,7 +20,7 @@ Outputs:
       alias_dryrun_top_pairs.csv              (optional)
 
 Usage:
-  python 02_diagnostics_explore.py \
+  python diagnostics_explore.py \
     --in-dir ./shelf_outputs_full \
     --out-dir ./diagnostics_outputs \
     --alias-dryrun-size 10000 \

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-02_bridge_audit_normalize.py
+Bridge Script: Step 1 → Step 2 Integration
 
 Bridges Step 1 (audit + parsed shelves) and Step 2 (shelf normalization)
 into an integrated dataset ready for clustering/modeling.
@@ -22,7 +22,7 @@ Outputs (in --out dir):
   - shelf_norm_bridge_log.jsonl (provenance)
 
 Usage:
-  python 02_bridge_audit_normalize.py \
+  python bridge_audit_normalize.py \
     --parsed parse_outputs_full/parsed_books_YYYYmmdd_HHMMSS.parquet \
     --canon normalize_outputs/shelf_canonical.csv \
     --segments normalize_outputs/shelf_segments.csv \

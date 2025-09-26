@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-02b_validate_bridge.py
-
 Deep diagnostics for Step-1/2 outputs:
 - books_with_shelf_norm.parquet
 - shelves_raw_long.parquet

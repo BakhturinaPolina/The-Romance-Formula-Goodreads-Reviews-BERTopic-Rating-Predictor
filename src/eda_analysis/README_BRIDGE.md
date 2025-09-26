@@ -224,6 +224,74 @@ tail -n 1 bridge_outputs/shelf_norm_bridge_log.jsonl | jq .
 - `numpy>=1.20` — Numerical operations
 - `pathlib` — Path handling (built-in)
 
+## Quality Assurance & Diagnostics
+
+### Deep Diagnostics (`02b_validate_bridge.py`)
+
+After running the bridge script, immediately validate outputs with comprehensive diagnostics:
+
+```bash
+python 02b_validate_bridge.py \
+  --books bridge_outputs/books_with_shelf_norm.parquet \
+  --raw-long bridge_outputs/shelves_raw_long.parquet \
+  --canon-long bridge_outputs/shelves_canon_long.parquet \
+  --segments-long bridge_outputs/segments_long.parquet \
+  --canonical-csv normalize_outputs/shelf_canonical.csv \
+  --segments-csv normalize_outputs/shelf_segments.csv \
+  --noncontent-csv normalize_outputs/noncontent_shelves.csv \
+  --alias-csv normalize_outputs/shelf_alias_candidates.csv \
+  --out bridge_qa/ \
+  --print-examples \
+  --verbose-logs
+```
+
+**What it catches:**
+- Schema/dtype issues and missing columns
+- List-length mismatches between canon and flags
+- Null/empty tokens in long tables
+- Duplicate (id, row_index, value) triplets
+- Unicode control characters and suspicious punctuation
+- Coverage gaps between canonical map and output
+- Misalignment of noncontent flags vs. filter list
+- Segment quality issues (too short/long, digit/punct-heavy)
+
+**Outputs:**
+- `bridge_qa/diagnostics_summary.json` — Machine-readable results
+- `bridge_qa/diagnostics_report.txt` — Human-readable report
+- `bridge_qa/suspect_examples_*.csv` — Sample problematic rows (with `--print-examples`)
+
+### Lightweight Tests (`test_bridge_integrity.py`)
+
+For CI/CD and regression testing:
+
+```bash
+pytest -q src/eda_analysis/test_bridge_integrity.py -v
+```
+
+**Test coverage:**
+- ✅ File existence and non-empty validation
+- ✅ Schema integrity (required columns present)
+- ✅ Flag alignment (canon vs. noncontent flags same length)
+- ✅ No nulls/empties in long tables
+- ✅ Canonical coverage (output values in mapping)
+- ✅ Noncontent alignment (FP/FN rates within bounds)
+
+### Regression Comparison (`02c_diff_bridge_runs.py`)
+
+Compare diagnostics between runs:
+
+```bash
+python 02c_diff_bridge_runs.py \
+  --old bridge_qa_run1/diagnostics_summary.json \
+  --new bridge_qa_run2/diagnostics_summary.json
+```
+
+**Tracks changes in:**
+- Row counts across all tables
+- Flag mismatch counts
+- Coverage gaps
+- False positive/negative rates
+
 ## Next Steps
 
 1. **Semantic Clustering**: Use canonical shelves and segments for embedding

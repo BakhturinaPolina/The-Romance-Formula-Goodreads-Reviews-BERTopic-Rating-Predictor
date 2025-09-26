@@ -1,0 +1,271 @@
+======================================================================
+
+Shelf Normalization Diagnostics
+
+======================================================================
+
+Timestamp UTC: 2025-09-26 02:31:06
+
+Input dir: shelf_norm_outputs_subsample
+
+Output dir: diagnostics_outputs_subsample
+
+
+
+## Canonicalization
+
+- Rows: 10,000
+
+- Unique shelves (raw): 10,000
+
+- Unique shelves (canon): 9,994
+
+- Compression ratio (canon/raw): 0.999400
+
+- Identity maps (canon == raw): 2,111
+
+- Blank canon values: 0
+
+- Dash-heavy raw shelves: 11
+
+- Top 20 unmapped (identity or blank):
+
+  • romance  (n=1)
+
+  • kindle  (n=1)
+
+  • ebook  (n=1)
+
+  • contemporary  (n=1)
+
+  • series  (n=1)
+
+  • favorites  (n=1)
+
+  • owned  (n=1)
+
+  • fiction  (n=1)
+
+  • ebooks  (n=1)
+
+  • adult  (n=1)
+
+  • dnf  (n=1)
+
+  • erotica  (n=1)
+
+  • maybe  (n=1)
+
+  • library  (n=1)
+
+  • arc  (n=1)
+
+  • books  (n=1)
+
+  • paranormal  (n=1)
+
+  • tbr  (n=1)
+
+  • fantasy  (n=1)
+
+  • reviewed  (n=1)
+
+
+
+## Segmentation
+
+- Rows: 9,994
+
+- Accepted: 718 (7.18%)
+
+- Reject len<=2 tokens (heuristic): 133
+
+- Reject digit/punct tokens (heuristic): 33
+
+- Top 20 rejected tokens:
+
+  • to read  (n=1)
+
+  • currently reading  (n=1)
+
+  • kindle  (n=1)
+
+  • ebook  (n=1)
+
+  • contemporary  (n=1)
+
+  • owned  (n=1)
+
+  • contemporary romance  (n=1)
+
+  • ebooks  (n=1)
+
+  • adult  (n=1)
+
+  • e book  (n=1)
+
+  • books i own  (n=1)
+
+  • dnf  (n=1)
+
+  • erotica  (n=1)
+
+  • maybe  (n=1)
+
+  • wish list  (n=1)
+
+  • library  (n=1)
+
+  • arc  (n=1)
+
+  • owned books  (n=1)
+
+  • part of a series  (n=1)
+
+  • to buy  (n=1)
+
+- Examples (accepted, first 10):
+
+  ✓ romance → ['rom an ce']
+
+  ✓ series → ['se ri es']
+
+  ✓ favorites → ['fav or it es']
+
+  ✓ fiction → ['fic ti on']
+
+  ✓ paranormal → ['pa ra no rm al']
+
+  ✓ reviewed → ['re vi ew ed']
+
+  ✓ suspense → ['su sp en se']
+
+  ✓ erotic → ['er ot ic']
+
+  ✓ audiobook → ['au dio bo ok']
+
+  ✓ netgalley → ['ne tg all ey']
+
+- Examples (rejected, first 10):
+
+  ✗ to read → ['to read']
+
+  ✗ currently reading → ['currently reading']
+
+  ✗ kindle → ['kindle']
+
+  ✗ ebook → ['ebook']
+
+  ✗ contemporary → ['contemporary']
+
+  ✗ owned → ['owned']
+
+  ✗ contemporary romance → ['contemporary romance']
+
+  ✗ ebooks → ['ebooks']
+
+  ✗ adult → ['adult']
+
+  ✗ e book → ['e book']
+
+
+
+## Alias Candidates
+
+- No alias candidates present in file. Dry-run produced 0 pairs.
+
+  Dry-run samples: diagnostics_outputs_subsample/alias_dryrun_samples.csv
+
+
+
+## Non-content shelves
+
+No non-content list available.
+
+
+
+## Normalization logs
+
+- Log lines: 19,995
+
+- Actions (top):
+
+  • unknown: 19995
+
+
+
+## Segments vocabulary
+
+- Vocabulary size: 461
+
+- Sample tokens (first 50):
+
+  
+ab          
+abd         
+ac          
+ad          
+add         
+ads         
+af          
+ag          
+aga         
+age         
+
+
+  
+ai          
+aid         
+ain         
+ak          
+al          
+ale         
+all         
+als         
+am          
+ama         
+
+
+  
+an          
+ana         
+and         
+ap          
+ape         
+ar          
+arc         
+are         
+art         
+as          
+
+
+  
+at          
+ate         
+au          
+aus         
+av          
+ave         
+awe         
+ay          
+az          
+ba          
+
+
+  
+bad         
+bb          
+bc          
+bd          
+be          
+bg          
+bi          
+bit         
+bl          
+bla         
+
+
+
+  ... and 411 more
+
+

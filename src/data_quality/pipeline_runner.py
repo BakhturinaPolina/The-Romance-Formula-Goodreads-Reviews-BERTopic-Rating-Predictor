@@ -25,13 +25,13 @@ from typing import Dict, Any, Optional
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Import all pipeline components
-from step1_missing_values_cleaning import MissingValuesCleaner
-from step2_duplicate_detection import DuplicateDetector
-from step3_data_type_validation import DataTypeValidator
-from step4_outlier_detection import OutlierDetectionReporter
-from step4_outlier_treatment import OutlierTreatmentApplier
-from step5_data_type_optimization import DataTypeOptimizer
-from step6_final_quality_validation import FinalQualityValidator
+from .step1_missing_values_cleaning import MissingValuesCleaner
+from .step2_duplicate_detection import DuplicateDetector
+from .step3_data_type_validation import DataTypeValidator
+from .step4_outlier_detection import OutlierDetectionReporter
+from .step4_outlier_treatment import OutlierTreatmentApplier
+from .step5_data_type_optimization import DataTypeOptimizer
+from .step6_final_quality_validation import FinalQualityValidator
 
 def setup_logging():
     """Set up enhanced logging configuration."""

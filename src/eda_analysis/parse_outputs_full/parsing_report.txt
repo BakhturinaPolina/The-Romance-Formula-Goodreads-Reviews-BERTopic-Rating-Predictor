@@ -1,0 +1,52 @@
+============================================================
+LIST PARSING REPORT
+============================================================
+Generated: 2025-09-26T00:29:44.087169
+Dataset: 53,349 rows, 29 columns
+
+PARSING RESULTS:
+------------------------------
+
+book_id_list_en -> book_ids:
+  Success Rate: 100.0%
+  Empty Lists: 0 (0.0%)
+  Avg Items/Row: 1.8
+  Total Items: 94,923
+
+genres_str -> genres:
+  Success Rate: 100.0%
+  Empty Lists: 0 (0.0%)
+  Avg Items/Row: 3.2
+  Total Items: 170,819
+
+shelves_str -> shelves:
+  Success Rate: 100.0%
+  Empty Lists: 0 (0.0%)
+  Avg Items/Row: 80.9
+  Total Items: 4,317,940
+
+FIELD STATISTICS:
+------------------------------
+
+book_ids:
+  Unique Items: 94,923
+  Total Items: 94,923
+  Items per Row: 1.8 ± 1.3
+  Range: 1 - 98
+  Top Items: 9416, 227650, 9423, 6088685, 19826270
+
+genres:
+  Unique Items: 13
+  Total Items: 170,819
+  Items per Row: 3.2 ± 1.7
+  Range: 1 - 11
+  Top Items: romance, fiction, fantasy, paranormal, mystery
+
+shelves:
+  Unique Items: 255,662
+  Total Items: 4,317,940
+  Items per Row: 80.9 ± 29.0
+  Range: 1 - 153
+  Top Items: to-read, romance, currently-reading, kindle, ebook
+
+============================================================

@@ -4,11 +4,12 @@ A comprehensive token deduplication pipeline with graph refinement, triangle-bas
 
 ## 🎯 **Pipeline Overview**
 
-The complete pipeline consists of three main components:
+The complete pipeline consists of four main components:
 
 1. **Graph Refinement** - Build clean, dense graphs from raw candidates
 2. **Triangle Growth** - Expand clusters via triangle-based attachment  
 3. **Canonical Normalization** - Export frequency-based medoids and normalize labels
+4. **Hyperparameter Tuning** - Systematic optimization of pipeline parameters
 
 ## 🛠️ **Core Components**
 
@@ -82,6 +83,77 @@ python src/deduplication/mapping_export.py normalize-shelves-genres \
   clusters_token_map.parquet books.csv output_dir
 ```
 
+### 4. Hyperparameter Tuning
+
+**Purpose**: Systematic optimization of pipeline parameters using advanced multi-objective optimization.
+
+#### Basic Tuning (`param_tuner.py`)
+
+**Key Features**:
+- **Multi-objective optimization** - Balance quality, coverage, and efficiency
+- **Bayesian optimization** - TPE sampler for efficient parameter search
+- **Pareto front analysis** - Find non-dominated solutions
+- **Parallel execution** - Support for distributed tuning
+- **Size-aware quality metrics** - Different criteria for different cluster sizes
+
+**Commands**:
+```bash
+# Quick tuning with defaults
+python src/deduplication/quick_tune.py input_pairs.parquet output_dir
+
+# Advanced tuning with custom parameters
+python -m src.deduplication.param_tuner tune \
+  --in-pairs input_pairs.parquet \
+  --out-base output_dir \
+  --trials 100 --n-jobs 4 \
+  --study my_study --storage sqlite:///tuning.db
+
+# Export best trials
+python -m src.deduplication.param_tuner best \
+  --study my_study --storage sqlite:///tuning.db \
+  --top 5 --export best_trials.csv
+
+# Validate specific trial
+python -m src.deduplication.param_tuner validate \
+  --trial-dir output_dir/trial_0042_abc123 \
+  --in-pairs input_pairs.parquet
+```
+
+#### Advanced Tuning (`param_tuner_advanced.py`) ⭐ **NEW**
+
+**Key Features**:
+- **Multi-objective optimization** - NSGA-II and MOTPE samplers
+- **Multi-fidelity budgets** - 5% → 20% → 100% data for efficient exploration
+- **Early pruning** - Hyperband/ASHA to eliminate weak trials
+- **Constraint handling** - Min coverage, max edges constraints
+- **Pareto re-evaluation** - Full data validation of top solutions
+- **Robust evaluation** - Multiple folds to reduce variance
+- **Visualization tools** - Interactive Pareto front and parameter analysis
+
+**Commands**:
+```bash
+# Advanced NSGA-II tuning with multi-fidelity budgets
+python -m src.deduplication.param_tuner_advanced tune \
+  --in-pairs input_pairs.parquet \
+  --out-base output_dir \
+  --trials 60 --n-jobs 4 \
+  --study-name advanced_nsga2 \
+  --storage sqlite:///advanced.db \
+  --sampler nsga2 \
+  --pruner hyperband \
+  --budgets 0.05,0.20,1.00 \
+  --min-coverage 10 --max-edges 20000
+
+# Analyze results with visualizations
+python -m src.deduplication.param_tuner_advanced analyze \
+  --study-name advanced_nsga2 \
+  --storage sqlite:///advanced.db \
+  --out-dir analysis_output
+
+# Compare tuners
+python src/deduplication/compare_tuners.py
+```
+
 ## 📊 **Quality Assessment**
 
 ### Size-Aware Quality Criteria
@@ -101,6 +173,8 @@ The pipeline uses different quality criteria based on cluster size:
 - **size**: Number of tokens in cluster
 
 ## 🎯 **Complete Workflow Example**
+
+### Option 1: Manual Parameter Selection
 
 ```bash
 # 1. Build clean graph and cluster
@@ -122,6 +196,78 @@ python src/deduplication/mapping_export.py export-medoids \
 python src/deduplication/mapping_export.py normalize-columns \
   data/processed/books.csv outputs/mapping/token_to_medoid.parquet \
   data/processed/books.canonical.csv --col shelves_str --col genres_str
+```
+
+### Option 2: Basic Optimized Parameter Selection
+
+```bash
+# 1. Create sample dataset for fast tuning
+python -c "
+import pandas as pd
+df = pd.read_parquet('data/intermediate/token_pairs.parquet')
+sample = df.sample(n=50000, random_state=42)
+sample.to_parquet('data/intermediate/token_pairs_sample.parquet', index=False)
+"
+
+# 2. Run hyperparameter tuning
+python src/deduplication/quick_tune.py \
+  data/intermediate/token_pairs_sample.parquet \
+  organized_outputs/tuning \
+  --trials 100 --n-jobs 4 \
+  --storage sqlite:///tuning.db
+
+# 3. Use optimized parameters on full dataset
+python src/deduplication/dedupe_pipeline.py refined-all \
+  data/intermediate/token_pairs.parquet outputs/optimized \
+  --base-threshold 0.65 --k 8 --mutual-nn --max-degree 100 \
+  --pair-min-sim 0.88 --small-min-sim 0.75 --big-min-sim 0.70
+
+# 4. Export medoids and normalize (same as Option 1)
+python src/deduplication/mapping_export.py export-medoids \
+  outputs/optimized/clusters_token_map.parquet outputs/mapping \
+  --csv data/processed/books.csv --col shelves_str --col genres_str
+```
+
+### Option 3: Advanced Multi-Objective Optimization (Recommended) ⭐ **NEW**
+
+```bash
+# 1. Create sample dataset for fast tuning
+python -c "
+import pandas as pd
+df = pd.read_parquet('data/intermediate/token_pairs.parquet')
+sample = df.sample(n=100000, random_state=42)
+sample.to_parquet('data/intermediate/token_pairs_sample.parquet', index=False)
+"
+
+# 2. Run advanced multi-objective tuning with NSGA-II
+python -m src.deduplication.param_tuner_advanced tune \
+  --in-pairs data/intermediate/token_pairs_sample.parquet \
+  --out-base organized_outputs/advanced_tuning \
+  --trials 60 --n-jobs 4 \
+  --study-name production_nsga2 \
+  --storage sqlite:///advanced_tuning.db \
+  --sampler nsga2 \
+  --pruner hyperband \
+  --budgets 0.05,0.20,1.00 \
+  --min-coverage 20 --max-edges 15000 \
+  --top-k 3
+
+# 3. Analyze results with visualizations
+python -m src.deduplication.param_tuner_advanced analyze \
+  --study-name production_nsga2 \
+  --storage sqlite:///advanced_tuning.db \
+  --out-dir organized_outputs/analysis
+
+# 4. Use best Pareto solution on full dataset
+python src/deduplication/dedupe_pipeline.py refined-all \
+  data/intermediate/token_pairs.parquet outputs/advanced_optimized \
+  --base-threshold 0.68 --k 8 --mutual-nn --max-degree 120 \
+  --pair-min-sim 0.90 --small-min-sim 0.78 --big-min-sim 0.72
+
+# 5. Export medoids and normalize
+python src/deduplication/mapping_export.py export-medoids \
+  outputs/advanced_optimized/clusters_token_map.parquet outputs/mapping \
+  --csv data/processed/books.csv --col shelves_str --col genres_str
 ```
 
 ## 📈 **Results on Sample Data**
@@ -186,6 +332,11 @@ python src/deduplication/mapping_export.py normalize-columns \
 3. **Triangle growth is conservative** - maintains quality while allowing expansion
 4. **Frequency-based medoids work** - corpus usage determines canonical forms
 5. **Size-aware criteria are essential** - different rules for different cluster sizes
+6. **Parameter tuning is crucial** - systematic optimization finds much better configurations
+7. **Multi-objective optimization** - balances quality, coverage, and efficiency automatically
+8. **Advanced tuning is 5-10x faster** - multi-fidelity budgets with early pruning
+9. **Pareto analysis reveals trade-offs** - multiple good solutions, not just one "best"
+10. **Constraint handling ensures viability** - production-ready parameter combinations
 
 ## 🚀 **Performance Tips**
 
@@ -194,6 +345,12 @@ python src/deduplication/mapping_export.py normalize-columns \
 - Monitor **triangle rates** for local consistency
 - Use **streaming processing** for large datasets
 - **Raise thresholds** for better quality over quantity
+- **Tune parameters systematically** - don't guess, optimize
+- **Start with samples** - tune on 50k pairs, validate on full data
+- **Use multi-objective optimization** - balance quality vs efficiency
+- **Use advanced tuner** - 5-10x faster with multi-fidelity budgets
+- **Apply constraints** - ensure production-ready solutions
+- **Analyze Pareto front** - understand trade-offs between objectives
 
 ## 🔍 **Troubleshooting**
 

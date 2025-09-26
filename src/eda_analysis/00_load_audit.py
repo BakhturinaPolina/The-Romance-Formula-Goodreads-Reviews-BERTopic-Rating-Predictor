@@ -24,7 +24,7 @@ import math
 import logging
 import pathlib
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 
 import numpy as np
@@ -117,7 +117,7 @@ class DataAuditor:
             }
         
         schema_results = {
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'n_rows': int(len(self.df)),
             'n_cols': int(len(self.df.columns)),
             'present_cols': present_cols,
@@ -343,7 +343,9 @@ class DataAuditor:
         # Add compact summary to audit results
         self.audit_results["overdispersion"] = {
             var: {
+                "dl_z": overdisp_summary[var]["dean_lawless"]["z"],
                 "dl_p": overdisp_summary[var]["dean_lawless"]["p_two_sided"],
+                "ct_t": overdisp_summary[var]["cameron_trivedi"]["t"],
                 "ct_p": overdisp_summary[var]["cameron_trivedi"]["p"],
                 "vmr": overdisp_summary[var]["variance_mean_ratio"],
                 "is_overdispersed": (
@@ -541,6 +543,7 @@ class DataAuditor:
     <div class="section">
         <h3>📊 Heavy-Tail Analysis</h3>
         <p><em>Using Clauset-Shalizi-Newman (2009) methodology</em></p>
+        <p><em>Note: Log-binned histograms are visualization only; parameters estimated via MLE/KS/LLR.</em></p>
         
         {% for var, analysis in heavy_tails.items() %}
         <h4>{{ var }}</h4>
@@ -601,13 +604,13 @@ class DataAuditor:
             <tr><th>Test</th><th>Statistic</th><th>p-value</th><th>Interpretation</th></tr>
             <tr>
                 <td>Dean–Lawless (Pearson χ²)</td>
-                <td>z = {{ "%.3f" | format(results.dl_p) }}</td>
+                <td>z = {{ "%.3f" | format(results.dl_z) }}</td>
                 <td>{{ "%.4f" | format(results.dl_p) }}</td>
                 <td>{% if results.dl_p < 0.05 %}<span class="error">Reject H₀ (overdispersed)</span>{% else %}<span class="success">Fail to reject H₀</span>{% endif %}</td>
             </tr>
             <tr>
                 <td>Cameron–Trivedi (Auxiliary OLS)</td>
-                <td>t = {{ "%.3f" | format(results.ct_p) }}</td>
+                <td>t = {{ "%.3f" | format(results.ct_t) }}</td>
                 <td>{{ "%.4f" | format(results.ct_p) }}</td>
                 <td>{% if results.ct_p < 0.05 %}<span class="error">Reject H₀ (overdispersed)</span>{% else %}<span class="success">Fail to reject H₀</span>{% endif %}</td>
             </tr>
@@ -660,7 +663,7 @@ class DataAuditor:
         
         # Prepare template data
         template_data = {
-            'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
+            'timestamp': datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
             'data_path': self.data_path,
             'schema': self.audit_results['schema'],
             'missingness': self.audit_results['missingness'],
@@ -732,8 +735,15 @@ def main():
                        help='Output directory for audit results')
     parser.add_argument('--verbose', action='store_true',
                        help='Enable verbose logging')
+    parser.add_argument('--verbose-logs', action='store_true',
+                       help='Enable verbose DEBUG logs from matplotlib et al.')
     
     args = parser.parse_args()
+    
+    # Silence very chatty matplotlib DEBUG logs unless explicitly requested
+    if not args.verbose_logs:
+        for name in ("matplotlib", "matplotlib.ticker"):
+            logging.getLogger(name).setLevel(logging.WARNING)
     
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)

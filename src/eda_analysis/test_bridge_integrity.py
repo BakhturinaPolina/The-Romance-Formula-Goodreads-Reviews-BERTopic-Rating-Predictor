@@ -5,7 +5,7 @@ import numpy as np
 
 # Set these to your real paths or pass via env in CI
 BRIDGE_DIR = Path("bridge_outputs")
-NORM_DIR = Path("shelf_norm_outputs_no_filters")
+NORM_DIR = Path("shelf_norm_outputs")
 
 def _read_parquet(p: Path) -> pd.DataFrame:
     try:

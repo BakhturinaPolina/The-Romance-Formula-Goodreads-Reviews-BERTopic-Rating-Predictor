@@ -15,16 +15,6 @@ How do thematic characteristics of romance novels relate to their popularity amo
 3. **Correlation Analysis**: Examine relationships between book themes and popularity metrics
 4. **Comparative Analysis**: Compare author-intended themes with reader-perceived themes
 
-### Target Subgenres
-
-The research focuses on modern romantic novels in these subgenres:
-- Contemporary Romance
-- Historical Romance  
-- Paranormal Romance
-- Romantic Suspense
-- Romantic Fantasy
-- Science Fiction Romance
-
 ## Dataset
 
 The project uses Goodreads metadata including:
@@ -52,71 +42,6 @@ The dataset uses **work-level aggregation** to handle multiple editions of the s
 
 This approach ensures fair comparison between books regardless of how many editions they have.
 
-## Research Phases
-
-### Phase 1: Data Exploration and Understanding ✅ COMPLETE
-**Objective**: Comprehensive understanding of dataset structure and quality
-
-**Activities**:
-- Systematic exploration of all 9 JSON files
-- Field type identification and categorization
-- Data quality assessment and documentation
-- Relationship mapping between files
-- Sample content analysis
-
-**Deliverables**:
-- Data structure documentation
-- Quality assessment reports
-- Field selection rationale
-- Processing strategy
-
-### Phase 2: Data Processing and Preparation ✅ COMPLETE
-**Objective**: Create clean, analysis-ready datasets
-
-**Activities**:
-- Data cleaning and standardization
-- Field selection and transformation
-- Quality filtering and validation
-- Subgenre classification
-- Author balancing and deduplication
-
-**Deliverables**:
-- Cleaned datasets for analysis (119,678 romance novels)
-- Processing documentation
-- Quality metrics and validation
-- Corpus creation for NLP analysis
-
-### Phase 3: Data Quality Pipeline ✅ COMPLETE
-**Objective**: Implement comprehensive data quality assurance
-
-**Activities**:
-- 6-step data cleaning and validation pipeline
-- Outlier detection and treatment
-- Data type optimization and persistence
-- Final quality validation and certification
-
-**Deliverables**:
-- Quality-certified datasets ready for analysis
-- Comprehensive quality validation reports
-- Data type optimization for memory efficiency
-- Pipeline documentation and reproducibility
-
-### Phase 4: NLP Analysis and Topic Modeling 🔄 NEXT PHASE
-**Objective**: Extract themes and topics from text content
-
-**Activities**:
-- Text preprocessing and normalization
-- BERTopic modeling for books and reviews
-- Topic interpretation and validation
-- Theme extraction and categorization
-- Cross-validation of topic models
-
-**Deliverables**:
-- Topic models for book descriptions and reviews
-- Theme categorization and interpretation
-- Correlation analysis with popularity metrics
-- Research findings and insights
-
 ## Current Project Status
 
 ### ✅ **Completed**
@@ -128,19 +53,10 @@ This approach ensures fair comparison between books regardless of how many editi
 - **Complete Data Cleaning Pipeline**: Full pipeline from raw data to final analysis
 - **NLP Text Preprocessing**: HTML cleaning, text normalization, genre categorization
 - **EDA Analysis**: Comprehensive exploratory data analysis with statistical insights
-- **Repository Organization**: All outputs centralized and organized
-- **Repository Cleanup**: Comprehensive cleanup with all files safely archived
-- **Dataset Specialization**: Multiple dataset versions created for different research needs
 
 ### 🔄 **In Progress**
 - **Data Audit**: Statistical analysis and data exploration pipeline
 - **Shelf Normalization**: Processing messy shelf tags into normalized forms
-
-### 📋 **Next Steps**
-- **Topic Modeling**: Implement BERTopic for theme extraction
-- **Subgenre Classification**: Parse popular shelves for standardized categories
-- **Correlation Analysis**: Analyze theme-popularity relationships
-- **Research Paper**: Prepare findings for academic publication
 
 ## Project Structure
 
@@ -283,33 +199,12 @@ romance-novel-nlp-research/
 - **Segmentation**: CamelCase detection with guard conditions
 - **Alias Detection**: Jaro-Winkler similarity, edit distance, character n-grams
 
-## Data Quality
-
-### Complete Pipeline Results
-- **Starting Records**: 119,678 romance novels (raw integrated data)
-- **Final Records**: 80,755 romance novels (cleaned and preprocessed)
-- **Total Reduction**: 38,923 records (32.52% reduction)
-- **Data Quality**: High-quality, research-ready dataset
-- **Text Processing**: HTML cleaned, normalized, and validated
-- **Coverage**: 2000-2017 publication years (English editions)
-- **Structure**: 30 columns (complete) or 23 columns (core research)
-- **Quality Status**: Quality-certified through complete 6-step pipeline
-
 ### Dataset Versions Available
 - **Complete Dataset**: All 30 columns with full metadata
 - **Core Research Dataset**: 23 essential columns for efficient analysis
 - **False Duplicates Dataset**: 21,105 records with similar titles by different authors
 - **Step-by-Step Datasets**: 7 datasets showing pipeline progression
 - **Specialized Versions**: 9 different dataset versions for specific research needs
-
-### Data Strengths
-- Complete core metadata (title, author, publication year)
-- Clean, normalized text content
-- Comprehensive popularity metrics
-- Structured series information
-- Subgenre signals in popular shelves
-- Work-level aggregation for fair comparison
-- Quality-assured through systematic validation
 
 ## Getting Started
 
@@ -394,32 +289,6 @@ make bridge       # Step 2: Bridge with parsed data
 make diagnostics  # Step 3: Run diagnostics
 make validate     # Step 4: Validate outputs
 ```
-
-## Repository Maintenance
-
-### Recent Cleanup Activities
-The repository has undergone comprehensive cleanup and organization to maintain a clean, focused codebase:
-
-**Repository Organization**:
-- All outputs centralized in `organized_outputs/` directory
-- Clean separation between active code and development artifacts
-- Streamlined repository with only essential functionality
-- All development history preserved in `archive/` directory
-
-### Current Repository State
-- **Clean Source Code**: No cache files or redundant scripts in active directories
-- **Organized Outputs**: All outputs centralized with clear structure
-- **Current Datasets**: Only current dataset files in `data/processed/`
-- **Preserved History**: All development artifacts safely archived
-- **Ready for Research**: Clean, organized codebase prepared for advanced NLP analysis
-
-## Documentation
-
-### Current Documentation
-- **Main README**: This file - project overview and usage
-- **Module READMEs**: Detailed documentation in each `src/` subfolder
-- **Notebook Organization Rules**: Guidelines for Jupyter notebook structure
-- **Archive Summaries**: Documentation of cleanup and organization activities
 
 ## License
 

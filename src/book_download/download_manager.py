@@ -127,61 +127,6 @@ class BookDownloadManager:
         """Check if we can download more books today"""
         return self.progress['daily_downloads'] < self.daily_limit
     
-    def search_book(self, title: str, author_name: str) -> Optional[Dict]:
-        """
-        Search for a book using anna-mcp server
-        """
-        logger.info(f"Searching for: '{title}' by {author_name}")
-        
-        # Create search term combining title and author
-        search_term = f"{title} {author_name}"
-        logger.info(f"Search term: '{search_term}'")
-        
-        # Use real MCP integration
-        search_results = self.mcp.search_books(search_term)
-        
-        if not search_results:
-            logger.warning(f"No search results found for: {search_term}")
-            return None
-        
-        # Return the first result
-        first_result = search_results[0]
-        
-        # If title/author are empty, use the original search terms
-        if not first_result.get('title') or first_result.get('title') == 'Unknown Title':
-            first_result['title'] = title
-        if not first_result.get('author') or first_result.get('author') == 'Unknown Author':
-            first_result['author'] = author_name
-        
-        logger.info(f"Found book: {first_result.get('title', 'Unknown')} by {first_result.get('author', 'Unknown')}")
-        
-        return first_result
-    
-    def download_book(self, search_result: Dict, work_id: int) -> bool:
-        """
-        Download a book using anna-mcp server
-        """
-        logger.info(f"Downloading book: {search_result.get('title', 'Unknown')}")
-        
-        # Use real MCP integration
-        book_hash = search_result.get('hash')
-        title = search_result.get('title', f'book_{work_id}')
-        format_type = search_result.get('format', 'epub')
-        
-        if not book_hash:
-            logger.error("No hash found in search result")
-            return False
-        
-        # Use MCP integration to download
-        success = self.mcp.download_book(book_hash, title, format_type)
-        
-        if success:
-            logger.info(f"Successfully downloaded: {title}")
-        else:
-            logger.error(f"Failed to download: {title}")
-        
-        return success
-    
     def process_single_book(self, row: pd.Series) -> Dict:
         """Process a single book (search + download)"""
         work_id = row['work_id']
@@ -202,28 +147,43 @@ class BookDownloadManager:
         }
         
         try:
-            # Search for the book
-            search_result = self.search_book(title, author_name)
-            if not search_result or not search_result.get('hash'):
+            # Search for book candidates
+            candidates = self.mcp.find_book_candidates(title, author_name)
+            if not candidates:
                 result['error'] = 'Book not found in Anna\'s Archive'
                 logger.warning(f"Book not found: {title}")
                 return result
-            
-            # Download the book
-            if self.download_book(search_result, work_id):
-                result['status'] = 'downloaded'
-                result['download_path'] = os.path.join(
-                    self.download_dir, 
-                    f"{work_id}_{title.replace(' ', '_')}.{search_result['format']}"
-                )
-                logger.info(f"Successfully downloaded: {title}")
-            else:
-                result['error'] = 'Download failed'
-                logger.error(f"Download failed: {title}")
+
+            # Attempt to download the best candidates
+            download_success = False
+            for candidate in candidates:
+                logger.info(f"Attempting to download candidate: {candidate.get('title')}")
+                
+                # Use MCP integration to download
+                if self.mcp.download_book(
+                    candidate.get('hash'), 
+                    candidate.get('title', f'book_{work_id}'), 
+                    'epub'
+                ):
+                    result['status'] = 'downloaded'
+                    safe_title = "".join(c for c in candidate.get('title', title) if c.isalnum() or c in (' ', '-', '_')).rstrip()
+                    result['download_path'] = os.path.join(
+                        self.download_dir, 
+                        f"{safe_title}.epub"
+                    )
+                    logger.info(f"Successfully downloaded: {title}")
+                    download_success = True
+                    break  # Exit loop on first successful download
+                else:
+                    logger.warning(f"Failed to download candidate for {title}. Trying next one.")
+
+            if not download_success:
+                result['error'] = 'Download failed for all candidates'
+                logger.error(f"Download failed for all candidates: {title}")
         
         except Exception as e:
             result['error'] = str(e)
-            logger.error(f"Error processing book {work_id}: {e}")
+            logger.error(f"Error processing book {work_id}: {e}", exc_info=True)
         
         return result
     

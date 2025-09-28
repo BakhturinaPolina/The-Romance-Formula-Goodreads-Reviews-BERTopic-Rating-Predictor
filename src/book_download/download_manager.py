@@ -14,6 +14,9 @@ import numpy as np
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 
+# Import MCP integration
+from mcp_integration import AnnaMCPIntegration
+
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
@@ -45,6 +48,9 @@ class BookDownloadManager:
         
         # Create download directory if it doesn't exist
         os.makedirs(self.download_dir, exist_ok=True)
+        
+        # Initialize MCP integration
+        self.mcp = AnnaMCPIntegration()
         
         # Load progress tracking
         self.progress = self._load_progress()
@@ -124,48 +130,57 @@ class BookDownloadManager:
     def search_book(self, title: str, author_name: str) -> Optional[Dict]:
         """
         Search for a book using anna-mcp server
-        This will be implemented with actual MCP calls
         """
         logger.info(f"Searching for: '{title}' by {author_name}")
         
-        # TODO: Implement actual MCP server call
-        # For now, simulate search
-        search_result = {
-            'title': title,
-            'author': author_name,
-            'search_term': f"{title} {author_name}",
-            'found': True,  # Simulate finding the book
-            'hash': f"simulated_hash_{hash(title + author_name)}",
-            'format': 'epub',
-            'size': 1024000,  # Simulate 1MB file
-            'timestamp': datetime.now().isoformat()
-        }
+        # Create search term combining title and author
+        search_term = f"{title} {author_name}"
+        logger.info(f"Search term: '{search_term}'")
         
-        logger.info(f"Search result: {search_result}")
-        return search_result
+        # Use real MCP integration
+        search_results = self.mcp.search_books(search_term)
+        
+        if not search_results:
+            logger.warning(f"No search results found for: {search_term}")
+            return None
+        
+        # Return the first result
+        first_result = search_results[0]
+        
+        # If title/author are empty, use the original search terms
+        if not first_result.get('title') or first_result.get('title') == 'Unknown Title':
+            first_result['title'] = title
+        if not first_result.get('author') or first_result.get('author') == 'Unknown Author':
+            first_result['author'] = author_name
+        
+        logger.info(f"Found book: {first_result.get('title', 'Unknown')} by {first_result.get('author', 'Unknown')}")
+        
+        return first_result
     
     def download_book(self, search_result: Dict, work_id: int) -> bool:
         """
         Download a book using anna-mcp server
-        This will be implemented with actual MCP calls
         """
-        logger.info(f"Downloading book: {search_result['title']}")
+        logger.info(f"Downloading book: {search_result.get('title', 'Unknown')}")
         
-        # TODO: Implement actual MCP server download call
-        # For now, simulate download
-        filename = f"{work_id}_{search_result['title'].replace(' ', '_')}.{search_result['format']}"
-        filepath = os.path.join(self.download_dir, filename)
+        # Use real MCP integration
+        book_hash = search_result.get('hash')
+        title = search_result.get('title', f'book_{work_id}')
+        format_type = search_result.get('format', 'epub')
         
-        # Simulate download by creating a placeholder file
-        try:
-            with open(filepath, 'w') as f:
-                f.write(f"Simulated download of {search_result['title']} by {search_result['author']}")
-            
-            logger.info(f"Downloaded to: {filepath}")
-            return True
-        except Exception as e:
-            logger.error(f"Download failed: {e}")
+        if not book_hash:
+            logger.error("No hash found in search result")
             return False
+        
+        # Use MCP integration to download
+        success = self.mcp.download_book(book_hash, title, format_type)
+        
+        if success:
+            logger.info(f"Successfully downloaded: {title}")
+        else:
+            logger.error(f"Failed to download: {title}")
+        
+        return success
     
     def process_single_book(self, row: pd.Series) -> Dict:
         """Process a single book (search + download)"""
@@ -189,7 +204,7 @@ class BookDownloadManager:
         try:
             # Search for the book
             search_result = self.search_book(title, author_name)
-            if not search_result or not search_result.get('found'):
+            if not search_result or not search_result.get('hash'):
                 result['error'] = 'Book not found in Anna\'s Archive'
                 logger.warning(f"Book not found: {title}")
                 return result

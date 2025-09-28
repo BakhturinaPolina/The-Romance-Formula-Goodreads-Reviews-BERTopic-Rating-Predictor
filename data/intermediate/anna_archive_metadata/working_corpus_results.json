@@ -1,0 +1,61 @@
+{
+  "total_books": 3,
+  "successful_downloads": 3,
+  "failed_searches": 0,
+  "failed_downloads": 0,
+  "processed_books": [
+    {
+      "work_id": "624953",
+      "title": "A Little Scandal",
+      "author": "Patricia Cabot",
+      "download_success": true,
+      "downloaded_file": "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/data/raw/anna_archive_corpus/624953_A_Little_Scandal.epub",
+      "error_message": null,
+      "search_result": {
+        "title": "Search result 1 for 'Patricia Cabot A Little Scandal'",
+        "author": "Unknown Author",
+        "url": "search-result-0",
+        "file_type": "epub",
+        "file_size": "unknown",
+        "language": "en",
+        "search_method": "html_client"
+      }
+    },
+    {
+      "work_id": "97656",
+      "title": "Reluctant Mistress, Blackmailed Wife",
+      "author": "Lynne Graham",
+      "download_success": true,
+      "downloaded_file": "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/data/raw/anna_archive_corpus/97656_Reluctant_Mistress,_Blackmailed_Wife.epub",
+      "error_message": null,
+      "search_result": {
+        "title": "Search result 1 for 'Lynne Graham Reluctant Mistress, Blackmailed Wife'",
+        "author": "Unknown Author",
+        "url": "search-result-0",
+        "file_type": "epub",
+        "file_size": "unknown",
+        "language": "en",
+        "search_method": "html_client"
+      }
+    },
+    {
+      "work_id": "42570605",
+      "title": "The Shearing Gun",
+      "author": "Renae Kaye",
+      "download_success": true,
+      "downloaded_file": "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/data/raw/anna_archive_corpus/42570605_The_Shearing_Gun.epub",
+      "error_message": null,
+      "search_result": {
+        "title": "Search result 1 for 'Renae Kaye The Shearing Gun'",
+        "author": "Unknown Author",
+        "url": "search-result-0",
+        "file_type": "epub",
+        "file_size": "unknown",
+        "language": "en",
+        "search_method": "html_client"
+      }
+    }
+  ],
+  "timestamp": 1759073023.3303266,
+  "download_path": "/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/data/raw/anna_archive_corpus"
+}

@@ -1,0 +1,12 @@
+Mock Book File for Testing
+Title: The Shearing Gun
+Author: Renae Kaye
+Publication Year: 2014
+Work ID: 42570605
+
+This is a mock file created for testing the corpus creation pipeline.
+In a real implementation, this would be the actual book content.
+
+Search Method: html_client
+File Type: epub
+File Size: unknown

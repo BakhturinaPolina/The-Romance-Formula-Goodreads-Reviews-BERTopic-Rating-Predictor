@@ -1,30 +1,11 @@
 """
-Corpus Creation Pipeline for Romance Novel Research
+Corpus Creation Module for Romance Novel NLP Research
 
-This module provides automated corpus creation from Anna's Archive datasets,
-designed for romance novel NLP research projects.
+This module provides tools for creating a research corpus of romance novels
+from Anna's Archive using the annas-mcp tool with personal API keys.
 
-Features:
-- Book matching using title/author/year
-- Format preference (epub > HTML > PDF)
-- Organized storage with consistent naming
-- Error handling and flagging for missing books
-- Scalable design for large datasets
+Components:
+- AnnaArchiveSearcher: Search for books by title and author
+- AnnaArchiveDownloader: Download books with metadata tracking
+- CorpusManager: Coordinate the entire corpus creation process
 """
-
-__version__ = "0.1.0"
-__author__ = "Research Assistant"
-
-from .book_matcher import BookMatcher
-from .annas_client import AnnasArchiveClient
-from .downloader import BookDownloader
-from .pipeline import CorpusCreationPipeline
-from .free_pipeline import FreeCorpusCreationPipeline
-
-__all__ = [
-    'BookMatcher',
-    'AnnasArchiveClient',
-    'BookDownloader',
-    'CorpusCreationPipeline',
-    'FreeCorpusCreationPipeline'
-]

@@ -1,0 +1,41 @@
+[
+  {
+    "work_id": 624953,
+    "title": "A Little Scandal",
+    "author_name": "Patricia Cabot",
+    "publication_year": 2000,
+    "search_result": {
+      "search_term": "A Little Scandal Patricia Cabot",
+      "title": "A Little Scandal",
+      "author": "Patricia Cabot",
+      "status": "search_simulated"
+    },
+    "test_timestamp": "2025-09-28T17:53:23.052890"
+  },
+  {
+    "work_id": 97656,
+    "title": "Reluctant Mistress, Blackmailed Wife",
+    "author_name": "Lynne Graham",
+    "publication_year": 2006,
+    "search_result": {
+      "search_term": "Reluctant Mistress, Blackmailed Wife Lynne Graham",
+      "title": "Reluctant Mistress, Blackmailed Wife",
+      "author": "Lynne Graham",
+      "status": "search_simulated"
+    },
+    "test_timestamp": "2025-09-28T17:53:24.053677"
+  },
+  {
+    "work_id": 42570605,
+    "title": "The Shearing Gun",
+    "author_name": "Renae Kaye",
+    "publication_year": 2014,
+    "search_result": {
+      "search_term": "The Shearing Gun Renae Kaye",
+      "title": "The Shearing Gun",
+      "author": "Renae Kaye",
+      "status": "search_simulated"
+    },
+    "test_timestamp": "2025-09-28T17:53:25.055856"
+  }
+]

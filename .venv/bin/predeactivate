@@ -1,0 +1,17 @@
+#!/bin/bash
+# This file is sourced when the virtual environment is deactivated
+# Clean up environment variables
+
+# Remove Calibre from PATH
+export PATH=$(echo $PATH | sed "s|$HOME/calibre-bin/calibre:||g")
+
+# Unset Calibre-specific variables
+unset EBOOK_CONVERT_BIN
+
+# Remove vendored XCB cursor from LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$(echo $LD_LIBRARY_PATH | sed "s|$HOME/.local/libxcb-cursor0/usr/lib/x86_64-linux-gnu:||g")
+
+# Unset Qt platform
+unset QT_QPA_PLATFORM
+
+echo "✓ Calibre environment cleaned up"

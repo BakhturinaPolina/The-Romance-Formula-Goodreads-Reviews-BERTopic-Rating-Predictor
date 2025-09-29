@@ -1,4 +1,0 @@
-2025-09-27 16:43:00,438 - src.corpus_creation.logging_config - INFO - configure_logging:82 - Logging configured - File: /home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/logs/pipeline_debug.log (level: DEBUG), Console: INFO
-2025-09-27 16:43:00,438 - src.corpus_creation.logging_config - DEBUG - configure_logging:83 - Debug logging enabled - detailed execution information will be recorded
-2025-09-27 16:43:00,438 - test - INFO - <module>:6 - Test info message
-2025-09-27 16:43:00,438 - test - DEBUG - <module>:7 - Test debug message

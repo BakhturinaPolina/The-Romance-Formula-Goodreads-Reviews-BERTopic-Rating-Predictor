@@ -1,160 +1,301 @@
 # Book Download Research Component
 
-This component handles downloading romance novels from Anna's Archive for NLP research using the anna-mcp server.
+A robust system for downloading romance novels from Anna's Archive with automatic format validation, conversion, and progress tracking.
 
 ## Overview
 
-The system is designed to:
-- Download 6,000 romance novels from Anna's Archive
-- Process 999 books per day with proper rate limiting
-- Resume from exactly where it left off if interrupted
-- Use title and author_name for searching
-- Save books in EPUB/HTML format
-- Provide extensive logging and progress tracking
+This component provides a complete solution for downloading books from Anna's Archive using IPFS gateways, with built-in EPUB validation, MOBI-to-EPUB conversion via Calibre, and comprehensive error handling.
 
-## Files
+## Features
 
-- `run_downloads.py` - Main production script for running downloads
-- `download_manager_production.py` - Production download management system with progress tracking
-- `mcp_integration_final.py` - Production-ready integration with anna-mcp server
-- `FORMAT_ISSUE_ANALYSIS.md` - Detailed analysis of format detection issue and solution
-- `PRODUCTION_READY_SUMMARY.md` - Complete production readiness summary
-- `README.md` - This documentation
+- **🔍 Smart Search**: Search Anna's Archive using title and author
+- **📥 Robust Downloads**: IPFS-based downloads with multiple gateway fallbacks
+- **🛡️ EPUB Guard**: Automatic format detection and validation
+- **🔄 Format Conversion**: MOBI to EPUB conversion via Calibre
+- **📊 Progress Tracking**: Resume-capable download sessions with daily limits
+- **🔧 File Repair**: Fix mislabeled files in existing download directories
+- **⚡ Hardened IPFS**: User-Agent headers and exponential backoff for 403 errors
 
-## Setup
+## Components
 
-1. **Environment**: The anna-mcp server is already configured in Cursor with:
-   - API Key: Set in MCP configuration
-   - Download Path: `/home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research/organized_outputs/anna_archive_download`
+### Core Files
 
-2. **Virtual Environment**: Always run in the project's virtual environment:
-   ```bash
-   cd /home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research
-   source venv/bin/activate
-   ```
+- **`download_manager.py`** - Main orchestrator for batch downloads
+- **`mcp_integration.py`** - Integration with anna-mcp server
+- **`aa_epub_guard.py`** - EPUB validation and format conversion
+- **`repair_existing_files.py`** - One-shot repair for mislabeled files
+
+### Configuration Files
+
+- **`EPUB_GUARD_INTEGRATION.md`** - Technical documentation for EPUB guard
+
+## Prerequisites
+
+### 1. Calibre Installation
+
+Calibre is required for MOBI to EPUB conversion. Install it in user space:
+
+```bash
+# Download and install Calibre binary
+wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin install_dir=~/calibre-bin
+
+# Install missing libxcb-cursor dependency
+mkdir -p ~/.local/libxcb-cursor0/usr/lib/x86_64-linux-gnu
+wget -O ~/.local/libxcb-cursor0/usr/lib/x86_64-linux-gnu/libxcb-cursor.so.0 \
+  http://archive.ubuntu.com/ubuntu/pool/main/libx/libxcb/libxcb-cursor0_1.15-1_amd64.deb
+```
+
+### 2. Virtual Environment Setup
+
+The virtual environment is automatically configured with Calibre support via `postactivate` scripts:
+
+```bash
+# Activate virtual environment (Calibre setup is automatic)
+source .venv/bin/activate
+
+# Verify Calibre is available
+ebook-convert --version
+```
+
+### 3. Anna's Archive MCP Server
+
+Install the anna-mcp server for search and download functionality:
+
+```bash
+# Install anna-mcp (if not already installed)
+pip install anna-mcp
+
+# Set environment variables
+export ANNAS_SECRET_KEY="your_secret_key"
+export ANNAS_DOWNLOAD_PATH="/path/to/download/directory"
+```
 
 ## Usage
 
-### Testing with Sample Books (2-3 books)
+### Basic Download Workflow
 
-```bash
-# Test with sample CSV (8 books total)
-python src/book_download/run_downloads.py --sample --max-books 3
+```python
+from download_manager import BookDownloadManager
 
-# Test with specific daily limit
-python src/book_download/run_downloads.py --sample --max-books 5 --daily-limit 10
+# Initialize download manager
+manager = BookDownloadManager(
+    csv_path="data/processed/sample_books_for_download.csv",
+    download_dir="organized_outputs/anna_archive_download",
+    daily_limit=10  # Respect rate limits
+)
+
+# Run a batch of downloads
+summary = manager.run_download_batch(max_books=5)
+print(f"Downloaded: {summary['downloaded']}, Failed: {summary['failed']}")
 ```
 
-### Production Run (Full Dataset)
+### Individual Book Processing
 
-```bash
-# Download up to daily limit (999 books)
-python src/book_download/run_downloads.py
+```python
+# Search for a book
+search_result = manager.search_book("Emma", "Jane Austen")
 
-# Download specific number of books
-python src/book_download/run_downloads.py --max-books 500
-
-# Custom daily limit
-python src/book_download/run_downloads.py --daily-limit 500
+# Download the book
+if search_result:
+    success = manager.download_book(search_result, work_id=12345)
+    if success:
+        print("Download successful!")
 ```
 
-### Format Detection
+### EPUB Guard Standalone Usage
 
-The system automatically detects and handles different file formats:
-- **Format Detection**: Uses `file` command to detect actual format (EPUB, MOBI, PDF, etc.)
-- **Automatic Renaming**: Files renamed to reflect actual format
-- **Format Validation**: Ensures correct file extensions match content
+```python
+from aa_epub_guard import download_from_metadata, ensure_valid_epub
+
+# Download with automatic format validation
+metadata = {
+    "file_unified_data": {
+        "title_best": "Emma",
+        "author_best": "Jane Austen",
+        "ipfs_infos": [{"ipfs_cid": "QmfApP4c1A9YtDJor1TivVTLYpJpWkJB8BU55sUVQrHTuM"}]
+    }
+}
+
+final_path = download_from_metadata(metadata, Path("./downloads"))
+print(f"Downloaded to: {final_path}")
+```
+
+### Repair Existing Files
+
+```bash
+# Fix mislabeled files in download directory
+python repair_existing_files.py
+```
+
+## Configuration
+
+### Environment Variables
+
+The system uses these environment variables (automatically set in virtual environment):
+
+```bash
+# Calibre configuration
+export PATH="$HOME/calibre-bin/calibre:$PATH"
+export EBOOK_CONVERT_BIN="$HOME/calibre-bin/calibre/ebook-convert"
+
+# Qt headless mode
+export QT_QPA_PLATFORM=offscreen
+export LD_LIBRARY_PATH="$HOME/.local/libxcb-cursor0/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
+
+# Anna's Archive MCP
+export ANNAS_SECRET_KEY="your_secret_key"
+export ANNAS_DOWNLOAD_PATH="/path/to/downloads"
+```
+
+### Download Manager Configuration
+
+```python
+manager = BookDownloadManager(
+    csv_path="path/to/books.csv",           # CSV with book metadata
+    download_dir="path/to/downloads",       # Download destination
+    progress_file="download_progress.json", # Progress tracking file
+    daily_limit=50                          # Daily download limit
+)
+```
+
+## File Formats
+
+### Supported Input Formats
+
+- **EPUB** - Validated and normalized
+- **MOBI** - Automatically converted to EPUB
+- **ZIP** - Checked for valid EPUB structure
+- **HTML** - Detected as error pages
+
+### Output Format
+
+All books are normalized to **EPUB** format with proper filenames:
+- `Title - Author.epub`
+- Fallback to MD5 hash if title/author unavailable
+
+## Error Handling
+
+### IPFS Gateway Resilience
+
+The system handles common IPFS gateway issues:
+
+- **403 Forbidden**: Uses proper User-Agent headers and exponential backoff
+- **429 Rate Limited**: Automatic retry with increasing delays
+- **Timeout**: 30-second timeout with fallback to next gateway
+- **Network Errors**: Graceful degradation with detailed error messages
+
+### EPUB Validation
+
+- **Mimetype Check**: Ensures EPUB follows OCF specification
+- **ZIP Structure**: Validates proper EPUB container format
+- **Format Detection**: Sniffs actual file format vs. extension
+- **Conversion**: MOBI files automatically converted to EPUB
 
 ## Progress Tracking
 
-The system automatically tracks progress in:
-- `download_progress.json` - Current progress and statistics
-- `download_summary_YYYYMMDD_HHMMSS.json` - Summary of each run
-- `download_log.txt` - Detailed logging
-
-### Progress File Structure
+The system maintains detailed progress tracking:
 
 ```json
 {
-  "last_row": 2,
-  "total_processed": 2,
-  "total_downloaded": 2,
-  "total_failed": 0,
+  "last_row": 150,
+  "total_processed": 150,
+  "total_downloaded": 120,
+  "total_failed": 30,
   "last_run_date": "2025-09-28",
-  "daily_downloads": 2,
+  "daily_downloads": 10,
   "download_history": [...]
 }
 ```
 
-## Resumable Downloads
+## Troubleshooting
 
-The system automatically resumes from the last processed row:
-- If interrupted, run the same command again
-- It will start from `last_row` in the progress file
-- Daily limits are reset each day
-- No duplicate downloads
+### Common Issues
 
-## Daily Limits
+1. **Calibre Not Found**
+   ```bash
+   # Verify installation
+   ~/calibre-bin/calibre/ebook-convert --version
+   
+   # Check environment variables
+   echo $EBOOK_CONVERT_BIN
+   ```
 
-- **Default**: 999 books per day
-- **Customizable**: Use `--daily-limit` parameter
-- **Automatic reset**: Counter resets at midnight
-- **Progress tracking**: Shows remaining downloads for the day
+2. **403 IPFS Errors**
+   - The hardened fetcher should handle these automatically
+   - Check network connectivity
+   - Try different IPFS gateways
 
-## File Organization
+3. **MOBI Conversion Fails**
+   ```bash
+   # Test Calibre conversion manually
+   ebook-convert input.mobi output.epub
+   ```
 
-Downloaded books are saved to:
+4. **Virtual Environment Issues**
+   ```bash
+   # Reactivate environment
+   deactivate
+   source .venv/bin/activate
+   ```
+
+### Debug Mode
+
+Enable detailed logging:
+
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
 ```
-organized_outputs/anna_archive_download/
-├── 624953_A_Little_Scandal.mobi          # MOBI format (auto-detected)
-├── 97656_Reluctant_Mistress_Blackmailed_Wife.epub  # EPUB format
-├── download_progress.json                # Progress tracking
-├── download_summary_YYYYMMDD_HHMMSS.json # Run summaries
-└── download_log.txt                      # Detailed logging
+
+## API Reference
+
+### BookDownloadManager
+
+```python
+class BookDownloadManager:
+    def __init__(self, csv_path, download_dir, progress_file, daily_limit)
+    def search_book(self, title: str, author_name: str) -> Optional[Dict]
+    def download_book(self, search_result: Dict, work_id: int) -> bool
+    def run_download_batch(self, max_books: Optional[int]) -> Dict
 ```
 
-## Error Handling
+### EPUB Guard Functions
 
-The system handles:
-- Network errors with retries
-- Books not found in Anna's Archive
-- Daily limit reached
-- File system errors
-- Progress corruption (creates new progress file)
+```python
+def fetch_via_ipfs_cids(cids: Iterable[str], dest: Path, filename: str) -> Path
+def sniff_format(path: Path) -> str
+def ensure_valid_epub(path: Path, convert_mobi: bool, calibre_bin: str) -> Path
+def download_from_metadata(meta: dict, out_dir: Path) -> Path
+```
 
-## Logging
+## Contributing
 
-All operations are logged to:
-- Console output (INFO level)
-- `download_log.txt` file
-- Progress tracking files
+When modifying the download system:
 
-## Production Status
+1. **Test format detection** on various file types
+2. **Verify Calibre integration** works in headless mode
+3. **Check IPFS resilience** with different gateway combinations
+4. **Update progress tracking** for new features
+5. **Maintain backward compatibility** with existing downloads
 
-The system is **PRODUCTION READY** with:
-- ✅ **Real MCP Integration**: Working with actual Anna's Archive
-- ✅ **Format Detection**: Automatic format detection and renaming
-- ✅ **Error Handling**: Robust error handling for all scenarios
-- ✅ **Progress Tracking**: Resumable downloads with progress tracking
-- ✅ **Daily Limits**: 999 books per day with automatic reset
+## License
 
-## Testing
+This component is part of the Romance Novel NLP Research project. See the main project LICENSE for details.
 
-The system has been thoroughly tested with:
-- ✅ **MCP Integration**: Real MCP search and download functionality
-- ✅ **Format Detection**: Correctly detects MOBI vs EPUB formats
-- ✅ **Progress Tracking**: Resumable downloads working
-- ✅ **Error Handling**: Proper error handling for all scenarios
-- ✅ **Production Workflow**: Complete end-to-end functionality
-- ✅ **Sample Data**: Tested with 8-book sample dataset
+## Changelog
 
-## Production Deployment
+### v1.2.0 (2025-09-28)
+- ✅ Hardened IPFS fetcher with User-Agent headers and backoff
+- ✅ Persistent Calibre environment setup in virtual environment
+- ✅ Enhanced error handling for 403/429 responses
+- ✅ Improved EPUB guard validation and conversion
 
-For production use with the full 6,000 book dataset:
+### v1.1.0
+- ✅ EPUB guard integration with format detection
+- ✅ MOBI to EPUB conversion via Calibre
+- ✅ Progress tracking and resume capability
 
-1. **First run**: `python src/book_download/run_downloads.py`
-2. **Daily runs**: Same command - automatically resumes from last position
-3. **Monitoring**: Check `download_progress.json` for current status
-4. **Completion**: System will stop when all 6,000 books are processed
-
-The system is designed to run reliably over multiple days, automatically managing daily limits and progress tracking.
+### v1.0.0
+- ✅ Initial release with basic download functionality
+- ✅ Anna's Archive MCP integration
+- ✅ CSV-based batch processing

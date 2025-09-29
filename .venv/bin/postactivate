@@ -1,0 +1,13 @@
+#!/bin/bash
+# This file is sourced when the virtual environment is activated
+# Add environment variables and setup for the project
+
+# Calibre (user-space, no sudo)
+export PATH="$HOME/calibre-bin/calibre:$PATH"
+export EBOOK_CONVERT_BIN="$HOME/calibre-bin/calibre/ebook-convert"
+
+# Qt headless + vendored XCB cursor
+export LD_LIBRARY_PATH="$HOME/.local/libxcb-cursor0/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
+export QT_QPA_PLATFORM=offscreen
+
+echo "✓ Calibre environment configured for headless operation"

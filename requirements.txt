@@ -5,6 +5,12 @@ numpy>=2.3.0  # pandas dependency
 # Progress tracking
 tqdm>=4.64.0
 
+# Book download and format conversion
+# Note: Calibre must be installed separately for MOBI to EPUB conversion
+# Ubuntu/Debian: sudo apt-get install calibre
+# macOS: brew install --cask calibre
+# Windows: Download from https://calibre-ebook.com/download
+
 # Jupyter for analysis (if needed)
 jupyter>=1.0.0
 

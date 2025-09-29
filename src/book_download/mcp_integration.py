@@ -10,6 +10,10 @@ import os
 import subprocess
 import time
 from typing import Dict, List, Optional
+from pathlib import Path
+
+# Import EPUB guard helper
+from aa_epub_guard import download_from_metadata, ensure_valid_epub, sniff_format
 
 # Set up logging
 logging.basicConfig(
@@ -104,7 +108,7 @@ class AnnaMCPIntegration:
     
     def download_book(self, book_hash: str, title: str, format_type: str = "epub") -> bool:
         """
-        Download a book using anna-mcp server
+        Download a book using anna-mcp server (legacy method)
         
         Args:
             book_hash: Hash of the book to download
@@ -157,6 +161,49 @@ class AnnaMCPIntegration:
             return False
         except Exception as e:
             logger.error(f"Download error: {e}")
+            return False
+    
+    def download_book_with_epub_guard(self, metadata: Dict, work_id: int, author_name: str = "") -> bool:
+        """
+        Download a book using EPUB guard helper with robust validation and conversion
+        
+        Args:
+            metadata: Full metadata dict from Anna's Archive search
+            work_id: Work ID for tracking
+            author_name: Author name for filename
+            
+        Returns:
+            True if download successful, False otherwise
+        """
+        logger.info(f"Downloading book with EPUB guard: {metadata.get('title', 'Unknown')}")
+        
+        try:
+            # Use EPUB guard helper for robust download and validation
+            final_path = download_from_metadata(
+                metadata, 
+                Path(self.download_dir), 
+                prefer_title_author=True, 
+                convert_mobi=True
+            )
+            
+            logger.info(f"EPUB guard download successful: {final_path}")
+            return True
+            
+        except ValueError as e:
+            # Handle specific EPUB guard errors with user-friendly messages
+            error_msg = str(e)
+            if "HTML page instead of a book" in error_msg:
+                logger.error("The mirror returned an HTML page. Switching gateway...")
+            elif "ZIP file is not a valid EPUB" in error_msg:
+                logger.error("EPUB layout invalid (mimetype not first). Re-download from another gateway.")
+            elif "Unknown or corrupted file" in error_msg:
+                logger.error("Corrupted or wrong format. Retrying with alternate CID/mirror.")
+            else:
+                logger.error(f"EPUB guard error: {error_msg}")
+            return False
+            
+        except Exception as e:
+            logger.error(f"EPUB guard download failed: {e}")
             return False
     
     def _parse_search_results(self, output: str) -> List[Dict]:

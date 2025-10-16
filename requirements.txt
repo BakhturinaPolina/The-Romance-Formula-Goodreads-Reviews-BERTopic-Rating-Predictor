@@ -24,6 +24,8 @@ optuna>=3.0.0    # for hyperparameter optimization
 # Shelf normalization and BERTopic pipeline dependencies
 unidecode>=1.3.0  # for unicode normalization
 rapidfuzz>=3.0.0  # for fuzzy string matching
+python-Levenshtein>=0.21.0  # for faster fuzzy matching
+datasets>=2.14.0  # for Hugging Face datasets
 symspellpy>=6.7.0  # for spelling correction (optional)
 hdbscan>=0.8.0   # for clustering
 scikit-learn>=1.3.0  # for ML utilities and nearest neighbors

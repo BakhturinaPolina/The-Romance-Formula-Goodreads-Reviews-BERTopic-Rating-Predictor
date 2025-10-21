@@ -13,9 +13,11 @@ import json
 import numpy as np
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
+from pathlib import Path
 
 # Import MCP integration
-from mcp_integration import AnnaMCPIntegration
+from .mcp_integration import AnnaMCPIntegration
+from .aa_epub_guard import ensure_valid_epub, sniff_format
 
 # Set up logging
 logging.basicConfig(
@@ -51,6 +53,9 @@ class BookDownloadManager:
         
         # Initialize MCP integration
         self.mcp = AnnaMCPIntegration()
+        
+        # Track final download path for EPUB guard normalization
+        self._last_final_path = None
         
         # Load progress tracking
         self.progress = self._load_progress()
@@ -159,26 +164,52 @@ class BookDownloadManager:
     
     def download_book(self, search_result: Dict, work_id: int) -> bool:
         """
-        Download a book using anna-mcp server
+        Download a book using anna-mcp server with EPUB guard validation
         """
         logger.info(f"Downloading book: {search_result.get('title', 'Unknown')}")
         
-        # Use real MCP integration
-        book_hash = search_result.get('hash')
-        title = search_result.get('title', f'book_{work_id}')
-        format_type = search_result.get('format', 'epub')
-        
-        if not book_hash:
-            logger.error("No hash found in search result")
-            return False
-        
-        # Use MCP integration to download
-        success = self.mcp.download_book(book_hash, title, format_type)
+        # Check if we have full metadata for EPUB guard
+        if 'file_unified_data' in search_result and 'ipfs_infos' in search_result.get('file_unified_data', {}):
+            # Use EPUB guard method for robust download and validation
+            success = self.mcp.download_book_with_epub_guard(search_result, work_id)
+        else:
+            # Fall back to legacy method
+            book_hash = search_result.get('hash')
+            title = search_result.get('title', f'book_{work_id}')
+            format_type = search_result.get('format', 'epub')
+            
+            if not book_hash:
+                logger.error("No hash found in search result")
+                return False
+            
+            # Use MCP integration to download
+            success = self.mcp.download_book(book_hash, title, format_type)
+            
+            # If download successful, normalize format with EPUB guard
+            if success:
+                # Build expected path for legacy downloads
+                safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+                expected_path = os.path.join(self.download_dir, f"{safe_title}.{format_type}")
+                
+                if os.path.exists(expected_path):
+                    try:
+                        # Normalize/convert so extension matches real content
+                        calibre_bin = os.environ.get("EBOOK_CONVERT_BIN", "ebook-convert")
+                        final_path = ensure_valid_epub(Path(expected_path), convert_mobi=True, calibre_bin=calibre_bin)
+                        if str(final_path) != expected_path:
+                            logger.info(f"Normalized format: {expected_path} -> {final_path}")
+                        # Store the real path so the caller can record it
+                        self._last_final_path = str(final_path)
+                    except Exception as e:
+                        logger.warning(f"Format normalization failed: {e}")
+                        self._last_final_path = expected_path
+                else:
+                    self._last_final_path = expected_path
         
         if success:
-            logger.info(f"Successfully downloaded: {title}")
+            logger.info(f"Successfully downloaded: {search_result.get('title', 'Unknown')}")
         else:
-            logger.error(f"Failed to download: {title}")
+            logger.error(f"Failed to download: {search_result.get('title', 'Unknown')}")
         
         return success
     
@@ -212,10 +243,11 @@ class BookDownloadManager:
             # Download the book
             if self.download_book(search_result, work_id):
                 result['status'] = 'downloaded'
-                result['download_path'] = os.path.join(
-                    self.download_dir, 
-                    f"{work_id}_{title.replace(' ', '_')}.{search_result['format']}"
-                )
+                # Use the normalized path from EPUB guard if available
+                result['download_path'] = getattr(self, "_last_final_path", os.path.join(
+                    self.download_dir,
+                    f"{work_id}_{title.replace(' ', '_')}.{search_result.get('format','epub')}"
+                ))
                 logger.info(f"Successfully downloaded: {title}")
             else:
                 result['error'] = 'Download failed'

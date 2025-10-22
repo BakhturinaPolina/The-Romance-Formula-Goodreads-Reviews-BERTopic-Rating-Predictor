@@ -68,6 +68,87 @@ class UnifiedTitleMatcher:
                         'year': 'year'
                     }
                 },
+            
+                'goodreads_books': {
+                    'index': 'goodreads_books',
+                    'name': 'Goodreads Books',
+                    'description': 'Book metadata from Goodreads (excellent for fiction)',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.authors',
+                        'year': 'metadata.publishedDate'
+                    }
+                },
+                'libby_books': {
+                    'index': 'libby_books',
+                    'name': 'Libby Library Books',
+                    'description': 'Library books from Libby (includes fiction)',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.authors',
+                        'year': 'metadata.publishedDate'
+                    }
+                },
+                'upload_books': {
+                    'index': 'upload_books',
+                    'name': 'User Uploaded Books',
+                    'description': 'Books uploaded by users (includes fiction)',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.authors',
+                        'year': 'metadata.publishedDate'
+                    }
+                },
+                'worldcat_books': {
+                    'index': 'worldcat_books',
+                    'name': 'WorldCat Library Catalog',
+                    'description': 'Global library catalog (comprehensive fiction coverage)',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.authors',
+                        'year': 'metadata.publishedDate'
+                    }
+                },
+                'trantor_books': {
+                    'index': 'trantor_books',
+                    'name': 'Trantor Books',
+                    'description': 'Books from Trantor platform',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.authors',
+                        'year': 'metadata.publishedDate'
+                    }
+                },
+                'gbooks_books': {
+                    'index': 'gbooks_books',
+                    'name': 'Google Books',
+                    'description': 'Google Books metadata',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.authors',
+                        'year': 'metadata.publishedDate'
+                    }
+                },
+                'hathitrust_books': {
+                    'index': 'hathitrust_books',
+                    'name': 'HathiTrust Books',
+                    'description': 'HathiTrust digital library books',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.authors',
+                        'year': 'metadata.publishedDate'
+                    }
+                },
+                'internet_archive_books': {
+                    'index': 'internet_archive_books',
+                    'name': 'Internet Archive Books',
+                    'description': 'Books from Internet Archive',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.authors',
+                        'year': 'metadata.publishedDate'
+                    }
+                },
             'duxiu': {
                 'index': 'aa_records',
                 'name': 'Duxiu Academic',
@@ -222,6 +303,102 @@ class UnifiedTitleMatcher:
                 }
             })
         
+        elif source_key == 'goodreads_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'libby_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'upload_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'worldcat_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'trantor_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'gbooks_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'hathitrust_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'internet_archive_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
         elif source_key == 'duxiu':
             record = source_data.get('metadata', {}).get('record', {})
             match.update({

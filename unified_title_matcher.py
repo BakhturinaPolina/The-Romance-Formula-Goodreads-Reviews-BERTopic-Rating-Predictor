@@ -48,6 +48,26 @@ class UnifiedTitleMatcher:
                     'year': None
                 }
             },
+                'libgen_fiction': {
+                    'index': 'libgen_fiction',
+                    'name': 'LibGen Fiction',
+                    'description': 'Fiction books from Library Genesis',
+                    'fields': {
+                        'title': 'title',
+                        'author': 'author',
+                        'year': 'year'
+                    }
+                },
+                'libgenli_books': {
+                    'index': 'libgenli_books',
+                    'name': 'LibGen.li Books',
+                    'description': 'Books from LibGen.li (editions and files)',
+                    'fields': {
+                        'title': 'title',
+                        'author': 'author',
+                        'year': 'year'
+                    }
+                },
             'duxiu': {
                 'index': 'aa_records',
                 'name': 'Duxiu Academic',

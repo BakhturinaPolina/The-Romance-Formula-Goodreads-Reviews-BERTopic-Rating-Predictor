@@ -82,6 +82,38 @@ def extract_md5_hashes():
     except Exception as e:
         print(f"  ❌ Error extracting LibGen Fiction hashes: {e}")
     
+    # 3. LibGen.li Books (has MD5 hashes)
+    print("\n📚 Extracting from LibGen.li Books...")
+    try:
+        result = es.search(
+            index='libgenli_books',
+            body={
+                'query': {'match_all': {}},
+                'size': 10000
+            }
+        )
+        
+        for hit in result['hits']['hits']:
+            data = hit['_source']
+            if 'md5' in data and data['md5']:
+                hash_info = {
+                    'source': 'LibGen.li Books',
+                    'md5': data['md5'],
+                    'title': data.get('title', 'Unknown'),
+                    'author': data.get('author', 'Unknown'),
+                    'year': data.get('year', 'Unknown'),
+                    'extension': data.get('extension', 'Unknown'),
+                    'filesize': data.get('filesize', 'Unknown'),
+                    'libgen_id': data.get('id', 'Unknown'),
+                    'download_url': f"https://libgen.li/ads.php?md5={data['md5']}"
+                }
+                all_hashes.append(hash_info)
+        
+        print(f"  ✅ Found {len([h for h in all_hashes if h['source'] == 'LibGen.li Books'])} LibGen.li books with MD5 hashes")
+        
+    except Exception as e:
+        print(f"  ❌ Error extracting LibGen.li hashes: {e}")
+    
     # 3. Check other sources for any MD5-like identifiers
     print("\n📚 Checking other sources for identifiers...")
     

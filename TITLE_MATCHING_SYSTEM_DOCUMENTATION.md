@@ -32,9 +32,12 @@ Raw Data (JSONL) → Elasticsearch Index → Title Matcher → Results (CSV)
 - **Elasticsearch Index**: `aa_records`
 - **Books with titles**: 4,424 documents
 
-### 3. OpenLibrary Dataset (15GB - Downloaded but not loaded)
-- **Status**: Downloaded but MariaDB connection issues prevent loading
-- **Potential**: Large collection of book metadata
+### 3. OpenLibrary Dataset (16GB - Successfully Loaded)
+- **Status**: ✅ Successfully loaded into Elasticsearch
+- **Index**: `openlibrary_books`
+- **Records Loaded**: 10,000+ (expanding to 100,000+)
+- **Content**: Comprehensive book metadata including fiction, romance, mystery, fantasy
+- **Features**: ISBNs, publishers, publication dates, subjects, page counts
 
 ## Usage Instructions
 
@@ -72,6 +75,17 @@ echo "Moments for You: A small town second chance romance,Carrie Ann Ryan,2024" 
 
 # Run matching
 python3 custom_title_matcher_zlib.py --input test_romance_books.csv --output romance_matches.csv
+```
+
+#### For OpenLibrary Books (Comprehensive Collection)
+```bash
+# Create input CSV
+echo "title,author_name,publication_year" > test_openlibrary_books.csv
+echo "Sister Sunshine,Unknown,1997" >> test_openlibrary_books.csv
+echo "In a warrior's romance,Unknown,1991" >> test_openlibrary_books.csv
+
+# Run matching
+python3 custom_title_matcher_openlibrary.py --input test_openlibrary_books.csv --output openlibrary_matches.csv
 ```
 
 #### For Chinese Academic Books (Duxiu)
@@ -162,6 +176,8 @@ The system generates CSV files with the following columns:
 ### Current Dataset Sizes
 - **Z-Library**: 216 books (loaded in ~2 seconds)
 - **Duxiu**: 8,542 documents (already loaded)
+- **OpenLibrary**: 10,000+ books (expanding to 100,000+)
+- **Total**: 18,758+ books indexed
 - **Search Speed**: Sub-second response times
 
 ### Match Accuracy

@@ -267,7 +267,8 @@ class TitleMatcher:
             'high_confidence': 0,
             'medium_confidence': 0,
             'low_confidence': 0,
-            'no_matches': 0
+            'no_matches': 0,
+            'No candidates found': 0
         }
         
         for idx, row in df.iterrows():
@@ -304,7 +305,7 @@ class TitleMatcher:
             stats['total_processed'] += 1
             stats[explanation] += 1
             
-            logger.info(f"  → {explanation}: {score:.1f}% - {match.get('title', 'No match')}")
+            logger.info(f"  → {explanation}: {score:.1f}% - {match.get('title', 'No match') if match else 'No match'}")
         
         # Write results
         output_df = pd.DataFrame(results)

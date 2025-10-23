@@ -11,6 +11,3 @@ Main Components:
 - notebooks: Jupyter notebooks for interactive analysis
 - utils: Utility scripts and helper functions
 """
-
-__version__ = "1.0.0"
-__author__ = "Romance Novel NLP Research Team"

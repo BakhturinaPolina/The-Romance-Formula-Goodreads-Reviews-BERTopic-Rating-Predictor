@@ -370,6 +370,97 @@ class AnnaAPIClient:
                 "details": result
             }
 
+    def _normalize_text(self, text: str) -> str:
+        """Return *text* in lowercase with non-alnum replaced by spaces."""
+        import re
+        return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+
+    def search_md5(self, title: str, author: str | None = None, prefer_exts: tuple[str, ...] = ("epub",)) -> Optional[str]:
+        """Search Anna's Archive member API for *title*/*author* and return a preferred MD5.
+
+        The method queries the same mirrors used by :py:meth:`get_fast_download` but hits
+        the member search endpoint (``/dyn/api/search.json``).  The response schema is a
+        list of result objects that include *md5*, *extension*, *title*, and *author*.
+
+        Selection heuristic (best-to-worst):
+        1. extension in *prefer_exts* (earlier items have higher priority)
+        2. exact (normalized) title match;
+        3. author substring match (if *author* given);
+        4. highest reported relevance score (if ``score`` field present).
+        """
+        if not self.api_key:
+            logger.error("Member secret (ANNAS_SECRET_KEY) not configured – cannot search.")
+            return None
+
+        search_term = f"{title} {author}".strip()
+        params = {"query": search_term, "key": self.api_key, "page": 1, "type": "books"}
+        errors = []
+
+        norm_title = self._normalize_text(title)
+        norm_author = self._normalize_text(author) if author else None
+
+        best_candidate: dict | None = None
+        best_score = -1  # higher is better
+
+        for mirror in self.MIRRORS:
+            url = f"{mirror}/dyn/api/search.json"
+            try:
+                response = self._make_tor_request(url, params, self.headers)
+                data = response.json()
+                results = data.get("results") or data  # some versions return list directly
+                if not isinstance(results, list):
+                    logger.debug("Unexpected search payload from %s", mirror)
+                    continue
+
+                for res in results:
+                    md5 = res.get("md5")
+                    ext = (res.get("extension") or "").lower()
+                    title_res = res.get("title", "")
+                    author_res = res.get("author", "")
+                    score_res = res.get("score", 0)
+
+                    if not md5 or len(md5) != 32:
+                        continue
+
+                    # heuristic score
+                    score = score_res
+                    # preferred extension bonus
+                    if ext in prefer_exts:
+                        score += 30 + (len(prefer_exts) - prefer_exts.index(ext))
+                    # exact title match bonus
+                    if self._normalize_text(title_res) == norm_title:
+                        score += 50
+                    # author substring bonus
+                    if norm_author and norm_author in self._normalize_text(author_res):
+                        score += 10
+
+                    if score > best_score:
+                        best_score = score
+                        best_candidate = res
+
+                # if we already found a very good match, break early
+                if best_score >= 90:
+                    break
+            except Exception as exc:  # pylint: disable=broad-except
+                errors.append({"mirror": mirror, "error": str(exc)})
+                logger.debug("Search request failed for %s: %s", mirror, exc)
+
+        if best_candidate:
+            logger.info(
+                "Selected MD5 %s for '%s' by '%s' (ext=%s, score=%.1f)",
+                best_candidate.get("md5"),
+                title,
+                author,
+                best_candidate.get("extension"),
+                best_score,
+            )
+            return best_candidate.get("md5")
+
+        logger.warning("No MD5 found for '%s' by '%s'", title, author)
+        if errors:
+            logger.debug("Search errors: %s", errors)
+        return None
+
 def main():
     """Test the Anna API client"""
     import argparse

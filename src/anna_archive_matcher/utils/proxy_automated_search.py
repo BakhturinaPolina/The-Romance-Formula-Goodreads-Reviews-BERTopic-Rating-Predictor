@@ -117,8 +117,8 @@ class ProxyAutomatedSearcher:
             
             # Configure requests to use SOCKS5
             session.proxies = {
-                'http': f'socks5://{proxy_host}:{proxy_port}',
-                'https': f'socks5://{proxy_host}:{proxy_port}'
+                'http': f'socks5h://{proxy_host}:{proxy_port}',
+                'https': f'socks5h://{proxy_host}:{proxy_port}'
             }
             
             logger.info(f"Configured Tor SOCKS5 proxy: {proxy_host}:{proxy_port}")
@@ -132,8 +132,8 @@ class ProxyAutomatedSearcher:
             socket.socket = socks.socksocket
             
             session.proxies = {
-                'http': f'socks5://{proxy_host}:{proxy_port}',
-                'https': f'socks5://{proxy_host}:{proxy_port}'
+                'http': f'socks5h://{proxy_host}:{proxy_port}',
+                'https': f'socks5h://{proxy_host}:{proxy_port}'
             }
             
             logger.info(f"Configured SOCKS5 proxy: {proxy_host}:{proxy_port}")

@@ -1,0 +1,42 @@
+[
+  {
+    "idx": 1,
+    "title": "Example Book 1",
+    "author": "Unknown Author",
+    "md5": "d6e1dc51a50726f00ec438af21952a45",
+    "success": true,
+    "filepath": "organized_outputs/epub_downloads/Example_Book_1_d6e1dc51a50726f00ec438af21952a45.epub",
+    "error": null,
+    "timestamp": "2025-10-23T11:17:04.291421"
+  },
+  {
+    "idx": 2,
+    "title": "Mont-Saint-Michel and Chartres",
+    "author": "Henry Adams",
+    "md5": "4aaa4f9b53b20a0d31aa28fb8c74b7c4",
+    "success": true,
+    "filepath": "organized_outputs/epub_downloads/Mont-Saint-Michel_and_Chartres_4aaa4f9b53b20a0d31aa28fb8c74b7c4.epub",
+    "error": null,
+    "timestamp": "2025-10-23T11:17:06.634773"
+  },
+  {
+    "idx": 3,
+    "title": "Equal Danger",
+    "author": "Leonardo Sciascia",
+    "md5": "4bde319229eca75f0b7773d0c8319705",
+    "success": true,
+    "filepath": "organized_outputs/epub_downloads/Equal_Danger_4bde319229eca75f0b7773d0c8319705.epub",
+    "error": null,
+    "timestamp": "2025-10-23T11:17:09.042073"
+  },
+  {
+    "idx": 4,
+    "title": "T Zero",
+    "author": "Italo Calvino",
+    "md5": "81e4ece26ab81e4f9b0ff83e08259066",
+    "success": true,
+    "filepath": "organized_outputs/epub_downloads/T_Zero_81e4ece26ab81e4f9b0ff83e08259066.epub",
+    "error": null,
+    "timestamp": "2025-10-23T11:17:11.390257"
+  }
+]

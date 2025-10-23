@@ -68,6 +68,86 @@ class UnifiedTitleMatcher:
                         'year': 'year'
                     }
                 },
+                'magzdb_publications': {
+                    'index': 'magzdb_publications',
+                    'name': 'MagzDB Publications',
+                    'description': 'Russian science fiction magazines and publications',
+                    'fields': {
+                        'title': 'metadata.record.title',
+                        'author': 'metadata.record.description',
+                        'year': 'metadata.record.yearRange'
+                    }
+                },
+                'rgb_library_books': {
+                    'index': 'rgb_library_books',
+                    'name': 'RGB Library Books',
+                    'description': 'Russian State Library records (academic and rare books)',
+                    'fields': {
+                        'title': 'metadata.record.fields.245.subfields.a',
+                        'author': 'metadata.record.fields.100.subfields.a',
+                        'year': 'metadata.record.fields.260.subfields.c'
+                    }
+                },
+                'cerlalc_books': {
+                    'index': 'cerlalc_books',
+                    'name': 'CERLALC Books',
+                    'description': 'Latin American book publishing records (Spanish books)',
+                    'fields': {
+                        'title': 'metadata.record.titulos.titulo',
+                        'author': 'metadata.record.titulos_autores_rows.colaboradores_rows.nombre',
+                        'year': 'metadata.record.titulos.fecha_aparicion'
+                    }
+                },
+                'nexusstc_books': {
+                    'index': 'nexusstc_books',
+                    'name': 'NexusSTC Books',
+                    'description': 'NexusSTC book records',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
+                    }
+                },
+                'airitibooks_books': {
+                    'index': 'airitibooks_books',
+                    'name': 'AiritiBooks',
+                    'description': 'AiritiBooks digital library records',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
+                    }
+                },
+                'kulturpass_books': {
+                    'index': 'kulturpass_books',
+                    'name': 'Kulturpass Books',
+                    'description': 'Kulturpass cultural books',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
+                    }
+                },
+                'ebscohost_books': {
+                    'index': 'ebscohost_books',
+                    'name': 'EBSCOhost Books',
+                    'description': 'EBSCOhost academic and library books',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
+                    }
+                },
+                'hentai_books': {
+                    'index': 'hentai_books',
+                    'name': 'Hentai Books',
+                    'description': 'Hentai manga and graphic novels',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
+                    }
+                },
             
                 'goodreads_books': {
                     'index': 'goodreads_books',
@@ -147,6 +227,87 @@ class UnifiedTitleMatcher:
                         'title': 'metadata.title',
                         'author': 'metadata.authors',
                         'year': 'metadata.publishedDate'
+                    }
+                },
+            
+                'magzdb_publications': {
+                    'index': 'magzdb_publications',
+                    'name': 'MagzDB Publications',
+                    'description': 'Russian science fiction magazines and publications',
+                    'fields': {
+                        'title': 'metadata.record.title',
+                        'author': 'metadata.record.description',
+                        'year': 'metadata.record.yearRange'
+                    }
+                },
+                'rgb_library_books': {
+                    'index': 'rgb_library_books',
+                    'name': 'RGB Library Books',
+                    'description': 'Russian State Library records (academic and rare books)',
+                    'fields': {
+                        'title': 'metadata.record.fields.245.subfields.a',
+                        'author': 'metadata.record.fields.100.subfields.a',
+                        'year': 'metadata.record.fields.260.subfields.c'
+                    }
+                },
+                'cerlalc_books': {
+                    'index': 'cerlalc_books',
+                    'name': 'CERLALC Books',
+                    'description': 'Latin American book publishing records (Spanish books)',
+                    'fields': {
+                        'title': 'metadata.record.titulos.titulo',
+                        'author': 'metadata.record.titulos_autores_rows.colaboradores_rows.nombre',
+                        'year': 'metadata.record.titulos.fecha_aparicion'
+                    }
+                },
+                'nexusstc_books': {
+                    'index': 'nexusstc_books',
+                    'name': 'NexusSTC Books',
+                    'description': 'NexusSTC book records',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
+                    }
+                },
+                'airitibooks_books': {
+                    'index': 'airitibooks_books',
+                    'name': 'AiritiBooks',
+                    'description': 'AiritiBooks digital library records',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
+                    }
+                },
+                'kulturpass_books': {
+                    'index': 'kulturpass_books',
+                    'name': 'Kulturpass Books',
+                    'description': 'Kulturpass cultural books',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
+                    }
+                },
+                'ebscohost_books': {
+                    'index': 'ebscohost_books',
+                    'name': 'EBSCOhost Books',
+                    'description': 'EBSCOhost academic and library books',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
+                    }
+                },
+                'hentai_books': {
+                    'index': 'hentai_books',
+                    'name': 'Hentai Books',
+                    'description': 'Hentai manga and graphic novels',
+                    'fields': {
+                        'title': 'metadata.title',
+                        'author': 'metadata.author',
+                        'year': 'metadata.year'
                     }
                 },
             'duxiu': {
@@ -388,6 +549,102 @@ class UnifiedTitleMatcher:
                 }
             })
         elif source_key == 'internet_archive_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'magzdb_publications':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'rgb_library_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'cerlalc_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'nexusstc_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'airitibooks_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'kulturpass_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'ebscohost_books':
+            source_data = self.sources[source_key]
+            results.append({
+                'source': source_data['name'],
+                'count': count,
+                'description': source_data['description'],
+                'fields': {
+                    'title': source_data['fields']['title'],
+                    'author': source_data['fields']['author'],
+                    'year': source_data['fields']['year']
+                }
+            })
+        elif source_key == 'hentai_books':
             source_data = self.sources[source_key]
             results.append({
                 'source': source_data['name'],

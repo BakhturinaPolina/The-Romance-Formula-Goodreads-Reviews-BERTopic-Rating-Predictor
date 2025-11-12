@@ -1,43 +1,53 @@
-# Anna's Archive Full Automation System
+# Anna's Archive Book Matcher
 
-## Overview
-Fully automated system for finding and downloading romance books from Anna's Archive without manual intervention.
+This module provides automated book matching between your romance novels dataset and Anna's Archive collections to extract MD5 hashes for batch downloading.
 
-## Quick Start
+## Features
 
-### One-Command Full Automation
-```bash
-cd /home/polina/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research
-source .venv/bin/activate
-cd src/anna_archive_matcher
+- **DuckDB-based Analysis**: High-performance SQL queries on Anna's Archive datasets
+- **Multi-source Matching**: Searches across Elasticsearch, AAC, and MariaDB datasets
+- **Fuzzy Matching**: Handles title/author variations and formatting differences
+- **Batch Processing**: Processes large datasets efficiently
+- **MD5 Extraction**: Automatically extracts download hashes for matched books
 
-# Complete automation (100 top-rated books)
-python fully_automated_workflow.py \
-  --romance-csv ../../data/processed/romance_books_main_final_canonicalized.csv \
-  --max-books 100 \
-  --priority-list top_rated
+## Dataset Sources
+
+Based on the [Anna's Archive Data Science Starter Kit](https://github.com/RArtutos/Data-science-starter-kit-Enhance/):
+
+1. **Elasticsearch Dataset**: Main book collection with metadata
+2. **AAC Dataset**: Additional book records and metadata
+3. **MariaDB Dataset**: Archive metadata and file information
+
+## Usage
+
+```python
+from anna_archive_matcher import BookMatcher
+
+# Initialize matcher
+matcher = BookMatcher()
+
+# Load your romance books dataset
+romance_books = matcher.load_romance_dataset()
+
+# Find matches in Anna's Archive
+matches = matcher.find_matches(romance_books)
+
+# Extract MD5 hashes for download
+md5_hashes = matcher.extract_md5_hashes(matches)
 ```
 
-### Quick Test
-```bash
-# Test with 20 books
-python utils/robust_automated_search.py \
-  --romance-csv utils/priority_lists/top_rated_popular_books.csv \
-  --max-books 20 \
-  --delay-min 1.0 \
-  --delay-max 2.0
+## Directory Structure
+
 ```
-
-## Expected Results
-- **Success rate**: 20-40% of books found automatically
-- **Processing time**: 1-3 minutes per book
-- **Quality**: High-quality matches with MD5 hashes
-
-## Documentation
-- `FULL_AUTOMATION_GUIDE.md` - Complete automation guide
-- `README_FINAL.md` - Detailed solution summary
-
-## Files
-- `fully_automated_workflow.py` - Main automation workflow
-- `utils/robust_automated_search.py` - Core automated search engine
-- `utils/priority_lists/` - Pre-generated priority lists
+anna_archive_matcher/
+├── data/
+│   ├── elasticsearch/    # Original .gz files
+│   ├── elasticsearchF/   # Processed .parquet files
+│   ├── aac/             # AAC .zst files
+│   ├── aacF/            # Processed AAC .parquet files
+│   ├── mariadb/         # MariaDB .gz files
+│   └── mariadbF/        # Processed MariaDB .parquet files
+├── notebooks/           # Analysis notebooks
+├── core/               # Core matching logic
+└── utils/              # Utility functions
+```

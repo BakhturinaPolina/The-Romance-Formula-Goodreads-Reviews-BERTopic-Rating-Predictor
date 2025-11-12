@@ -57,6 +57,7 @@ This approach ensures fair comparison between books regardless of how many editi
 ### 🔄 **In Progress**
 - **Data Audit**: Statistical analysis and data exploration pipeline
 - **Shelf Normalization**: Processing messy shelf tags into normalized forms
+- **Review Extraction**: Extracting English reviews from Goodreads dataset (~9-10 hours processing time)
 
 ## Project Structure
 
@@ -89,14 +90,20 @@ romance-novel-nlp-research/
 │   │   │   └── list_parser.py                    # List parsing script
 │   │   ├── notebooks/                            # Interactive analysis notebooks
 │   │   └── utils/                                # Utility scripts
-│   └── shelf_normalization/                      # Shelf tag normalization pipeline
-│       ├── core/                                 # Core normalization logic
-│       │   └── shelf_normalize.py                # Main pipeline script
-│       ├── bridge/                               # Integration with other pipeline steps
-│       │   └── bridge_audit_normalize.py         # Bridge Step 1 → Step 2
-│       └── diagnostics/                          # Quality assurance and validation
-│           ├── diagnostics_explore.py            # Deep-dive diagnostics
-│           └── validate_bridge.py                # Bridge output validation
+│   ├── shelf_normalization/                      # Shelf tag normalization pipeline
+│   │   ├── core/                                 # Core normalization logic
+│   │   │   └── shelf_normalize.py                # Main pipeline script
+│   │   ├── bridge/                               # Integration with other pipeline steps
+│   │   │   └── bridge_audit_normalize.py         # Bridge Step 1 → Step 2
+│   │   └── diagnostics/                          # Quality assurance and validation
+│   │       ├── diagnostics_explore.py            # Deep-dive diagnostics
+│   │       └── validate_bridge.py                # Bridge output validation
+│   └── review_extraction/                        # Review extraction and processing
+│       ├── extract_reviews.py                    # Main extraction script
+│       ├── monitor_extraction.py                 # Real-time monitoring
+│       ├── estimate_time.py                      # Time estimation utility
+│       ├── review_dataset.py                     # Dataset review utility
+│       └── README.md                             # Module documentation
 ├── data/
 │   ├── raw/                                      # Original Goodreads JSON files (9 files)
 │   ├── intermediate/                              # Temporary processing outputs
@@ -199,6 +206,42 @@ romance-novel-nlp-research/
 - **Segmentation**: CamelCase detection with guard conditions
 - **Alias Detection**: Jaro-Winkler similarity, edit distance, character n-grams
 
+### Review Extraction (`src/review_extraction/`)
+**Purpose**: Extract English-language reviews for romance books from Goodreads dataset
+
+**Key Features**:
+- **Book ID Filtering**: Matches reviews to books from main dataset
+- **Language Detection**: Automatically detects and filters English reviews
+- **Real-Time Monitoring**: Live progress tracking with process status
+- **Time Estimation**: Estimates remaining processing time
+- **Progress Logging**: Detailed logging every 5,000 reviews
+
+**Main Scripts**:
+- `extract_reviews.py`: Main extraction script (processes ~3.6M reviews)
+- `monitor_extraction.py`: Real-time monitoring with process stats
+- `estimate_time.py`: Calculate remaining time estimates
+- `review_dataset.py`: Utility to review dataset structure
+- `monitor.sh`: Quick wrapper for monitoring
+
+**Processing Details**:
+- **Input**: `goodreads_reviews_romance.json.gz` (~1.2GB, ~3.6M reviews)
+- **Output**: `romance_reviews_english.csv` (review_id, review_text, rating, book_id)
+- **Processing Rate**: ~100-110 reviews/second
+- **Total Time**: ~9-10 hours for full dataset
+- **Language Detection**: Uses `langdetect` library
+
+**Usage**:
+```bash
+# Run extraction
+python3 src/review_extraction/extract_reviews.py
+
+# Monitor progress
+./src/review_extraction/monitor.sh [PID]
+
+# Estimate time remaining
+python3 src/review_extraction/estimate_time.py
+```
+
 ### Dataset Versions Available
 - **Complete Dataset**: All 30 columns with full metadata
 - **Core Research Dataset**: 23 essential columns for efficient analysis
@@ -290,6 +333,22 @@ make diagnostics  # Step 3: Run diagnostics
 make validate     # Step 4: Validate outputs
 ```
 
+#### Review Extraction
+```bash
+# Run extraction (will take ~9-10 hours)
+cd src/review_extraction
+python3 extract_reviews.py
+
+# Monitor progress in real-time
+./monitor.sh [PID]
+
+# Estimate remaining time
+python3 estimate_time.py
+
+# Review dataset structure
+python3 review_dataset.py
+```
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
@@ -297,3 +356,41 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgments
 
 - **Data Source**: UCSD Goodreads Book Graph
+
+## Quick non-Docker usage (member API)
+
+```bash
+# 1. Setup
+cd ~/Documents/goodreads_romance_research_cursor/romance-novel-nlp-research
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -r requirements.txt requests pandas python-dotenv
+
+# 2. Auth
+export ANNAS_SECRET_KEY="<your_member_secret>"
+
+# 3. Batch-download when MD5s already exist
+python src/book_download/batch_md5_download.py \
+  --csv data/processed/test_books_with_md5_final.csv \
+  --out organized_outputs/epub_downloads
+
+# 4. Batch-download without MD5s (title/author only)
+#    (search_md5() falls back to member-API search)
+python - <<'PY'
+import csv, pathlib, os
+from src.book_download.anna_api_client import AnnaAPIClient
+api = AnnaAPIClient()
+root = pathlib.Path('organized_outputs/epub_downloads'); root.mkdir(parents=True, exist_ok=True)
+with open('data/processed/sample_books_for_download.csv') as f:
+    for row in csv.DictReader(f):
+        md5 = (row.get('md5') or '').strip()
+        if not md5:
+            md5 = api.search_md5(row['title'], row['author_name'])
+        if not md5:
+            print('no match:', row['title']); continue
+        api.download_book(md5, download_dir=str(root))
+PY
+```
+
+This path avoids Elasticsearch/MariaDB and heavy services – ideal for quick experiments.

@@ -57,12 +57,19 @@ def load_spacy_model(model_name: str = "en_core_web_sm", disable_components: Opt
     """
     if disable_components is None:
         # Disable everything except tokenizer and sentence segmenter for speed
+        # Keep sentencizer for sentence boundary detection
         disable_components = ['tagger', 'parser', 'ner', 'lemmatizer', 'attribute_ruler']
     
     try:
         logger.info(f"Loading spaCy model: {model_name}")
         logger.info(f"Disabling components for speed: {disable_components}")
         nlp = spacy.load(model_name, disable=disable_components)
+        
+        # Add sentencizer if not present (needed for sentence boundary detection)
+        if 'sentencizer' not in nlp.pipe_names:
+            logger.info("Adding sentencizer component for sentence detection...")
+            nlp.add_pipe('sentencizer')
+        
         logger.info(f"✓ Model loaded successfully")
         logger.info(f"Active pipeline components: {nlp.pipe_names}")
         return nlp
@@ -194,12 +201,19 @@ def split_reviews_to_sentences(
     pbar = tqdm(total=len(review_texts), desc="Splitting reviews", 
                 unit="review", unit_scale=True) if show_progress else None
     
-    # Process in chunks to manage memory
-    chunk_size = 50000  # Process 50k reviews at a time
+    # Process in smaller chunks for better progress tracking and incremental saving
+    chunk_size = 5000  # Process 5k reviews at a time (much smaller for continuous progress)
     n_chunks = (len(review_texts) + chunk_size - 1) // chunk_size
     logger.info(f"Processing in {n_chunks} chunks of up to {chunk_size:,} reviews each")
+    logger.info(f"Incremental saving enabled: will save after each chunk")
+    
+    # Setup incremental saving directory
+    temp_output_dir = DATA_PROCESSED / "review_sentences_temp"
+    temp_output_dir.mkdir(parents=True, exist_ok=True)
+    logger.info(f"Temporary chunk files will be saved to: {temp_output_dir}")
     
     chunk_processing_times = []
+    chunk_files = []  # Track chunk files for final combination
     
     for chunk_num, chunk_start in enumerate(range(0, len(review_texts), chunk_size), 1):
         chunk_start_time = time.time()
@@ -280,14 +294,52 @@ def split_reviews_to_sentences(
             f"{chunk_sentences/chunk_size_actual:.1f} sentences/review)"
         )
         
+        # Save chunk incrementally
+        if len(sentence_records) > 0:
+            save_start = time.time()
+            chunk_df = pd.DataFrame(sentence_records)
+            # Calculate starting sentence_id for this chunk
+            chunk_start_id = total_sentences - chunk_sentences
+            chunk_df['sentence_id'] = range(chunk_start_id, chunk_start_id + len(chunk_df))
+            
+            # Reorder columns
+            column_order = [
+                'sentence_id',
+                'sentence_text',
+                'review_id',
+                'work_id',
+                'pop_tier',
+                'rating',
+                'sentence_index',
+                'n_sentences_in_review'
+            ]
+            chunk_df = chunk_df[column_order]
+            
+            # Save chunk to temporary file
+            chunk_file = temp_output_dir / f"chunk_{chunk_num:04d}.parquet"
+            chunk_df.to_parquet(chunk_file, index=False, engine='pyarrow')
+            chunk_files.append(chunk_file)
+            
+            save_time = time.time() - save_start
+            file_size_mb = chunk_file.stat().st_size / (1024 * 1024)
+            logger.info(
+                f"  💾 Chunk {chunk_num} saved: {chunk_file.name} "
+                f"({len(chunk_df):,} sentences, {file_size_mb:.2f} MB) in {save_time:.2f}s"
+            )
+            
+            # Clear records to free memory (we've saved them)
+            sentence_records.clear()
+        
         # Log running statistics
         if chunk_num > 0:
             avg_chunk_time = sum(chunk_processing_times) / len(chunk_processing_times)
             remaining_chunks = n_chunks - chunk_num
             estimated_remaining = avg_chunk_time * remaining_chunks
-            logger.debug(
-                f"  Running average: {avg_chunk_time:.2f}s per chunk, "
-                f"estimated {estimated_remaining/60:.1f} minutes remaining"
+            progress_pct = (chunk_num / n_chunks) * 100
+            logger.info(
+                f"  📊 Progress: {chunk_num}/{n_chunks} chunks ({progress_pct:.1f}%), "
+                f"avg: {avg_chunk_time:.2f}s/chunk, "
+                f"ETA: {estimated_remaining/60:.1f} minutes"
             )
     
     if pbar:
@@ -299,37 +351,35 @@ def split_reviews_to_sentences(
     logger.info(f"  Total sentences extracted: {total_sentences:,}")
     logger.info(f"  Average processing rate: {total_processed/total_processing_time:.0f} reviews/sec")
     logger.info(f"  Average sentences per review: {total_sentences/total_processed:.2f}")
+    logger.info(f"  Chunk files created: {len(chunk_files):,}")
     
-    # Create DataFrame from records
+    # Combine all chunk files into final dataset
     logger.info("=" * 80)
-    logger.info("Creating DataFrame from sentence records...")
-    df_start = time.time()
-    logger.debug(f"  Number of sentence records: {len(sentence_records):,}")
-    logger.debug(f"  Estimated memory: ~{len(sentence_records) * 500 / 1024 / 1024:.0f} MB")
+    logger.info("Combining chunk files into final dataset...")
+    combine_start = time.time()
+    logger.info(f"  Loading {len(chunk_files):,} chunk files...")
     
-    sentences_df = pd.DataFrame(sentence_records)
-    df_time = time.time() - df_start
-    logger.info(f"✓ DataFrame created in {df_time:.2f}s")
-    logger.debug(f"  DataFrame shape: {sentences_df.shape}")
-    logger.debug(f"  DataFrame memory usage: {sentences_df.memory_usage(deep=True).sum() / 1024 / 1024:.0f} MB")
+    # Load and combine chunks
+    chunk_dfs = []
+    for idx, chunk_file in enumerate(chunk_files, 1):
+        if chunk_file.exists():
+            chunk_df = pd.read_parquet(chunk_file)
+            chunk_dfs.append(chunk_df)
+            if idx % 10 == 0 or idx == len(chunk_files):
+                logger.debug(f"    Loaded {idx}/{len(chunk_files)} chunk files...")
+        else:
+            logger.warning(f"    Chunk file not found: {chunk_file}")
     
-    # Add sentence_id as unique identifier
-    logger.debug("Adding sentence_id column...")
+    logger.info(f"  Combining {len(chunk_dfs):,} DataFrames...")
+    sentences_df = pd.concat(chunk_dfs, ignore_index=True)
+    
+    # Re-assign sentence_id to ensure continuity (in case chunks had overlapping IDs)
     sentences_df['sentence_id'] = range(len(sentences_df))
-    logger.debug(f"✓ Added sentence_id: {sentences_df['sentence_id'].min()}-{sentences_df['sentence_id'].max()}")
     
-    # Reorder columns for clarity
-    column_order = [
-        'sentence_id',
-        'sentence_text',
-        'review_id',
-        'work_id',
-        'pop_tier',
-        'rating',
-        'sentence_index',
-        'n_sentences_in_review'
-    ]
-    sentences_df = sentences_df[column_order]
+    combine_time = time.time() - combine_start
+    logger.info(f"✓ Combined in {combine_time:.2f}s")
+    logger.debug(f"  Final DataFrame shape: {sentences_df.shape}")
+    logger.debug(f"  Final DataFrame memory: {sentences_df.memory_usage(deep=True).sum() / 1024 / 1024:.0f} MB")
     
     # Log summary statistics
     logger.info("=" * 80)
@@ -359,6 +409,20 @@ def split_reviews_to_sentences(
         logger.debug(f"    Median: {sentence_lengths.median():.1f} chars")
     
     logger.info("=" * 80)
+    
+    # Clean up temporary chunk files
+    logger.info("Cleaning up temporary chunk files...")
+    cleanup_start = time.time()
+    for chunk_file in chunk_files:
+        try:
+            chunk_file.unlink()
+        except Exception as e:
+            logger.warning(f"  Could not delete {chunk_file.name}: {e}")
+    try:
+        temp_output_dir.rmdir()
+        logger.info(f"✓ Cleanup complete in {time.time() - cleanup_start:.2f}s")
+    except Exception as e:
+        logger.debug(f"  Could not remove temp directory (may not be empty): {e}")
     
     return sentences_df
 
@@ -550,7 +614,7 @@ def main():
         min_sentence_length=10,
         clean_text=True,
         spacy_batch_size=2000,  # Larger batch size for faster processing
-        log_interval=50000  # Log every 50k reviews
+        log_interval=10000  # Log every 10k reviews (more frequent with smaller chunks)
     )
     dataset_time = time.time() - dataset_start
     logger.info(f"✓ Dataset creation completed in {dataset_time/60:.1f} minutes")

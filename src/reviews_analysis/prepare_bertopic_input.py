@@ -473,6 +473,14 @@ def clean_sentence_text(sentences_df: pd.DataFrame) -> pd.DataFrame:
     removed = initial_count - len(sentences_df)
     logger.debug(f"    ✓ Completed in {time.time() - step3_start:.2f}s")
     
+    # Update n_sentences_in_review to reflect actual counts after cleaning
+    # (some sentences may have been removed during cleaning)
+    logger.debug("  Step 4: Updating n_sentences_in_review to reflect actual counts...")
+    step4_start = time.time()
+    actual_counts = sentences_df.groupby('review_id').size()
+    sentences_df['n_sentences_in_review'] = sentences_df['review_id'].map(actual_counts)
+    logger.debug(f"    ✓ Completed in {time.time() - step4_start:.2f}s")
+    
     clean_time = time.time() - clean_start
     
     if removed > 0:
@@ -515,6 +523,19 @@ def create_sentence_dataset(
         logger.info("Loading joined reviews and books data...")
         joined_df = load_joined_reviews(how="inner")
         logger.info(f"Loaded {len(joined_df):,} reviews")
+    
+    # Deduplicate reviews (same review_id should only appear once)
+    initial_count = len(joined_df)
+    if 'review_id' in joined_df.columns:
+        duplicates = joined_df['review_id'].duplicated(keep='first')
+        n_duplicates = duplicates.sum()
+        if n_duplicates > 0:
+            logger.warning(
+                f"Found {n_duplicates:,} duplicate review_ids ({n_duplicates/initial_count*100:.2f}%). "
+                f"Removing duplicates to prevent duplicate sentences in output."
+            )
+            joined_df = joined_df[~duplicates].copy()
+            logger.info(f"After deduplication: {len(joined_df):,} reviews ({initial_count - len(joined_df):,} removed)")
     
     # Load spaCy model (optimized - only tokenizer and sentence segmenter)
     nlp = load_spacy_model(spacy_model, disable_components=['tagger', 'parser', 'ner', 'lemmatizer', 'attribute_ruler'])

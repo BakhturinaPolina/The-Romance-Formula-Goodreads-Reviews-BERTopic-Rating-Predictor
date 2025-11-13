@@ -67,23 +67,28 @@ All work happens in:
 
 ## Phase 4: Prepare BERTopic Input
 
-**Objective**: Aggregate reviews per book into single documents for BERTopic.
+**Objective**: Split reviews into sentences and create sentence-level dataset for BERTopic (matching the original novels pipeline approach).
 
 **Tasks**:
 1. Create `src/reviews_analysis/prepare_bertopic_input.py`:
    - Input: English reviews joined to books with `pop_tier`
-   - Aggregate reviews per book:
-     - Concatenate all English reviews for each book
-     - Optionally cap total length if needed (document max length considerations)
+   - Split reviews into sentences using spaCy (same approach as original code)
+   - Create sentence-level dataset where each row = one sentence
    - Output columns:
-     - `book_id` (or `work_id`)
-     - `pop_tier` (trash/middle/top)
-     - `concat_reviews_text` (aggregated review text)
-   - Save: `data/processed/review_documents_per_book.csv` (or `.parquet`)
+     - `sentence_id`: Unique identifier for each sentence
+     - `sentence_text`: The sentence text (cleaned)
+     - `review_id`: ID of the source review
+     - `work_id`: ID of the book (work)
+     - `pop_tier`: Quality tier of the book (trash/middle/top)
+     - `rating`: Review rating (if available)
+     - `sentence_index`: Index of sentence within its review
+     - `n_sentences_in_review`: Total sentences in source review
+   - Save: `data/processed/review_sentences_for_bertopic.parquet`
 
 **Outputs**:
-- Per-book review documents dataset
-- Documentation of aggregation strategy (concatenation, length caps, etc.)
+- Sentence-level dataset (one row per sentence)
+- Metadata preserved for mapping topics back: sentence → review → book
+- Documentation of sentence splitting strategy (spaCy model, min length, cleaning rules)
 
 ## Phase 5: Adapt BERTopic + OCTIS for Reviews
 
@@ -96,13 +101,18 @@ All work happens in:
 
 2. Create `src/reviews_analysis/run_bertopic_reviews.py`:
    - Reuse best configurations from `stage03_modeling` as starting point
-   - Adjust hyperparameters for shorter, noisier review texts:
+   - **Input**: Sentence-level dataset from Phase 4 (`review_sentences_for_bertopic.parquet`)
+   - Adjust hyperparameters for sentence-level analysis (similar to original novels code):
      - Consider different embedding models (e.g., models better for short texts)
-     - Adjust `min_topic_size` (likely smaller than 127 for reviews)
-     - Adjust UMAP `n_neighbors` and HDBSCAN `min_cluster_size`
+     - Adjust `min_topic_size` (likely smaller than 127 for sentences)
+     - Adjust UMAP `n_neighbors` and HDBSCAN `min_cluster_size` for sentence-level clustering
      - Consider different vectorizer settings (e.g., `min_df`, `ngram_range`)
-   - Train at least one **global** BERTopic model on:
-     - `data/processed/review_documents_per_book.csv`
+   - Train at least one **global** BERTopic model on sentences
+   - **Map topics back to reviews and books**:
+     - Create topic-sentence assignments (from BERTopic output)
+     - Aggregate sentence topics → review-level topic distributions
+     - Aggregate review topics → book-level topic distributions
+     - Preserve metadata (review_id, work_id, pop_tier) throughout mapping
    - Optionally: models per `pop_tier` group (trash, middle, top)
    - Integrate OCTIS to compute:
      - Topic coherence (e.g., C_V)
@@ -110,7 +120,9 @@ All work happens in:
    - Save:
      - Model artifacts
      - Topic-word lists
-     - Topic-document matrices
+     - Topic-sentence assignments
+     - Topic-review assignments (aggregated)
+     - Topic-book assignments (aggregated)
      - OCTIS metrics
 
 3. Create `src/reviews_analysis/config/`:
@@ -118,8 +130,10 @@ All work happens in:
    - Separate configs for global vs. per-group models if applicable
 
 **Outputs**:
-- Trained BERTopic models (global, optionally per-group)
-- Topic-word lists and topic-document assignments
+- Trained BERTopic models (global, optionally per-group) trained on sentences
+- Topic-word lists and topic-sentence assignments
+- Topic-review assignments (aggregated from sentences)
+- Topic-book assignments (aggregated from reviews)
 - OCTIS evaluation metrics
 - Model artifacts saved to clearly named folders under `data/` and `reports/`
 
@@ -134,13 +148,15 @@ All work happens in:
    - Key decisions documented:
      - Minimum review count per book (if any filtering applied)
      - Text cleaning rules
-     - Aggregation strategy (how reviews combined per book)
-     - Hyperparameter adjustments for reviews vs. novels
+     - Sentence splitting strategy (spaCy model, min length, cleaning)
+     - Topic mapping strategy (sentence → review → book aggregation)
+     - Hyperparameter adjustments for sentence-level analysis vs. novel-level
    - Output file locations and formats
 
 2. Optional: Use `task-researcher`'s `research_topic` to generate methods section on:
-   - Topic modeling on review text
-   - Tradeoffs in aggregating many short reviews into one document per entity
+   - Topic modeling on review text using sentence-level analysis
+   - Tradeoffs in sentence-level vs. document-level topic modeling
+   - Aggregation strategies for mapping sentence topics to reviews and books
    - Interpretation of topics across trash/middle/top groups
 
 **Outputs**:
@@ -155,7 +171,7 @@ All work happens in:
 - **Review extraction logs**: `logs/`
 - **Output locations**:
   - Coverage tables: `data/interim/`
-  - Prepared documents: `data/processed/`
+  - Sentence dataset: `data/processed/review_sentences_for_bertopic.parquet`
   - EDA figures: `reports/reviews_eda/`
   - Model artifacts: `data/` and `reports/` (clearly named subfolders)
 
@@ -169,9 +185,10 @@ All work happens in:
 
 - ✅ Coverage report shows review availability for all 6,000 books
 - ✅ EDA visualizations saved and insights documented
-- ✅ Per-book review documents prepared and saved
-- ✅ At least one global BERTopic model trained on reviews
+- ✅ Sentence-level dataset prepared and saved (one row per sentence)
+- ✅ At least one global BERTopic model trained on sentences
+- ✅ Topic assignments mapped back to reviews and books
 - ✅ OCTIS metrics computed and saved
-- ✅ Clear documentation of adaptations for review-based modeling
+- ✅ Clear documentation of sentence-level approach and mapping strategy
 - ✅ Comparison of topics across trash/middle/top groups (if per-group models created)
 

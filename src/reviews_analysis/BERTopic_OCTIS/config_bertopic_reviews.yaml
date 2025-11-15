@@ -1,0 +1,79 @@
+# BERTopic + OCTIS Configuration for Reviews Corpus
+# This configuration file defines hyperparameters for Bayesian optimization
+
+# Embedding models to try (categorical)
+embedding_model:
+  type: categorical
+  values:
+    - "sentence-transformers/paraphrase-mpnet-base-v2"
+    - "sentence-transformers/multi-qa-mpnet-base-cos-v1"
+    - "intfloat/e5-base-v2"
+    - "thenlper/gte-large"
+
+# Topic-modeling hyperparameters
+top_n_words:
+  type: integer
+  min: 8
+  max: 25
+
+n_gram_range:
+  type: categorical
+  values:
+    - [1, 1]
+    - [1, 2]
+    - [1, 3]
+
+# NOTE: min_topic_size removed - it is ignored when custom hdbscan_model is passed to BERTopic
+# Only hdbscan__min_cluster_size controls topic size in this setup
+
+# NOTE: nr_topics removed from optimization - it can only REDUCE topics, not create them
+# Set nr_topics=None in code to keep all topics that HDBSCAN finds
+
+low_memory:
+  type: categorical
+  values:
+    - false
+    - true
+
+# UMAP parameters
+umap_n_neighbors:
+  type: integer
+  min: 10
+  max: 100
+
+umap_n_components:
+  type: integer
+  min: 2
+  max: 20
+
+umap_metric:
+  type: categorical
+  values:
+    - "euclidean"
+    - "l2"
+  # Note: cuML UMAP (GPU version) only supports 'euclidean' and 'l2' metrics
+  # 'cosine' and 'manhattan' are not supported by cuML and will cause errors
+
+# HDBSCAN parameters
+# Lower range to allow more granular topics (10-50 instead of 20-300)
+# Higher min_cluster_size values create fewer, larger clusters
+hdbscan_min_cluster_size:
+  type: integer
+  min: 10
+  max: 50
+
+hdbscan_min_samples:
+  type: integer
+  min: 5
+  max: 300
+  # Note: In usage, min_samples ≤ min_cluster_size (code enforces this constraint)
+
+hdbscan_metric:
+  type: categorical
+  values:
+    - "euclidean"
+    - "l2"
+  # Note: cuML HDBSCAN (GPU version) only supports 'euclidean' and 'l2' metrics
+  # 'manhattan' and 'cosine' are not supported by cuML and will cause errors
+  # If using CPU version, additional metrics are available but GPU is preferred for performance
+

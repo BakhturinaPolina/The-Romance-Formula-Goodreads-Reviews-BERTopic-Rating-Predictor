@@ -112,38 +112,49 @@ This document defines the logical structure of the Goodreads metadata and review
 - `utils/` - Utility scripts
   - `review_dataset.py` - Dataset review utility
 
-### Stage 05: Topic Modeling (`src/05_topic_modeling/`)
-**Purpose**: BERTopic analysis and optimization
+### Stage 05: Prepare Reviews Corpus for BERTopic (`src/05_prepare_reviews_for_BERTopic/`)
+**Purpose**: Prepare sentence-level corpus from reviews for BERTopic analysis
 
-- `BERTopic_OCTIS/` - BERTopic with OCTIS integration
-  - `bertopic_plus_octis.py` - Main BERTopic+OCTIS optimization script
-  - `load_raw_sentences.py` - Load sentences for BERTopic
-  - `sample_test_dataset.py` - Create test datasets
-  - `optimizer.py` - OCTIS optimizer configuration
-  - `restart_script.py` - Resume interrupted runs
-  - `topic_npy_to_json.py` - Convert topic outputs to JSON
-  - `config_bertopic_reviews.yaml` - BERTopic configuration
-- `bertopic_preparation/` - Input preparation and wrapper scripts (all Python)
-  - `prepare_bertopic_input.py` - Main preparation script
+- `core/` - Main preparation logic
+  - `prepare_bertopic_input.py` - Main preparation script (sentence splitting)
+- `monitoring/` - Monitoring and status checking
+  - `monitor_preparation.py` - Real-time monitoring
+  - `check_status.py` - Quick status check
+- `scripts/` - Execution and test scripts
+  - `run_preparation.py` - Python wrapper for preparation (uses venv)
+  - `run_test.py` - Python test runner (uses venv)
   - `venv_utils.py` - Virtual environment utilities (venv verification)
-  - `run_preparation.py` - Python wrapper for preparation (replaces shell script)
-  - `monitor_preparation.py` - Python monitoring script (replaces shell script)
-  - `check_status.py` - Python status check script (replaces shell script)
-  - `run_test.py` - Python test runner (replaces shell script)
 - `utils/` - Utility modules
   - `data_loading.py` - Data loading utilities
   - `checks_coverage.py` - Coverage checking utilities
 - `notebooks/` - Jupyter notebooks for exploration
-- `docs/` - Stage-specific documentation
+  - `eda_reviews.ipynb` - Exploratory data analysis
 
-### Stage 06: Shelf Normalization (`src/06_shelf_normalization/`)
+### Stage 06: Topic Modeling (`src/06_topic_modeling/`)
+**Purpose**: BERTopic analysis and optimization with OCTIS
+
+- `core/` - Main modeling logic
+  - `bertopic_plus_octis.py` - Main BERTopic+OCTIS optimization script
+  - `optimizer.py` - OCTIS optimizer configuration
+  - `load_raw_sentences.py` - Load sentences for BERTopic
+- `scripts/` - Execution and utility scripts
+  - `restart_script.py` - Resume interrupted runs
+  - `sample_test_dataset.py` - Create test datasets
+  - `topic_npy_to_json.py` - Convert topic outputs to JSON
+- `config/` - Configuration files
+  - `config_bertopic_reviews.yaml` - BERTopic configuration
+- `docs/` - Documentation
+  - `README.md` - BERTopic_OCTIS documentation
+  - `CONFIG_USAGE.md` - Configuration usage guide
+
+### Stage 07: Shelf Normalization (`src/07_shelf_normalization/`)
 **Purpose**: Shelf tag normalization and canonicalization
 
 - `core/` - Core normalization logic
 - `bridge/` - Integration with other pipeline steps
 - `diagnostics/` - Quality assurance and validation
 
-### Stage 07: Corpus Analysis (`src/07_corpus_analysis/`)
+### Stage 08: Corpus Analysis (`src/08_corpus_analysis/`)
 **Purpose**: Corpus statistics and analysis
 
 - `generate_corpus_statistics.py` - Corpus statistics generation
@@ -207,9 +218,10 @@ goodreads-topic-modeling/
 │   │   └── README_SCIENTIFIC.md        # Scientific documentation
 │   ├── 03_text_preprocessing/        # NLP text preprocessing
 │   ├── 04_review_extraction/         # Review extraction and filtering
-│   ├── 05_topic_modeling/            # BERTopic analysis and optimization
-│   ├── 06_shelf_normalization/       # Shelf tag normalization
-│   └── 07_corpus_analysis/            # Corpus statistics and analysis
+│   ├── 05_prepare_reviews_for_BERTopic/  # Prepare sentence-level corpus
+│   ├── 06_topic_modeling/            # BERTopic analysis and optimization
+│   ├── 07_shelf_normalization/       # Shelf tag normalization
+│   └── 08_corpus_analysis/            # Corpus statistics and analysis
 ├── docs/                              # Project documentation
 │   ├── setup.md                       # Setup instructions
 │   └── replication_guide.md          # How to use with other datasets
@@ -229,9 +241,10 @@ goodreads-topic-modeling/
 2. **Stage 02: Data Quality** → 6-step quality pipeline + statistical audit
 3. **Stage 03: Text Preprocessing** → Text cleaning and normalization
 4. **Stage 04: Review Extraction** → Extract and filter reviews
-5. **Stage 05: Topic Modeling** → BERTopic analysis and optimization
-6. **Stage 06: Shelf Normalization** → Normalize shelf tags
-7. **Stage 07: Corpus Analysis** → Generate corpus statistics
+5. **Stage 05: Prepare Reviews Corpus for BERTopic** → Sentence splitting and corpus creation
+6. **Stage 06: Topic Modeling** → BERTopic analysis and optimization
+7. **Stage 07: Shelf Normalization** → Normalize shelf tags
+8. **Stage 08: Corpus Analysis** → Generate corpus statistics
 
 ### Stage Documentation
 

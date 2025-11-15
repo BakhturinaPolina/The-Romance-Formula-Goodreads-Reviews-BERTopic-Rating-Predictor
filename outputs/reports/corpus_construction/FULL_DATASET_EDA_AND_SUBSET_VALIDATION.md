@@ -101,13 +101,16 @@ This section presents statistical comparisons between the full dataset and the 6
 
 The following visualizations provide the most informative and concise evidence for cross-corpus validation:
 
-![Ratings Distribution Comparison](figures/ratings_distributions.png)
+<img src="figures/ratings_distributions.png" alt="Ratings Distribution Comparison" width="700"/>
+
 *Average rating distributions for full dataset, subset, and by tier. Validates that the subset maintains the rating structure while ensuring tier representation.*
 
-![Genre Frequency Comparison](figures/genre_frequency_comparison.png)
+<img src="figures/genre_frequency_comparison.png" alt="Genre Frequency Comparison" width="700"/>
+
 *Top genre frequencies comparing full dataset and subset. Confirms genre representativeness (χ² = 0.011, p > 0.999).*
 
-![Engagement Metrics Comparison](figures/ratings_count_sum_boxplots.png)
+<img src="figures/ratings_count_sum_boxplots.png" alt="Engagement Metrics Comparison" width="700"/>
+
 *Ratings count distributions showing intentional prioritization of high-engagement books in the subset (expected difference, Cohen's d = -0.42).*
 
 ### Additional Visualizations

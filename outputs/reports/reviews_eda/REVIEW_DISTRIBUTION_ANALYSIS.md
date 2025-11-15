@@ -14,13 +14,16 @@ Phase 3 EDA examined the distribution of Goodreads review data across three roma
 
 The following visualizations provide the most informative evidence for tier-based patterns:
 
-![Ratings Distribution by Tier](ratings_distribution.png)
+<img src="ratings_distribution.png" alt="Ratings Distribution by Tier" width="700"/>
+
 *Rating distributions (1–5 stars) overall and by tier, demonstrating the expected quality gradient: trash (M = 3.35) → middle (M = 3.89) → top (M = 4.27).*
 
-![Review Count Distribution by Tier](review_count_distribution.png)
+<img src="review_count_distribution.png" alt="Review Count Distribution by Tier" width="700"/>
+
 *Review count distributions overall and by tier, revealing substantial differences in review volume: trash (M = 60.7/book) → middle (M = 240.1/book) → top (M = 184.2/book).*
 
-![Review Metrics Comparison](review_metrics_boxplots.png)
+<img src="review_metrics_boxplots.png" alt="Review Metrics Comparison" width="700"/>
+
 *Side-by-side boxplots comparing review counts per book, character length, and token count across tiers, showing consistent median lengths (63–70 tokens) but substantial volume differences.*
 
 ### Additional Outputs

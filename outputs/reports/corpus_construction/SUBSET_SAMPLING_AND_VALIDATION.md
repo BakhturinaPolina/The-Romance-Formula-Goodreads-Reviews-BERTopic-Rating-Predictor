@@ -57,12 +57,15 @@ Statistical validation confirms that the 6,000-book subset maintains representat
 
 ### Validation Evidence
 
-![Engagement Metrics: Ratings Count](figures/ratings_count_sum_boxplots.png)
+<img src="figures/ratings_count_sum_boxplots.png" alt="Engagement Metrics: Ratings Count" width="700"/>
+
 *Ratings count distributions demonstrating the intentional prioritization of high-engagement books in the subset (Mann-Whitney U = 48,396,241, p < 0.001, Cohen's d = -0.42).*
 
-![Engagement Metrics: Text Reviews Count](figures/text_reviews_count_sum_boxplots.png)
+<img src="figures/text_reviews_count_sum_boxplots.png" alt="Engagement Metrics: Text Reviews Count" width="700"/>
+
 *Text reviews count distributions showing subset prioritization of books with rich review data (Mann-Whitney U = 50,955,036, p < 0.001, Cohen's d = -0.57).*
 
-![Series Status Comparison](figures/series_status_comparison.png)
+<img src="figures/series_status_comparison.png" alt="Series Status Comparison" width="700"/>
+
 *Series vs standalone proportions confirming preserved distribution (χ² = 1.73, p = 0.188, Cramér's V = 0.005).*
 

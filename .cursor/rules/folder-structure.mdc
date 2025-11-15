@@ -151,8 +151,26 @@ This document defines the logical structure of the Goodreads metadata and review
 **Purpose**: Shelf tag normalization and canonicalization
 
 - `core/` - Core normalization logic
+  - `shelf_normalize.py` - Main normalization script
+  - `simple_shelf_cleaner.py` - Simple cleaning utilities
+  - `hybrid_classifier.py` - Hybrid classification approach
+  - `simple_semantic_cluster.py` - Semantic clustering
+  - `extract_shelves.py` - Shelf extraction utilities
 - `bridge/` - Integration with other pipeline steps
+  - `bridge_audit_normalize.py` - Bridge normalization with parsed data
 - `diagnostics/` - Quality assurance and validation
+  - `diagnostics_explore.py` - Diagnostic exploration
+  - `validate_bridge.py` - Bridge output validation
+- `scripts/` - Execution scripts
+  - `Makefile` - Pipeline execution Makefile
+- `docs/` - Documentation
+  - `LABELLING_GUIDE.md` - Labelling guide
+  - `SEMANTIC_CLUSTERING_RESULTS.md` - Semantic clustering results
+  - `SHELF_NORMALIZATION_IMPROVEMENTS.md` - Improvement documentation
+  - `SIMPLE_IMPROVEMENTS.md` - Simple improvements documentation
+  - `TESTING_RESULTS.md` - Testing results
+- `config/` - Configuration files
+- `tests/` - Test files
 
 ### Stage 08: Corpus Analysis (`src/08_corpus_analysis/`)
 **Purpose**: Corpus statistics and analysis

@@ -1,0 +1,736 @@
+{
+  "original_count": 251602,
+  "after_frequency_filter": 98305,
+  "after_plural_norm": 96890,
+  "after_stopwords": 94002,
+  "after_suffixes": 93999,
+  "final_count": 93999,
+  "plural_merges": [
+    {
+      "shelf_canon": "ebooks",
+      "shelf_cleaned": "ebook",
+      "count": 23035
+    },
+    {
+      "shelf_canon": "e-books",
+      "shelf_cleaned": "e-book",
+      "count": 12387
+    },
+    {
+      "shelf_canon": "audiobooks",
+      "shelf_cleaned": "audiobook",
+      "count": 6043
+    },
+    {
+      "shelf_canon": "arcs",
+      "shelf_cleaned": "arc",
+      "count": 3254
+    },
+    {
+      "shelf_canon": "audio-books",
+      "shelf_cleaned": "audio-book",
+      "count": 2749
+    },
+    {
+      "shelf_canon": "book-boyfriends",
+      "shelf_cleaned": "book-boyfriend",
+      "count": 2503
+    },
+    {
+      "shelf_canon": "library-books",
+      "shelf_cleaned": "library-book",
+      "count": 1919
+    },
+    {
+      "shelf_canon": "novels",
+      "shelf_cleaned": "novel",
+      "count": 1597
+    },
+    {
+      "shelf_canon": "novellas",
+      "shelf_cleaned": "novella",
+      "count": 1155
+    },
+    {
+      "shelf_canon": "reviews",
+      "shelf_cleaned": "review",
+      "count": 1073
+    },
+    {
+      "shelf_canon": "mysteries",
+      "shelf_cleaned": "mystery",
+      "count": 1017
+    },
+    {
+      "shelf_canon": "epubs",
+      "shelf_cleaned": "epub",
+      "count": 1003
+    },
+    {
+      "shelf_canon": "historicals",
+      "shelf_cleaned": "historical",
+      "count": 995
+    },
+    {
+      "shelf_canon": "owned-ebooks",
+      "shelf_cleaned": "owned-ebook",
+      "count": 983
+    },
+    {
+      "shelf_canon": "rock-stars",
+      "shelf_cleaned": "rock-star",
+      "count": 746
+    },
+    {
+      "shelf_canon": "love-stories",
+      "shelf_cleaned": "love-story",
+      "count": 723
+    },
+    {
+      "shelf_canon": "rockstars",
+      "shelf_cleaned": "rockstar",
+      "count": 671
+    },
+    {
+      "shelf_canon": "paperbacks",
+      "shelf_cleaned": "paperback",
+      "count": 661
+    },
+    {
+      "shelf_canon": "re-reads",
+      "shelf_cleaned": "re-read",
+      "count": 636
+    },
+    {
+      "shelf_canon": "holidays",
+      "shelf_cleaned": "holiday",
+      "count": 633
+    },
+    {
+      "shelf_canon": "thrillers",
+      "shelf_cleaned": "thriller",
+      "count": 484
+    },
+    {
+      "shelf_canon": "westerns",
+      "shelf_cleaned": "western",
+      "count": 470
+    },
+    {
+      "shelf_canon": "must-reads",
+      "shelf_cleaned": "must-read",
+      "count": 449
+    },
+    {
+      "shelf_canon": "quick-reads",
+      "shelf_cleaned": "quick-read",
+      "count": 438
+    },
+    {
+      "shelf_canon": "highlanders",
+      "shelf_cleaned": "highlander",
+      "count": 400
+    },
+    {
+      "shelf_canon": "fighters",
+      "shelf_cleaned": "fighter",
+      "count": 386
+    },
+    {
+      "shelf_canon": "celebrities",
+      "shelf_cleaned": "celebrity",
+      "count": 386
+    },
+    {
+      "shelf_canon": "kindle-reads",
+      "shelf_cleaned": "kindle-read",
+      "count": 374
+    },
+    {
+      "shelf_canon": "others",
+      "shelf_cleaned": "other",
+      "count": 369
+    },
+    {
+      "shelf_canon": "alphas",
+      "shelf_cleaned": "alpha",
+      "count": 347
+    },
+    {
+      "shelf_canon": "fav-authors",
+      "shelf_cleaned": "fav-author",
+      "count": 333
+    },
+    {
+      "shelf_canon": "motorcycle-clubs",
+      "shelf_cleaned": "motorcycle-club",
+      "count": 323
+    },
+    {
+      "shelf_canon": "artists",
+      "shelf_cleaned": "artist",
+      "count": 314
+    },
+    {
+      "shelf_canon": "firefighters",
+      "shelf_cleaned": "firefighter",
+      "count": 286
+    },
+    {
+      "shelf_canon": "australian-authors",
+      "shelf_cleaned": "australian-author",
+      "count": 281
+    },
+    {
+      "shelf_canon": "rereads",
+      "shelf_cleaned": "reread",
+      "count": 272
+    },
+    {
+      "shelf_canon": "review-copies",
+      "shelf_cleaned": "review-copy",
+      "count": 271
+    },
+    {
+      "shelf_canon": "netgalley-arcs",
+      "shelf_cleaned": "netgalley-arc",
+      "count": 271
+    },
+    {
+      "shelf_canon": "wolf-shifters",
+      "shelf_cleaned": "wolf-shifter",
+      "count": 258
+    },
+    {
+      "shelf_canon": "mc-bikers",
+      "shelf_cleaned": "mc-biker",
+      "count": 258
+    },
+    {
+      "shelf_canon": "shorts",
+      "shelf_cleaned": "short",
+      "count": 250
+    },
+    {
+      "shelf_canon": "arc-reviews",
+      "shelf_cleaned": "arc-review",
+      "count": 247
+    },
+    {
+      "shelf_canon": "female-authors",
+      "shelf_cleaned": "female-author",
+      "count": 245
+    },
+    {
+      "shelf_canon": "psychics",
+      "shelf_cleaned": "psychic",
+      "count": 238
+    },
+    {
+      "shelf_canon": "spies",
+      "shelf_cleaned": "spy",
+      "count": 234
+    },
+    {
+      "shelf_canon": "cliffhangers",
+      "shelf_cleaned": "cliffhanger",
+      "count": 233
+    },
+    {
+      "shelf_canon": "disabilities",
+      "shelf_cleaned": "disability",
+      "count": 232
+    },
+    {
+      "shelf_canon": "blog-tours",
+      "shelf_cleaned": "blog-tour",
+      "count": 232
+    },
+    {
+      "shelf_canon": "mystery-thrillers",
+      "shelf_cleaned": "mystery-thriller",
+      "count": 216
+    },
+    {
+      "shelf_canon": "soldiers",
+      "shelf_cleaned": "soldier",
+      "count": 211
+    }
+  ],
+  "stopword_removals": [
+    {
+      "shelf_canon": "-----sort",
+      "shelf_cleaned": "sort",
+      "count": 11
+    },
+    {
+      "shelf_canon": "-----sortdone",
+      "shelf_cleaned": "sortdone",
+      "count": 3
+    },
+    {
+      "shelf_canon": "-----sortnever",
+      "shelf_cleaned": "sortnever",
+      "count": 4
+    },
+    {
+      "shelf_canon": "----ebooks",
+      "shelf_cleaned": "ebooks",
+      "count": 24
+    },
+    {
+      "shelf_canon": "----print-books",
+      "shelf_cleaned": "print",
+      "count": 13
+    },
+    {
+      "shelf_canon": "---fr1",
+      "shelf_cleaned": "fr1",
+      "count": 9
+    },
+    {
+      "shelf_canon": "---wishlist",
+      "shelf_cleaned": "wishlist",
+      "count": 6
+    },
+    {
+      "shelf_canon": "---wishlist-ebooks",
+      "shelf_cleaned": "wishlist-ebooks",
+      "count": 6
+    },
+    {
+      "shelf_canon": "--already-own--",
+      "shelf_cleaned": "already-own",
+      "count": 3
+    },
+    {
+      "shelf_canon": "--also-sold-separately",
+      "shelf_cleaned": "also-sold-separately",
+      "count": 10
+    },
+    {
+      "shelf_canon": "--available-at-raspberrys--",
+      "shelf_cleaned": "available-at-raspberrys",
+      "count": 20
+    },
+    {
+      "shelf_canon": "--ebooks",
+      "shelf_cleaned": "ebooks",
+      "count": 52
+    },
+    {
+      "shelf_canon": "--ebooks-read",
+      "shelf_cleaned": "ebooks-read",
+      "count": 6
+    },
+    {
+      "shelf_canon": "--ebooks-wishlist",
+      "shelf_cleaned": "ebooks-wishlist",
+      "count": 5
+    },
+    {
+      "shelf_canon": "--fbphysical-book",
+      "shelf_cleaned": "fbphysical",
+      "count": 3
+    },
+    {
+      "shelf_canon": "--fdon-t-own",
+      "shelf_cleaned": "fdon-t-own",
+      "count": 3
+    },
+    {
+      "shelf_canon": "--library-read",
+      "shelf_cleaned": "library-read",
+      "count": 3
+    },
+    {
+      "shelf_canon": "--mine--",
+      "shelf_cleaned": "mine",
+      "count": 5
+    },
+    {
+      "shelf_canon": "--must-read",
+      "shelf_cleaned": "must-read",
+      "count": 3
+    },
+    {
+      "shelf_canon": "--need-to-buy--",
+      "shelf_cleaned": "need-to-buy",
+      "count": 7
+    },
+    {
+      "shelf_canon": "--second-looks",
+      "shelf_cleaned": "second-looks",
+      "count": 10
+    },
+    {
+      "shelf_canon": "--wish-list--",
+      "shelf_cleaned": "wish-list",
+      "count": 4
+    },
+    {
+      "shelf_canon": "--wish-list-secondary--",
+      "shelf_cleaned": "wish-list-secondary",
+      "count": 6
+    },
+    {
+      "shelf_canon": "--wishlist-ebooks",
+      "shelf_cleaned": "wishlist-ebooks",
+      "count": 7
+    },
+    {
+      "shelf_canon": "-2008-ebooks-read",
+      "shelf_cleaned": "2008-ebooks-read",
+      "count": 5
+    },
+    {
+      "shelf_canon": "-2009-ebooks-read",
+      "shelf_cleaned": "2009-ebooks-read",
+      "count": 6
+    },
+    {
+      "shelf_canon": "-2009-read",
+      "shelf_cleaned": "2009-read",
+      "count": 3
+    },
+    {
+      "shelf_canon": "-2010",
+      "shelf_cleaned": "2010",
+      "count": 4
+    },
+    {
+      "shelf_canon": "-2016",
+      "shelf_cleaned": "2016",
+      "count": 3
+    },
+    {
+      "shelf_canon": "-2017-men-in-uniform-challenge",
+      "shelf_cleaned": "2017-men-in-uniform-challenge",
+      "count": 11
+    },
+    {
+      "shelf_canon": "-a-to-z-book-title",
+      "shelf_cleaned": "a-to-z-title",
+      "count": 3
+    },
+    {
+      "shelf_canon": "-acheter",
+      "shelf_cleaned": "acheter",
+      "count": 8
+    },
+    {
+      "shelf_canon": "-booksfree",
+      "shelf_cleaned": "booksfree",
+      "count": 5
+    },
+    {
+      "shelf_canon": "-calif--",
+      "shelf_cleaned": "calif",
+      "count": 4
+    },
+    {
+      "shelf_canon": "-checker",
+      "shelf_cleaned": "checker",
+      "count": 4
+    },
+    {
+      "shelf_canon": "-cowboy",
+      "shelf_cleaned": "cowboy",
+      "count": 6
+    },
+    {
+      "shelf_canon": "-ebook",
+      "shelf_cleaned": "ebook",
+      "count": 19
+    },
+    {
+      "shelf_canon": "-ebook-",
+      "shelf_cleaned": "ebook",
+      "count": 5
+    },
+    {
+      "shelf_canon": "-ebook-fiction-wishlist-",
+      "shelf_cleaned": "ebook-wishlist",
+      "count": 4
+    },
+    {
+      "shelf_canon": "-england-",
+      "shelf_cleaned": "england",
+      "count": 7
+    },
+    {
+      "shelf_canon": "-espera-na-estante",
+      "shelf_cleaned": "espera-na-estante",
+      "count": 4
+    },
+    {
+      "shelf_canon": "-favorite-authors-",
+      "shelf_cleaned": "favorite-authors",
+      "count": 3
+    },
+    {
+      "shelf_canon": "-gang-bang-pick-from",
+      "shelf_cleaned": "gang-bang-pick-from",
+      "count": 10
+    },
+    {
+      "shelf_canon": "-gayromlit2011",
+      "shelf_cleaned": "gayromlit2011",
+      "count": 5
+    },
+    {
+      "shelf_canon": "-gfy",
+      "shelf_cleaned": "gfy",
+      "count": 17
+    },
+    {
+      "shelf_canon": "-historical",
+      "shelf_cleaned": "historical",
+      "count": 13
+    },
+    {
+      "shelf_canon": "-historical-romance-",
+      "shelf_cleaned": "historical-romance",
+      "count": 14
+    },
+    {
+      "shelf_canon": "-i-own",
+      "shelf_cleaned": "i-own",
+      "count": 8
+    },
+    {
+      "shelf_canon": "-in-shelf",
+      "shelf_cleaned": "in-shelf",
+      "count": 3
+    },
+    {
+      "shelf_canon": "-library",
+      "shelf_cleaned": "library",
+      "count": 6
+    }
+  ],
+  "suffix_removals": [
+    {
+      "shelf_canon": "books-on-books",
+      "shelf_cleaned": "books-on",
+      "count": 4
+    },
+    {
+      "shelf_canon": "e-book-fiction",
+      "shelf_cleaned": "e-book",
+      "count": 5
+    },
+    {
+      "shelf_canon": "fiction-books",
+      "shelf_cleaned": "fiction",
+      "count": 63
+    },
+    {
+      "shelf_canon": "fiction-novel",
+      "shelf_cleaned": "novel",
+      "count": 39
+    }
+  ],
+  "frequency_filtered": [
+    {
+      "shelf_canon": "tbr-main",
+      "count": 2
+    },
+    {
+      "shelf_canon": "ir-2013",
+      "count": 2
+    },
+    {
+      "shelf_canon": "cane-flogger-or-whip",
+      "count": 2
+    },
+    {
+      "shelf_canon": "heroes-you-want-to-keep",
+      "count": 2
+    },
+    {
+      "shelf_canon": "intruding-family",
+      "count": 2
+    },
+    {
+      "shelf_canon": "cute-cover-alert",
+      "count": 2
+    },
+    {
+      "shelf_canon": "damaged-heroes-3",
+      "count": 2
+    },
+    {
+      "shelf_canon": "westervelt-wolves-series",
+      "count": 2
+    },
+    {
+      "shelf_canon": "0next-follow-auth",
+      "count": 2
+    },
+    {
+      "shelf_canon": "ebooks-pre-ordered",
+      "count": 2
+    },
+    {
+      "shelf_canon": "2017-12-n-r",
+      "count": 2
+    },
+    {
+      "shelf_canon": "12-december-releases",
+      "count": 2
+    },
+    {
+      "shelf_canon": "blogger-books",
+      "count": 2
+    },
+    {
+      "shelf_canon": "unlikely-to-finish",
+      "count": 2
+    },
+    {
+      "shelf_canon": "mm-rough-bdsm-slaves",
+      "count": 2
+    },
+    {
+      "shelf_canon": "dip-into-dubious-waters",
+      "count": 2
+    },
+    {
+      "shelf_canon": "to-read-2012-4q",
+      "count": 2
+    },
+    {
+      "shelf_canon": "f-f-drama",
+      "count": 2
+    },
+    {
+      "shelf_canon": "harlequin-2010s",
+      "count": 2
+    },
+    {
+      "shelf_canon": "african-american-woman-lead",
+      "count": 2
+    },
+    {
+      "shelf_canon": "african-american-woman-heroine",
+      "count": 2
+    },
+    {
+      "shelf_canon": "april-2017-wishlist",
+      "count": 2
+    },
+    {
+      "shelf_canon": "recent-to-read",
+      "count": 2
+    },
+    {
+      "shelf_canon": "dumb-hero-trying-to-sound-smart",
+      "count": 2
+    },
+    {
+      "shelf_canon": "r-u-a-scaredy-cat",
+      "count": 2
+    },
+    {
+      "shelf_canon": "kakimai",
+      "count": 2
+    },
+    {
+      "shelf_canon": "wimp",
+      "count": 2
+    },
+    {
+      "shelf_canon": "tedious-prose",
+      "count": 2
+    },
+    {
+      "shelf_canon": "series-awesome",
+      "count": 2
+    },
+    {
+      "shelf_canon": "pseudo-intellectualism",
+      "count": 2
+    },
+    {
+      "shelf_canon": "pretentious-prose",
+      "count": 2
+    },
+    {
+      "shelf_canon": "100--250",
+      "count": 2
+    },
+    {
+      "shelf_canon": "fictionmisc-fiction",
+      "count": 2
+    },
+    {
+      "shelf_canon": "aa-unsorted",
+      "count": 2
+    },
+    {
+      "shelf_canon": "2013ish",
+      "count": 2
+    },
+    {
+      "shelf_canon": "recommended-ya",
+      "count": 2
+    },
+    {
+      "shelf_canon": "from-book-reviews-romance",
+      "count": 2
+    },
+    {
+      "shelf_canon": "check-this-out-later",
+      "count": 2
+    },
+    {
+      "shelf_canon": "print-books-to-read",
+      "count": 2
+    },
+    {
+      "shelf_canon": "g-pnr-or-uf",
+      "count": 2
+    },
+    {
+      "shelf_canon": "a-and-b",
+      "count": 2
+    },
+    {
+      "shelf_canon": "on-different-sides",
+      "count": 2
+    },
+    {
+      "shelf_canon": "fav2016",
+      "count": 2
+    },
+    {
+      "shelf_canon": "trtwishlist",
+      "count": 2
+    },
+    {
+      "shelf_canon": "trt-wishlist",
+      "count": 2
+    },
+    {
+      "shelf_canon": "spy-bodyguard-law-enforcement",
+      "count": 2
+    },
+    {
+      "shelf_canon": "kindle-relationships",
+      "count": 2
+    },
+    {
+      "shelf_canon": "sick-hurt",
+      "count": 2
+    },
+    {
+      "shelf_canon": "blue-stocking",
+      "count": 2
+    },
+    {
+      "shelf_canon": "tagkindle-own",
+      "count": 2
+    }
+  ]
+}

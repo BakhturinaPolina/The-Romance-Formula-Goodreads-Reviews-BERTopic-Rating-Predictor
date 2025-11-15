@@ -184,8 +184,7 @@ def load_book_id_to_work_id_mapping(
     if main_dataset_file is None:
         # Try default locations
         possible_locations = [
-            PROJECT_ROOT / "data" / "processed" / "romance_books_main_final.csv",
-            Path("/home/polina/Documents/goodreads_romance_research_cursor/anna_archive_romance_pipeline/data/processed/romance_books_main_final.csv")
+            PROJECT_ROOT / "data" / "processed" / "romance_books_main_final.csv"
         ]
         
         for loc in possible_locations:

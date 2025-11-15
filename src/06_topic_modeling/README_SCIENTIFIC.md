@@ -33,7 +33,7 @@
 
 - **BERTopic**: Topic modeling using BERT-based embeddings
 - **OCTIS Integration**: Optimization framework for hyperparameter tuning
-- **Hyperparameter Optimization**: Bayesian optimization using Optuna
+- **Hyperparameter Optimization**: Bayesian optimization using OCTIS framework
 - **Sentence-Level Analysis**: Topics extracted from individual sentences
 - **Multiple Embeddings**: Testing various embedding models (sentence-transformers)
 
@@ -42,7 +42,6 @@
 - **BERTopic**: Topic modeling framework
 - **OCTIS**: Topic modeling optimization framework
 - **sentence-transformers**: Embedding models
-- **optuna**: Bayesian hyperparameter optimization
 - **spacy**: Sentence splitting (used in preparation stage)
 
 ## Statistical Tools

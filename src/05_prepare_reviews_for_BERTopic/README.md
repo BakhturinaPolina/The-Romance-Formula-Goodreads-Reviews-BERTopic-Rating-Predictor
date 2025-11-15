@@ -52,7 +52,7 @@ For full project-wide rules, see `.cursor/rules/venv-requirement.mdc`.
 
 - `data/processed/review_sentences_for_bertopic.parquet` - Sentence-level dataset for BERTopic
 - `data/processed/review_sentences_temp/chunk_*.parquet` - Temporary chunk files (during processing)
-- `/tmp/bertopic_prep_monitor.log` - Processing log file
+- `logs/bertopic_prep_monitor.log` - Processing log file
 
 ## How to Run
 
@@ -119,7 +119,7 @@ A single work can have multiple editions (paperback, hardcover, ebook, etc.), ea
 4. Reviews are mapped using this dictionary before joining on `work_id`
 
 ### Progress Tracking
-- Progress is logged to `/tmp/bertopic_prep_monitor.log`
+- Progress is logged to `logs/bertopic_prep_monitor.log`
 - Monitor script displays:
   - Process status (running/stopped)
   - CPU and memory usage
@@ -136,7 +136,7 @@ A single work can have multiple editions (paperback, hardcover, ebook, etc.), ea
 ## Troubleshooting
 
 ### Process Not Running
-- Check if process crashed: `tail -50 /tmp/bertopic_prep_monitor.log`
+- Check if process crashed: `tail -50 logs/bertopic_prep_monitor.log`
 - Verify input files exist
 - Check disk space
 

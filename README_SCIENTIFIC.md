@@ -75,7 +75,7 @@ The research follows an 8-stage pipeline:
 
 - **Model**: BERTopic with various embedding models
 - **Framework**: OCTIS (Optimization and Comparative Topic Modeling Infrastructure for Scholars)
-- **Hyperparameter Optimization**: Bayesian optimization using Optuna
+- **Hyperparameter Optimization**: Bayesian optimization using OCTIS framework
 - **Evaluation Metrics**: Topic coherence, diversity, and quality metrics
 - **Sentence-Level Analysis**: Reviews split into sentences for granular topic extraction
 
@@ -94,7 +94,6 @@ The research follows an 8-stage pipeline:
 - **spaCy**: Natural language processing and sentence splitting
 - **BERTopic**: Topic modeling framework
 - **OCTIS**: Topic modeling optimization framework
-- **Optuna**: Bayesian hyperparameter optimization
 
 ### Data Processing Tools
 - **pandas**: Data manipulation

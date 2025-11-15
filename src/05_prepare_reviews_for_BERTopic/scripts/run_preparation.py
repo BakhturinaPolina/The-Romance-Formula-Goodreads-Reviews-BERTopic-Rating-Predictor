@@ -30,7 +30,10 @@ verify_venv()
 project_root = get_project_root()
 venv_python = get_venv_python()
 script_path = Path(__file__).parent.parent / "core" / "prepare_bertopic_input.py"
-log_file = Path("/tmp/bertopic_prep_monitor.log")
+# Use project-relative log directory instead of /tmp/
+log_dir = project_root / "logs"
+log_dir.mkdir(parents=True, exist_ok=True)
+log_file = log_dir / "bertopic_prep_monitor.log"
 
 # Change to project root
 import os

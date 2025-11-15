@@ -17,14 +17,22 @@ data/raw/*.json.gz
 
 # Exclude virtual environment
 venv/
+.venv/
+**/.venv/
+romance-novel-nlp-research/.venv/
 
 # Exclude Python cache
 __pycache__/
 *.pyc
 *.pyo
+*.py[cod]
+*$py.class
 
 # Exclude logs
 src/logs/
+*.log
+!archive/**/*.log
+# But keep archive logs for historical reference
 
 # Exclude visualization outputs (PNG files)
 *.png
@@ -44,3 +52,6 @@ outputs/*/*.pickle
 *.pkl
 *.pickle
 *.parquet
+
+# Exclude archive directory (historical artifacts, not needed for active development)
+archive/

@@ -4,7 +4,7 @@ This document defines the logical structure of the Goodreads metadata and review
 
 ## Code Location
 - **ALL code must be stored in**: `src/`
-- **Stages are numbered** (01-07) for clear pipeline order
+- **Stages are numbered** (01-08) for clear pipeline order
 - **NEVER create new folders** outside the defined structure
 - **Use existing stage directories** in `src/`
 
@@ -88,6 +88,8 @@ This document defines the logical structure of the Goodreads metadata and review
   - `comprehensive_data_analysis.py` - Comprehensive data analysis tool (ComprehensiveDataAnalyzer)
 - `utils/` - Utility functions
   - `diff_bridge_runs.py` - Utility for comparing different pipeline runs
+- `Makefile` - Makefile for running audit commands
+- `requirements.txt` - Python dependencies
 
 ### Stage 03: Text Preprocessing (`src/03_text_preprocessing/`)
 **Purpose**: NLP text preprocessing and normalization
@@ -171,11 +173,15 @@ This document defines the logical structure of the Goodreads metadata and review
   - `TESTING_RESULTS.md` - Testing results
 - `config/` - Configuration files
 - `tests/` - Test files
+- `outputs/` - Stage-specific outputs (test outputs, checkpoints, etc.)
+- `requirements.txt` - Python dependencies
 
 ### Stage 08: Corpus Analysis (`src/08_corpus_analysis/`)
 **Purpose**: Corpus statistics and analysis
 
 - `generate_corpus_statistics.py` - Corpus statistics generation
+- `README.md` - Stage documentation
+- `README_SCIENTIFIC.md` - Scientific documentation
 
 ## File Naming Conventions
 

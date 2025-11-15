@@ -33,13 +33,13 @@ The pipeline consists of 8 stages:
 1. **Data Integration** (`src/01_data_integration/`)
    ```bash
    cd src/01_data_integration
-   python run_builder.py
+   python csv_building/run_builder.py
    ```
 
 2. **Data Quality** (`src/02_data_quality/`)
    ```bash
    cd src/02_data_quality
-   python pipeline_runner.py
+   python data_quality/pipeline_runner.py
    ```
 
 3. **Text Preprocessing** (`src/03_text_preprocessing/`)
@@ -51,25 +51,28 @@ The pipeline consists of 8 stages:
 4. **Review Extraction** (`src/04_review_extraction/`)
    ```bash
    cd src/04_review_extraction
-   python extract_reviews.py
+   ./scripts/run_extraction.sh
+   # Or: romance-novel-nlp-research/.venv/bin/python3 core/extract_reviews.py
    ```
 
 5. **Prepare Reviews Corpus for BERTopic** (`src/05_prepare_reviews_for_BERTopic/`)
    ```bash
    cd src/05_prepare_reviews_for_BERTopic
+   romance-novel-nlp-research/.venv/bin/python3 scripts/run_preparation.py
    # See stage README for detailed instructions
    ```
 
 6. **Topic Modeling** (`src/06_topic_modeling/`)
    ```bash
    cd src/06_topic_modeling
+   romance-novel-nlp-research/.venv/bin/python3 core/bertopic_plus_octis.py
    # See stage README for detailed instructions
    ```
 
 7. **Shelf Normalization** (`src/07_shelf_normalization/`)
    ```bash
    cd src/07_shelf_normalization
-   make pipeline
+   make -f scripts/Makefile pipeline
    ```
 
 8. **Corpus Analysis** (`src/08_corpus_analysis/`)

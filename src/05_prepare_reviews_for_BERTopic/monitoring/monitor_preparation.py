@@ -28,7 +28,10 @@ except ImportError:
 verify_venv()
 
 project_root = get_project_root()
-log_file = Path("/tmp/bertopic_prep_monitor.log")
+# Use project-relative log directory instead of /tmp/
+log_dir = project_root / "logs"
+log_dir.mkdir(parents=True, exist_ok=True)
+log_file = log_dir / "bertopic_prep_monitor.log"
 output_file = project_root / "data" / "processed" / "review_sentences_for_bertopic.parquet"
 monitor_interval = 30  # Check every 30 seconds
 

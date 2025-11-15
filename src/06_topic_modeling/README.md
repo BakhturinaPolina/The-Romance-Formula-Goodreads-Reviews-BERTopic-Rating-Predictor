@@ -92,7 +92,6 @@ romance-novel-nlp-research/.venv/bin/python3 scripts/restart_script.py
 - sentence-transformers
 - pandas
 - numpy
-- optuna (for optimization)
 - spacy
 
 ## Example Usage

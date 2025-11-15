@@ -4,7 +4,7 @@
 
 ### Data Source and Extraction
 
-We extracted reader reviews from the Goodreads romance reviews dataset (`goodreads_reviews_romance.json.gz`), which contains approximately 3.6 million reviews. Reviews were matched to books in our 6,000-book research corpus using book IDs. The extraction process applied the following filters:
+Reader reviews were extracted from the Goodreads romance reviews dataset (`goodreads_reviews_romance.json.gz`), which contains approximately 3.6 million reviews. Reviews were matched to books in the 6,000-book research corpus using book IDs. The extraction process applied the following filters:
 
 1. **Book ID Matching**: Only reviews corresponding to books in the research corpus were retained.
 2. **Language Detection**: Reviews were filtered to English-only using the `langdetect` library. Reviews detected as non-English were excluded.

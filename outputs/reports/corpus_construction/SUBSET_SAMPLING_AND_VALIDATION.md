@@ -2,7 +2,7 @@
 
 ## Dataset Overview
 
-We constructed a research corpus of romance novels from Goodreads metadata, beginning with a full dataset of 52,585 English-language romance novels published between 2000 and 2017. From this full dataset, we selected a stratified sample of 6,000 novels using a multi-tier sampling strategy based on popularity metrics.
+A research corpus of romance novels was constructed from Goodreads metadata, beginning with a full dataset of 52,585 English-language romance novels published between 2000 and 2017. From this full dataset, a stratified sample of 6,000 novels was selected using a multi-tier sampling strategy based on popularity metrics.
 
 ### Full Dataset Characteristics
 
@@ -16,7 +16,7 @@ The 6,000-book research subset was constructed using a stratified sampling appro
 
 ## Statistical Validation
 
-To assess the representativeness of the 6,000-book subset, we performed comprehensive statistical comparisons between the full dataset and subset across key demographic and engagement variables.
+To assess the representativeness of the 6,000-book subset, comprehensive statistical comparisons were performed between the full dataset and subset across key demographic and engagement variables.
 
 ### Categorical Variables
 
@@ -52,4 +52,17 @@ Statistical validation confirms that the 6,000-book subset maintains representat
 | Page count | Mann-Whitney U | 157,508,606 | 0.843 | Cohen's d = -0.005 | No significant difference |
 
 *Expected differences due to sampling strategy prioritizing high-engagement books.
+
+## Visualizations
+
+### Validation Evidence
+
+![Engagement Metrics: Ratings Count](figures/ratings_count_sum_boxplots.png)
+*Ratings count distributions demonstrating the intentional prioritization of high-engagement books in the subset (Mann-Whitney U = 48,396,241, p < 0.001, Cohen's d = -0.42).*
+
+![Engagement Metrics: Text Reviews Count](figures/text_reviews_count_sum_boxplots.png)
+*Text reviews count distributions showing subset prioritization of books with rich review data (Mann-Whitney U = 50,955,036, p < 0.001, Cohen's d = -0.57).*
+
+![Series Status Comparison](figures/series_status_comparison.png)
+*Series vs standalone proportions confirming preserved distribution (χ² = 1.73, p = 0.188, Cramér's V = 0.005).*
 

@@ -97,24 +97,25 @@ This section presents statistical comparisons between the full dataset and the 6
 
 ## Visualizations
 
-All visualizations are saved in the `figures/` directory:
+### Key Validation Visualizations
 
-- `publication_year_distributions.png`: Publication year distributions for full dataset, subset, and comparison
-- `genre_frequency_comparison.png`: Top 20 genre frequencies for full dataset and subset
-- `ratings_distributions.png`: Average rating distributions for full dataset, subset, and by tier
-- `ratings_count_sum_boxplots.png`: Boxplots comparing ratings counts
-- `text_reviews_count_sum_boxplots.png`: Boxplots comparing review counts
-- `page_count_distributions.png`: Page count distributions for full dataset and subset
+The following visualizations provide the most informative and concise evidence for cross-corpus validation:
+
+![Ratings Distribution Comparison](figures/ratings_distributions.png)
+*Average rating distributions for full dataset, subset, and by tier. Validates that the subset maintains the rating structure while ensuring tier representation.*
+
+![Genre Frequency Comparison](figures/genre_frequency_comparison.png)
+*Top genre frequencies comparing full dataset and subset. Confirms genre representativeness (χ² = 0.011, p > 0.999).*
+
+![Engagement Metrics Comparison](figures/ratings_count_sum_boxplots.png)
+*Ratings count distributions showing intentional prioritization of high-engagement books in the subset (expected difference, Cohen's d = -0.42).*
+
+### Additional Visualizations
+
+Additional visualizations are available in the `figures/` directory:
+- `publication_year_distributions.png`: Temporal representativeness validation
+- `text_reviews_count_sum_boxplots.png`: Review count distributions
+- `page_count_distributions.png`: Page count distributions
 - `series_status_comparison.png`: Series vs standalone proportions
 
-## Data Files
-
-All CSV tables are saved in the `reports/corpus_construction/` directory:
-
-- `full_dataset_summary_statistics.csv`: Descriptive statistics for all numeric variables
-- `genre_distribution_full.csv`: Genre frequencies in full dataset
-- `genre_distribution_subset.csv`: Genre frequencies in subset
-- `cross_corpus_comparison.csv`: Side-by-side comparison of key metrics
-- `statistical_test_results.csv`: All statistical test results
-- `publication_year_distribution.csv`: Year counts for full and subset
 

@@ -1,94 +1,137 @@
+## Repository Structure
+
+This document defines the logical structure of the Goodreads metadata and reviews topic modeling research repository.
+
 ## Code Location
-- **ALL code must be stored in**: `romance-novel-nlp-research/src/`
-- **NEVER create new folders** like `scripts/`, `tools/`, etc.
-- **Use existing structure**: `src/data_quality/`, `src/csv_building/`, etc.
+- **ALL code must be stored in**: `src/`
+- **Stages are numbered** (01-07) for clear pipeline order
+- **NEVER create new folders** outside the defined structure
+- **Use existing stage directories** in `src/`
 
 ## Data Storage Rules
 
 ### Raw Data (Read-only)
-- **Location**: `romance-novel-nlp-research/data/raw/`
+- **Location**: `data/raw/`
 - **Purpose**: Original Goodreads JSON files
 - **Rules**: Never modify, read-only access
 - **Files**: `goodreads_*.json.gz`
 
 ### Intermediate Data (Scratch)
-- **Location**: `romance-novel-nlp-research/data/intermediate/`
+- **Location**: `data/intermediate/`
 - **Purpose**: Temporary processing outputs
 - **Rules**: Can be deleted, regenerated during processing
 
 ### Processed Data (Final)
-- **Location**: `romance-novel-nlp-research/data/processed/`
+- **Location**: `data/processed/`
 - **Purpose**: Final cleaned datasets for analysis
 - **Rules**: Keep, versioned outputs
-- **Files**: `cleaned_romance_novels_step*.pkl/csv` (pipeline outputs)
-
-### Logs
-- **Location**: `romance-novel-nlp-research/organized_outputs/logs/`
-- **Purpose**: All pipeline execution logs, validation reports, error logs
-- **Files**: `*_20250907_*.log` (timestamped execution logs)
+- **Files**: Processed CSV, parquet, and pickle files
 
 ### Outputs
-- **Location**: `romance-novel-nlp-research/organized_outputs/`
-- **Purpose**: All organized outputs, analysis results, reports, visualizations
+- **Location**: `outputs/`
+- **Purpose**: All research outputs, analysis results, reports, visualizations
 - **Structure**: 
   - `datasets/` - All dataset versions (step-by-step + specialized)
   - `logs/` - All pipeline execution logs
   - `reports/` - All analysis reports (JSON + Markdown)
   - `visualizations/` - All plots and charts
 
-### Configuration
-- **Location**: `romance-novel-nlp-research/config/` (if needed)
-- **Purpose**: YAML configuration files
-- **Note**: Currently not used in active project
-
 ### Documentation
-- **Location**: `romance-novel-nlp-research/docs/` (if needed)
-- **Purpose**: Project documentation, protocols, guides
-- **Note**: Currently not used in active project
+- **Location**: `docs/`
+- **Purpose**: Project documentation, setup guides, replication instructions
+- **Files**: `setup.md`, `replication_guide.md`, etc.
 
-### Tests
-- **Location**: `romance-novel-nlp-research/tests/` (if needed)
-- **Purpose**: Unit tests, integration tests
-- **Note**: Currently not used in active project
+### Notebooks
+- **Location**: `notebooks/`
+- **Purpose**: Jupyter notebooks for exploration and analysis
 
-## Code Reuse Rules
+### Archive
+- **Location**: `archive/`
+- **Purpose**: Archived outdated files and development history
+- **Structure**: Organized by date and purpose
 
-### Pipeline Execution
-- **NEVER write new pipeline code from scratch**
-- **ALWAYS modify existing code** in `src/data_quality/` or `src/csv_building/`
-- **Use parameters** to control behavior (e.g., `sample_size`)
-- **Same script** should work for both full dataset and subsets
+## Source Code Structure
 
-### Example: Pipeline Runner
-```python
-# ✅ CORRECT: Modify existing pipeline
-pipeline = DataTypeOptimizer()
-pipeline.run_complete_optimization()  # For full dataset
+### Stage 01: Data Integration (`src/01_data_integration/`)
+**Purpose**: CSV building, data integration, external data extraction, subdataset sampling
 
-# ❌ WRONG: Create new pipeline code
-# Don't create new files like scripts/run_pipeline_5000_sample.py
-```
+- `csv_building/` - CSV generation and data processing
+  - `final_csv_builder.py` - Main CSV builder class (OptimizedFinalCSVBuilder) that processes raw Goodreads JSON files
+  - `run_builder.py` - Interactive CLI runner for CSV building
+- `subdataset_sampling/` - Representative sampling for research datasets
+  - `create_subdataset_6000.py` - Creates 6,000 book subdataset with balanced tier representation
+  - `run_subdataset_sampling.py` - CLI runner for subdataset sampling
+- `external_data_extraction/` - External dataset extraction tools
+  - `extract_romance_books.py` - Extracts author/title pairs from Hugging Face romance-books dataset
+  - `bookrix_extractor.py` - Specialized BookRix URL parser for high-accuracy extraction
+  - `book_matcher.py` - Matches external dataset books to Goodreads metadata using fuzzy matching
+
+### Stage 02: Data Quality (`src/02_data_quality/`)
+**Purpose**: Data quality assurance pipeline and statistical audit
+
+- `data_quality/` - Complete 6-step data quality pipeline
+  - `pipeline_runner.py` - Main pipeline runner
+  - `step1_missing_values_cleaning.py` - Missing values cleaning
+  - `step2_duplicate_detection.py` - Duplicate detection
+  - `step3_data_type_validation.py` - Data type validation
+  - `step4_outlier_detection.py` - Outlier detection
+  - `step4_outlier_treatment.py` - Outlier treatment
+  - `step5_data_type_optimization.py` - Data type optimization
+  - `step6_final_quality_validation.py` - Final quality validation
+- `data_audit/` - Statistical analysis and data exploration
+  - `core/data_auditor.py` - Main audit script
+  - `parsing/list_parser.py` - List parsing utilities
+  - `notebooks/` - Interactive analysis notebooks
+
+### Stage 03: Text Preprocessing (`src/03_text_preprocessing/`)
+**Purpose**: NLP text preprocessing and normalization
+
+- `text_preprocessor.py` - Main text preprocessor
+- `run_preprocessor.py` - Preprocessor runner
+- `test_preprocessor.py` - Preprocessor tests
+
+### Stage 04: Review Extraction (`src/04_review_extraction/`)
+**Purpose**: Review extraction and filtering
+
+- `extract_reviews.py` - Main extraction script
+- `monitor_extraction.py` - Real-time monitoring
+- `estimate_time.py` - Time estimation utility
+- `review_dataset.py` - Dataset review utility
+
+### Stage 05: Topic Modeling (`src/05_topic_modeling/`)
+**Purpose**: BERTopic analysis and optimization
+
+- `BERTopic_OCTIS/` - BERTopic with OCTIS integration
+- `bertopic_preparation/` - Input preparation for BERTopic
+- `data_loading.py` - Data loading utilities
+- `checks_coverage.py` - Coverage checking utilities
+
+### Stage 06: Shelf Normalization (`src/06_shelf_normalization/`)
+**Purpose**: Shelf tag normalization and canonicalization
+
+- `core/` - Core normalization logic
+- `bridge/` - Integration with other pipeline steps
+- `diagnostics/` - Quality assurance and validation
+
+### Stage 07: Corpus Analysis (`src/07_corpus_analysis/`)
+**Purpose**: Corpus statistics and analysis
+
+- `generate_corpus_statistics.py` - Corpus statistics generation
 
 ## File Naming Conventions
 
 ### Data Files
-- **Pipeline Outputs**: `romance_novels_step[step]_[timestamp].[format]`
-- **Optimized Data**: `cleaned_romance_novels_step5_optimized_[timestamp].[format]`
-- **Reports**: `*_report_step[step]_[timestamp].json`
-- **Quality Reports**: `*_quality_report_[timestamp].txt`
+- **Pipeline Outputs**: `*_step[step]_[timestamp].[format]`
+- **Processed Data**: `*_[description]_[timestamp].[format]`
+- **Reports**: `*_report_[timestamp].json` or `*_report_[timestamp].md`
 
-### Pipeline Step Files
-- **Step Implementations**: `step[number]_[description].py`
-- **Main Runner**: `pipeline_runner.py`
-- **Individual Runners**: `run_[description].py`
+### Source Code Files
+- **Stage Implementations**: Descriptive names (e.g., `extract_reviews.py`)
+- **Main Runners**: `run_[description].py` or `pipeline_runner.py`
+- **Utilities**: Descriptive names indicating purpose
 
-### Archive Files
-- **Cleanup Archives**: `cleanup_YYYYMMDD/`
-- **Archive Summaries**: `CLEANUP_SUMMARY.md`
-- **Archive Documentation**: `ARCHIVE_SUMMARY.md`
-
-### Output Organization
-- **Step Outputs**: `src/data_quality/outputs/[step_name]/`
+### Output Files
+- **Stage Outputs**: Organized by stage in `outputs/`
 - **Timestamped Files**: `*_[YYYYMMDD_HHMMSS].[format]`
 - **Quality Reports**: `*_quality_report_[timestamp].md`
 
@@ -98,146 +141,73 @@ pipeline.run_complete_optimization()  # For full dataset
 - **Raw inputs**: Read-only in `data/raw/`
 - **Interim outputs**: `data/intermediate/` (can be deleted)
 - **Final outputs**: `data/processed/` (keep for research)
-- **Logs**: `logs/` (for reproducibility)
-- **Reports**: `outputs/` (for documentation)
+- **Logs**: `outputs/logs/` (for reproducibility)
+- **Reports**: `outputs/reports/` (for documentation)
 
 ## Current Project Structure
 
 ```
-romance-novel-nlp-research/
+goodreads-topic-modeling/
 ├── .cursor/                          # Cursor IDE configuration
 │   └── rules/                        # Project-specific rules
 ├── archive/                          # Archived development history
-│   ├── cleanup_20250105/             # January 5, 2025 cleanup
-│   ├── cleanup_20250106/             # January 6, 2025 cleanup
-│   ├── cleanup_20250907/             # September 7, 2025 comprehensive cleanup
-│   │   ├── CLEANUP_SUMMARY.md        # Comprehensive cleanup documentation
-│   │   ├── duplicate_outputs/        # Files now in organized_outputs/
-│   │   ├── old_datasets/             # Outdated dataset versions
-│   │   ├── old_logs/                 # Old log files
-│   │   ├── old_reports/              # Outdated reports
-│   │   └── scratch_files/            # (Empty - no scratch files found)
-│   ├── data_quality_archive_20250902/  # September 2025 data quality archive
-│   ├── data_quality_artifacts/       # Legacy data quality files
-│   ├── pipeline_outputs_20250902/    # Archived pipeline outputs
-│   ├── processed_data_20250904/      # Archived processed data
-│   ├── unused_code/                  # Previous implementations
-│   ├── ARCHIVE_SUMMARY.md            # Main archive documentation
-│   └── DATA_QUALITY_ARCHIVE_SUMMARY.md # Data quality archive summary
+│   └── outdated_for_github_prep_YYYYMMDD/
 ├── data/                             # Data storage
 │   ├── raw/                          # Original Goodreads JSON files (read-only)
-│   │   ├── goodreads_book_authors.json.gz
-│   │   ├── goodreads_book_genres_initial.json.gz
-│   │   ├── goodreads_book_series.json.gz
-│   │   ├── goodreads_book_works.json.gz
-│   │   ├── goodreads_books_romance.json.gz
-│   │   ├── goodreads_interactions_romance.json.gz
-│   │   ├── goodreads_reviews_dedup.json.gz
-│   │   ├── goodreads_reviews_romance.json.gz
-│   │   ├── goodreads_reviews_spoiler.json.gz
-│   │   └── README.md
 │   ├── intermediate/                 # Temporary processing outputs
-│   └── processed/                    # Current datasets (3 files)
-│       ├── final_books_2000_2020_en_enhanced_20250907_013708.csv
-│       ├── romance_novels_text_preprocessed_20250907_015606.csv
-│       └── text_preprocessing_report_20250907_015613.json
-├── organized_outputs/                # All organized outputs
+│   └── processed/                    # Final cleaned datasets
+├── outputs/                          # All research outputs
 │   ├── datasets/                     # All dataset versions
-│   │   ├── step_by_step/             # 7 datasets showing pipeline progression
-│   │   └── specialized_versions/     # 3 final dataset versions
 │   ├── logs/                         # All pipeline execution logs
 │   ├── reports/                      # All analysis reports
-│   │   ├── json/                     # 15 JSON reports with statistics
-│   │   └── markdown/                 # 5 Markdown analysis reports
-│   ├── visualizations/               # 17 publication-ready plots
-│   └── README.md                     # Complete output documentation
-├── src/                              # Source code (ALL code must be here)
-│   ├── data_quality/                 # Complete 6-step data quality pipeline
-│   │   ├── __init__.py               # Module exports
-│   │   ├── pipeline_runner.py        # Main pipeline runner (executes all 6 steps)
-│   │   ├── step1_missing_values_cleaning.py      # Step 1: Missing Values Cleaning
-│   │   ├── step2_duplicate_detection.py          # Step 2: Duplicate Detection
-│   │   ├── step3_data_type_validation.py         # Step 3: Data Type Validation
-│   │   ├── step4_outlier_detection.py            # Step 4: Outlier Detection
-│   │   ├── step4_outlier_treatment.py            # Step 4: Outlier Treatment
-│   │   ├── step5_data_type_optimization.py       # Step 5: Data Type Optimization
-│   │   └── step6_final_quality_validation.py     # Step 6: Final Quality Validation
-│   ├── csv_building/                 # CSV building and data integration
-│   │   ├── __init__.py
-│   │   ├── final_csv_builder.py      # Main CSV builder implementation
-│   │   └── run_builder.py            # Builder runner script
-│   ├── nlp_preprocessing/            # NLP text preprocessing
-│   │   ├── __init__.py
-│   │   ├── text_preprocessor.py      # Main text preprocessor
-│   │   ├── run_preprocessor.py       # Preprocessor runner
-│   │   └── test_preprocessor.py      # Preprocessor tests
-│   ├── eda_analysis/                 # Exploratory data analysis
-│   │   ├── __init__.py
-│   │   ├── improved_eda_final.py     # Main EDA analysis
-│   │   ├── comparative_distribution_visualization.py
-│   │   └── outputs/                  # EDA outputs
-│   │       └── complete_pipeline_analysis/       # Final analysis results
-│   └── __init__.py
-├── .cursorrules                      # Cursor rules configuration
-├── .cursorignore                     # Cursor ignore patterns
-├── .gitignore                        # Git ignore patterns
-├── LICENSE                           # MIT License
-├── README.md                         # Project documentation
-└── requirements.txt                  # Python dependencies
+│   └── visualizations/               # Publication-ready plots
+├── src/                              # Source code (organized by research stage)
+│   ├── 01_data_integration/          # CSV building, data integration
+│   │   ├── csv_building/              # Main dataset building
+│   │   ├── subdataset_sampling/       # Representative sampling
+│   │   ├── external_data_extraction/ # External dataset integration
+│   │   ├── README.md                  # Stage documentation
+│   │   └── README_SCIENTIFIC.md      # Scientific documentation
+│   ├── 02_data_quality/              # 6-step data quality pipeline + audit
+│   ├── 03_text_preprocessing/        # NLP text preprocessing
+│   ├── 04_review_extraction/         # Review extraction and filtering
+│   ├── 05_topic_modeling/            # BERTopic analysis and optimization
+│   ├── 06_shelf_normalization/       # Shelf tag normalization
+│   └── 07_corpus_analysis/            # Corpus statistics and analysis
+├── docs/                              # Project documentation
+│   ├── setup.md                       # Setup instructions
+│   └── replication_guide.md          # How to use with other datasets
+├── notebooks/                         # Jupyter notebooks for exploration
+├── README.md                          # Main project README
+├── README_SCIENTIFIC.md               # Scientific README
+├── LICENSE                            # MIT License
+├── requirements.txt                   # Python dependencies
+└── .gitignore                         # Git ignore patterns
 ```
 
 ## Pipeline Architecture
 
-### Complete 6-Step Pipeline Implementation
-The project implements a **complete 6-step data cleaning pipeline** with all steps currently active:
+### Research Pipeline Flow
 
-1. **Step 1**: Missing Values Cleaning
-   - **Implementation**: `step1_missing_values_cleaning.py`
-   - **Outputs**: `src/data_quality/outputs/missing_values_cleaning/`
-   - **Purpose**: Handle and document missing value patterns
+1. **Stage 01: Data Integration** → CSV building, data integration, sampling
+2. **Stage 02: Data Quality** → 6-step quality pipeline + statistical audit
+3. **Stage 03: Text Preprocessing** → Text cleaning and normalization
+4. **Stage 04: Review Extraction** → Extract and filter reviews
+5. **Stage 05: Topic Modeling** → BERTopic analysis and optimization
+6. **Stage 06: Shelf Normalization** → Normalize shelf tags
+7. **Stage 07: Corpus Analysis** → Generate corpus statistics
 
-2. **Step 2**: Duplicate Detection
-   - **Implementation**: `step2_duplicate_detection.py`
-   - **Outputs**: `src/data_quality/outputs/duplicate_detection/`
-   - **Purpose**: Identify and resolve duplicate records
+### Stage Documentation
 
-3. **Step 3**: Data Type Validation
-   - **Implementation**: `step3_data_type_validation.py`
-   - **Outputs**: `src/data_quality/outputs/data_type_validation/`
-   - **Purpose**: Validate and standardize data types
-
-4. **Step 4**: Outlier Detection & Treatment
-   - **Detection**: `step4_outlier_detection.py`
-   - **Treatment**: `step4_outlier_treatment.py`
-   - **Outputs**: `src/data_quality/outputs/outlier_detection/`
-   - **Purpose**: Identify and treat statistical outliers
-
-5. **Step 5**: Data Type Optimization & Persistence
-   - **Implementation**: `step5_data_type_optimization.py`
-   - **Outputs**: `src/data_quality/outputs/data_type_optimization/`
-   - **Purpose**: Optimize memory usage and create persistent formats
-
-6. **Step 6**: Final Quality Validation & Certification
-   - **Implementation**: `step6_final_quality_validation.py`
-   - **Outputs**: `src/data_quality/outputs/final_quality_validation/`
-   - **Purpose**: Final quality assessment and certification
-
-### Pipeline Execution
-- **Main Runner**: `src/data_quality/pipeline_runner.py` (Executes all 6 steps)
-- **Individual Steps**: Each step can be run independently
-- **Output Organization**: All outputs organized by step in `src/data_quality/outputs/`
-- **Quality Reports**: Comprehensive reporting for each step
-
-### Module Structure
-- **`src/data_quality/`**: Complete 6-step pipeline implementation
-- **`src/csv_building/`**: Data integration and CSV building
-- **Archived**: Legacy implementations and development artifacts (January 2025 cleanup)
+Each stage directory contains:
+- `README.md` - Standard README (purpose, I/O, how to run, dependencies, examples)
+- `README_SCIENTIFIC.md` - Scientific README (objectives, questions, hypotheses, methodology, tools, results)
 
 ## Enforcement
 
 ### When Creating New Files
 1. **Check existing structure** first
-2. **Use appropriate subfolder** in `src/`
+2. **Use appropriate stage directory** in `src/`
 3. **Follow naming conventions**
 4. **Respect academic constraints**
 5. **Reuse existing code** when possible
@@ -253,30 +223,5 @@ The project implements a **complete 6-step data cleaning pipeline** with all ste
 2. **Document what was archived** and why
 3. **Maintain recovery instructions**
 4. **Keep archive structure organized**
-
-### Recent Cleanup Activities (September 2025)
-The repository has undergone comprehensive cleanup and organization to maintain a clean, focused codebase:
-
-**September 7, 2025 Comprehensive Cleanup**:
-- **Repository Organization**: All outputs centralized in `organized_outputs/` directory
-- **Duplicate Files**: Archived 50+ duplicate files now superseded by organized structure
-- **Old Dataset Versions**: Archived 5 outdated dataset versions, keeping only current ones
-- **Old Logs**: Archived 3 old log files superseded by organized logs
-- **Old Reports**: Archived 10+ outdated reports superseded by organized reports
-- **Data Quality Outputs**: Archived old pipeline outputs from `src/data_quality/outputs/`
-
-**Previous Cleanup Activities (January 2025)**:
-- **Python Cache Files**: Removed `__pycache__` directories from `src/data_quality/` and `src/csv_building/`
-- **Empty Log Files**: Archived 5 empty log files (0 bytes) that were never used
-- **Duplicate Outputs**: Archived earlier versions of quality reports and unprocessed batch files
-- **Development Tools**: Archived 3 diagnostic scripts used during development
-- **Alternative Runners**: Archived 4 redundant runner scripts that duplicated core functionality
-
-**Current Repository State**:
-- **Clean Source Code**: No cache files or redundant scripts in active directories
-- **Organized Outputs**: All outputs centralized in `organized_outputs/` with clear structure
-- **Current Datasets**: Only 3 current dataset files in `data/processed/`
-- **Preserved History**: All development artifacts safely archived
-- **Ready for Research**: Clean, organized codebase prepared for advanced NLP analysis
 
 This rule must be applied to ALL tasks and code changes.

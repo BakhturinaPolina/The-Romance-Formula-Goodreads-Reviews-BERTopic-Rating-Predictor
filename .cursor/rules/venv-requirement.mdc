@@ -1,0 +1,55 @@
+# Virtual Environment Requirement
+
+## ⚠️ CRITICAL: Always Use Virtual Environment
+
+**ALL Python scripts in this project MUST be run using the virtual environment at:**
+
+```
+romance-novel-nlp-research/.venv
+```
+
+## Full Path
+
+```
+/home/polina/Documents/goodreads_romance_research_cursor/goodreads_reviews_BERTopic_rating_predictor/romance-novel-nlp-research/.venv/bin/python3
+```
+
+## Rules
+
+1. **NEVER use system Python** (`python3`, `python`)
+2. **NEVER use other virtual environments** without explicit user request
+3. **ALWAYS use** `romance-novel-nlp-research/.venv/bin/python3` first
+4. **Wrapper scripts** automatically use the venv
+5. **When in doubt**, use the wrapper scripts or the full venv path
+
+## Usage Examples
+
+### ✅ Correct (using venv)
+```bash
+# Using wrapper scripts (recommended)
+./run_extraction.sh
+./monitor.sh
+
+# Using venv directly
+romance-novel-nlp-research/.venv/bin/python3 script.py
+```
+
+### ❌ Incorrect (system Python)
+```bash
+python3 script.py
+python script.py
+```
+
+## Implementation
+
+- All wrapper scripts source `venv_setup.sh` for shared venv configuration
+- Scripts verify venv exists and fail with clear error if not found
+- This rule applies to ALL Python execution in the project
+
+## Verification
+
+To verify the venv exists and works:
+```bash
+romance-novel-nlp-research/.venv/bin/python3 --version
+# Should output: Python 3.12.3
+```

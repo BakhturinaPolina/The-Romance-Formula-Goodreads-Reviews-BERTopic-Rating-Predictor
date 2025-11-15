@@ -1,0 +1,208 @@
+2025-11-14 22:37:58,195 - WARNING - ⚠ GPU libraries (cuML) not available - falling back to CPU for UMAP/HDBSCAN
+2025-11-14 22:37:58,205 - INFO - ================================================================================
+2025-11-14 22:37:58,206 - INFO - BERTopic + OCTIS Optimization for Reviews Corpus
+2025-11-14 22:37:58,206 - INFO - ================================================================================
+2025-11-14 22:37:58,206 - INFO - 
+Memory Optimization Settings:
+2025-11-14 22:37:58,206 - INFO -   Max embedding models: 1
+2025-11-14 22:37:58,206 - INFO -   Embedding batch size: 8
+2025-11-14 22:37:58,206 - INFO -   Optimization multiplier: 5
+2025-11-14 22:37:58,206 - INFO -   Max sentences: 10,000
+2025-11-14 22:37:58,206 - INFO -   Process one model at a time: True
+2025-11-14 22:37:58,206 - INFO - 
+[STEP 1] Loading configuration...
+2025-11-14 22:37:58,206 - INFO - Loading configuration from: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/src/reviews_analysis/BERTopic_OCTIS/config_bertopic_reviews.yaml
+2025-11-14 22:37:58,220 - INFO - ✓ Configuration loaded successfully
+2025-11-14 22:37:58,220 - INFO -   Configuration loaded: 12 parameter groups
+2025-11-14 22:37:58,220 - INFO -   Available parameters: embedding_model, top_n_words, n_gram_range, min_topic_size, nr_topics, low_memory, umap_n_neighbors, umap_n_components, umap_metric, hdbscan_min_cluster_size, hdbscan_min_samples, hdbscan_metric
+2025-11-14 22:37:58,221 - INFO - 
+[STEP 2] Loading dataset...
+2025-11-14 22:37:58,221 - INFO -   Checking for test dataset: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/review_sentences_test_10k.parquet
+2025-11-14 22:37:58,221 - INFO - Found test dataset: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/review_sentences_test_10k.parquet
+2025-11-14 22:37:58,221 - INFO -   Loading from test parquet (for quick testing)
+2025-11-14 22:37:58,221 - WARNING -   NOTE: Test dataset may have cleaned text. For production, use raw text from reviews.
+2025-11-14 22:37:58,222 - INFO - Loading sentences from parquet: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/review_sentences_test_10k.parquet
+2025-11-14 22:37:58,308 - INFO -   Loaded 9,999 sentences
+2025-11-14 22:37:58,308 - INFO -   ✓ Loaded 9,999 raw sentences
+2025-11-14 22:37:58,308 - INFO -   Columns: ['sentence_id', 'sentence_text', 'review_id', 'work_id', 'pop_tier', 'rating', 'sentence_index', 'n_sentences_in_review']
+2025-11-14 22:37:58,309 - INFO - 
+  Pop tier distribution:
+2025-11-14 22:37:58,313 - INFO -     mid: 3,333 (33.3%)
+2025-11-14 22:37:58,314 - INFO -     thrash: 3,333 (33.3%)
+2025-11-14 22:37:58,314 - INFO -     top: 3,333 (33.3%)
+2025-11-14 22:37:58,315 - INFO - 
+[STEP 3] Preparing dataset for embeddings and coherence...
+2025-11-14 22:37:58,317 - INFO -   Total sentences for embeddings: 9,999
+2025-11-14 22:37:58,323 - INFO -   Metadata columns stored: ['sentence_id', 'review_id', 'work_id', 'pop_tier', 'rating']
+2025-11-14 22:37:58,376 - INFO -   Prepared 9,999 sentences for coherence calculation
+2025-11-14 22:37:58,376 - INFO - 
+[STEP 4] Preparing OCTIS dataset format...
+2025-11-14 22:37:58,377 - INFO -   OCTIS dataset path: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews
+2025-11-14 22:37:58,377 - INFO -   Creating OCTIS corpus.tsv file...
+2025-11-14 22:37:59,640 - INFO -   Writing 9,999 rows to TSV...
+2025-11-14 22:37:59,727 - INFO -   ✓ Created OCTIS corpus: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews/corpus.tsv
+2025-11-14 22:37:59,728 - INFO -   Total sentences: 9,999
+2025-11-14 22:37:59,728 - INFO -   Label format: work_id (book-level)
+2025-11-14 22:37:59,728 - INFO -   Loading OCTIS dataset...
+2025-11-14 22:37:59,937 - INFO -   ✓ OCTIS dataset loaded successfully
+2025-11-14 22:38:01,627 - INFO - 
+[STEP 5] Loading embedding models...
+2025-11-14 22:38:01,627 - INFO -   Limiting to 1 models (from 4 in config)
+2025-11-14 22:38:01,627 - INFO -   Using 1 embedding models from config:
+2025-11-14 22:38:01,627 - INFO -     1. sentence-transformers/paraphrase-mpnet-base-v2
+2025-11-14 22:38:01,627 - INFO - 
+  Determining compute device...
+2025-11-14 22:38:01,633 - INFO -   ✓ Using GPU device: NVIDIA GeForce RTX 2070 with Max-Q Design
+2025-11-14 22:38:01,633 - INFO -   GPU memory: 8.2 GB
+2025-11-14 22:38:01,633 - INFO - 
+  Loading 1 embedding model(s)...
+2025-11-14 22:38:01,634 - INFO -   [1/1] Loading: sentence-transformers/paraphrase-mpnet-base-v2
+2025-11-14 22:38:01,634 - INFO -     Device: cuda
+2025-11-14 22:38:01,635 - INFO - Load pretrained SentenceTransformer: sentence-transformers/paraphrase-mpnet-base-v2
+2025-11-14 22:38:04,363 - INFO -     ✓ Model loaded in 2.73 seconds
+2025-11-14 22:38:04,364 - INFO - 
+[STEP 6] Calculating/loading embeddings...
+2025-11-14 22:38:04,364 - INFO -   Using raw, unpreprocessed text for embeddings
+2025-11-14 22:38:04,365 - INFO -   Number of sentences: 9,999
+2025-11-14 22:38:04,365 - INFO -   Embedding models to process: 1
+2025-11-14 22:38:04,365 - INFO -   Embedding storage directory: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews
+2025-11-14 22:38:04,366 - INFO -   Embeddings will be loaded on-demand (one model at a time mode)
+2025-11-14 22:38:04,367 - INFO - 
+[STEP 8] Starting optimization for all embedding models...
+2025-11-14 22:38:04,367 - INFO -   Total embedding models to optimize: 1
+2025-11-14 22:38:04,367 - INFO -   Mode: Process one model at a time (memory-efficient)
+2025-11-14 22:38:04,367 - INFO - 
+================================================================================
+2025-11-14 22:38:04,367 - INFO - Processing embedding model 1/1: sentence-transformers/paraphrase-mpnet-base-v2
+2025-11-14 22:38:04,367 - INFO - ================================================================================
+2025-11-14 22:38:04,367 - INFO -   Loading embeddings for this model only...
+2025-11-14 22:38:04,367 - INFO -     Loading from: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews/embeddings_sentence-transformers_paraphrase-mpnet-base-v2.pkl
+2025-11-14 22:38:04,398 - INFO -   Instantiating BERTopicOctisModelWithEmbeddings...
+2025-11-14 22:38:04,399 - INFO -   ✓ Model instance created
+2025-11-14 22:38:04,399 - INFO -   Starting hyperparameter optimization for sentence-transformers/paraphrase-mpnet-base-v2...
+2025-11-14 22:38:04,400 - INFO - 
+[STEP 7] Setting up hyperparameter optimization for: sentence-transformers/paraphrase-mpnet-base-v2
+2025-11-14 22:38:04,400 - INFO -   Building search space from configuration...
+2025-11-14 22:38:04,400 - INFO - Building search space from configuration...
+2025-11-14 22:38:04,402 - INFO -   umap__n_neighbors: Integer(10, 100)
+2025-11-14 22:38:04,403 - INFO -   umap__n_components: Integer(2, 20)
+2025-11-14 22:38:04,409 - INFO -   umap__metric: Categorical(3 values)
+2025-11-14 22:38:04,411 - INFO -   hdbscan__min_cluster_size: Integer(20, 300)
+2025-11-14 22:38:04,412 - INFO -   hdbscan__min_samples: Integer(5, 300)
+2025-11-14 22:38:04,415 - INFO -   hdbscan__metric: Categorical(3 values)
+2025-11-14 22:38:04,417 - INFO -   bertopic__top_n_words: Integer(8, 25)
+2025-11-14 22:38:04,419 - INFO -   bertopic__n_gram_range: Categorical(3 values) - stored as strings, will convert to tuples
+2025-11-14 22:38:04,421 - INFO -   bertopic__min_topic_size: Integer(50, 500)
+2025-11-14 22:38:04,423 - INFO -   bertopic__nr_topics: Integer(50, 300)
+2025-11-14 22:38:04,425 - INFO -   bertopic__low_memory: Categorical(2 values)
+2025-11-14 22:38:04,427 - INFO -   vectorizer__min_df: Real(0.001, 0.01) [default]
+2025-11-14 22:38:04,428 - INFO - ✓ Search space built with 12 parameters
+2025-11-14 22:38:04,428 - INFO -   Search space contains 12 parameters:
+2025-11-14 22:38:04,428 - INFO -     - bertopic__low_memory
+2025-11-14 22:38:04,428 - INFO -     - bertopic__min_topic_size
+2025-11-14 22:38:04,428 - INFO -     - bertopic__n_gram_range
+2025-11-14 22:38:04,428 - INFO -     - bertopic__nr_topics
+2025-11-14 22:38:04,428 - INFO -     - bertopic__top_n_words
+2025-11-14 22:38:04,428 - INFO -     - hdbscan__metric
+2025-11-14 22:38:04,429 - INFO -     - hdbscan__min_cluster_size
+2025-11-14 22:38:04,429 - INFO -     - hdbscan__min_samples
+2025-11-14 22:38:04,429 - INFO -     - umap__metric
+2025-11-14 22:38:04,429 - INFO -     - umap__n_components
+2025-11-14 22:38:04,429 - INFO -     - umap__n_neighbors
+2025-11-14 22:38:04,429 - INFO -     - vectorizer__min_df
+2025-11-14 22:38:04,429 - INFO -   Optimization runs: 60 (5 × 12 parameters)
+2025-11-14 22:38:04,429 - WARNING -   ⚠ Using reduced multiplier (5 < 15) - optimization may be less thorough
+2025-11-14 22:38:04,429 - INFO -   Model runs per configuration: 1
+2025-11-14 22:38:04,429 - INFO -   Top-k for metrics: 10
+2025-11-14 22:38:04,430 - INFO -   Filtering empty documents for coherence calculation...
+2025-11-14 22:38:04,431 - INFO -   Documents for coherence: 9,999
+2025-11-14 22:38:04,431 - INFO -   Initializing evaluation metrics...
+2025-11-14 22:38:04,432 - INFO -     Coherence metric: c_v (topk=10)
+2025-11-14 22:38:04,432 - INFO - adding document #0 to Dictionary<0 unique tokens: []>
+2025-11-14 22:38:04,960 - INFO - built Dictionary<18815 unique tokens: ['be', 'higher.', 'rating', 'should', 'the']...> from 9999 documents (total 157174 corpus positions)
+2025-11-14 22:38:04,968 - INFO - Dictionary lifecycle event {'msg': "built Dictionary<18815 unique tokens: ['be', 'higher.', 'rating', 'should', 'the']...> from 9999 documents (total 157174 corpus positions)", 'datetime': '2025-11-14T22:38:04.961162', 'gensim': '4.4.0', 'python': '3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]', 'platform': 'Linux-6.14.0-115036-tuxedo-x86_64-with-glibc2.39', 'event': 'created'}
+2025-11-14 22:38:04,969 - INFO -     Diversity metric: TopicDiversity (topk=10)
+2025-11-14 22:38:04,969 - INFO -   ✓ Metrics initialized
+2025-11-14 22:38:04,969 - INFO -   Creating optimizer instance...
+2025-11-14 22:38:04,970 - INFO -   ✓ Optimizer created
+2025-11-14 22:38:04,970 - INFO -   Results path: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews/optimization_results/sentence-transformers/paraphrase-mpnet-base-v2/
+2025-11-14 22:38:04,970 - INFO -   Result file: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews/optimization_results/sentence-transformers/paraphrase-mpnet-base-v2/result.json
+2025-11-14 22:38:04,970 - INFO - 
+  No existing results found
+2025-11-14 22:38:04,970 - INFO -   Starting new optimization
+2025-11-14 22:38:04,970 - INFO -   Results will be saved to: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews/optimization_results/sentence-transformers/paraphrase-mpnet-base-v2/
+2025-11-14 22:38:04,970 - INFO -   Optimization settings:
+2025-11-14 22:38:04,971 - INFO -     - Number of calls: 60
+2025-11-14 22:38:04,971 - INFO -     - Model runs per config: 1
+2025-11-14 22:38:04,971 - INFO -     - Primary metric: Coherence (c_v)
+2025-11-14 22:38:04,971 - INFO -     - Extra metrics: TopicDiversity
+2025-11-14 22:38:04,971 - INFO -     - Save models: True
+2025-11-14 22:38:05,040 - INFO - 
+================================================================================
+2025-11-14 22:38:05,040 - INFO - Training #1
+2025-11-14 22:38:05,040 - INFO - Embedding model: sentence-transformers/paraphrase-mpnet-base-v2
+2025-11-14 22:38:05,040 - INFO - ================================================================================
+2025-11-14 22:38:05,041 - INFO - Results directory: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews/optimization_results/sentence-transformers/paraphrase-mpnet-base-v2
+2025-11-14 22:38:05,041 - INFO - Results file: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews/optimization_results/sentence-transformers/paraphrase-mpnet-base-v2/result.json
+2025-11-14 22:38:05,041 - INFO - Results CSV: /home/polina/Documents/goodreads_romance_research_cursor/romance_novel_nlp_research/data/interim/octis_reviews/optimization_results/sentence-transformers/paraphrase-mpnet-base-v2/results.csv
+2025-11-14 22:38:05,041 - INFO - 
+[Training] Setting hyperparameters...
+2025-11-14 22:38:05,042 - INFO -   Received 12 hyperparameters from optimizer
+2025-11-14 22:38:05,042 - INFO -   Hyperparameters after merging:
+2025-11-14 22:38:05,043 - INFO -     umap:
+2025-11-14 22:38:05,043 - INFO -       n_neighbors: 87
+2025-11-14 22:38:05,043 - INFO -       n_components: 16
+2025-11-14 22:38:05,044 - INFO -       min_dist: 0.05
+2025-11-14 22:38:05,044 - INFO -       metric: manhattan
+2025-11-14 22:38:05,044 - INFO -       random_state: 42
+2025-11-14 22:38:05,044 - INFO -     hdbscan:
+2025-11-14 22:38:05,044 - INFO -       min_cluster_size: 71
+2025-11-14 22:38:05,044 - INFO -       metric: cosine
+2025-11-14 22:38:05,044 - INFO -       cluster_selection_method: eom
+2025-11-14 22:38:05,044 - INFO -       prediction_data: True
+2025-11-14 22:38:05,044 - INFO -       gen_min_span_tree: True
+2025-11-14 22:38:05,044 - INFO -       min_samples: 212
+2025-11-14 22:38:05,044 - INFO -     vectorizer:
+2025-11-14 22:38:05,045 - INFO -       stop_words: english
+2025-11-14 22:38:05,045 - INFO -       min_df: 0.0056575194569230425
+2025-11-14 22:38:05,045 - INFO -       ngram_range: (1, 1)
+2025-11-14 22:38:05,045 - INFO -     tfdf_vectorizer:
+2025-11-14 22:38:05,045 - INFO -       reduce_frequent_words: True
+2025-11-14 22:38:05,045 - INFO -       bm25_weighting: True
+2025-11-14 22:38:05,045 - INFO -     bertopic:
+2025-11-14 22:38:05,045 - INFO -       language: english
+2025-11-14 22:38:05,045 - INFO -       top_n_words: 18
+2025-11-14 22:38:05,045 - INFO -       n_gram_range: (1, 3)
+2025-11-14 22:38:05,045 - INFO -       min_topic_size: 359
+2025-11-14 22:38:05,045 - INFO -       nr_topics: 99
+2025-11-14 22:38:05,045 - INFO -       low_memory: False
+2025-11-14 22:38:05,045 - INFO -       calculate_probabilities: True
+2025-11-14 22:38:05,045 - INFO -       verbose: True
+2025-11-14 22:38:05,045 - WARNING -   ⚠ Constraint violation: min_samples (212) > min_cluster_size (71)
+2025-11-14 22:38:05,046 - INFO -   Enforcing constraint: setting min_samples = min_cluster_size = 71
+2025-11-14 22:38:05,046 - INFO -   ✓ Constraint enforced
+2025-11-14 22:38:05,047 - INFO - 
+[Training] Initializing pipeline components...
+2025-11-14 22:38:05,047 - INFO -   Creating UMAP model...
+2025-11-14 22:38:05,048 - INFO -     Parameters: {'n_neighbors': 87, 'n_components': 16, 'min_dist': 0.05, 'metric': 'manhattan', 'random_state': 42}
+2025-11-14 22:38:05,048 - INFO -     Using CPU version
+2025-11-14 22:38:05,049 - INFO -     ✓ UMAP model created
+2025-11-14 22:38:05,049 - INFO -   Creating HDBSCAN model...
+2025-11-14 22:38:05,049 - INFO -     Parameters: {'min_cluster_size': 71, 'metric': 'cosine', 'cluster_selection_method': 'eom', 'prediction_data': True, 'gen_min_span_tree': True, 'min_samples': 71}
+2025-11-14 22:38:05,050 - INFO -     Using CPU version
+2025-11-14 22:38:05,050 - INFO -     ✓ HDBSCAN model created
+2025-11-14 22:38:05,051 - INFO -   Creating CountVectorizer...
+2025-11-14 22:38:05,051 - INFO -     Parameters: {'stop_words': 'english', 'min_df': 0.0056575194569230425, 'ngram_range': (1, 1)}
+2025-11-14 22:38:05,051 - INFO -     ✓ CountVectorizer created
+2025-11-14 22:38:05,052 - INFO -   Creating ClassTfidfTransformer...
+2025-11-14 22:38:05,052 - INFO -     Parameters: {'reduce_frequent_words': True, 'bm25_weighting': True}
+2025-11-14 22:38:05,052 - INFO -     ✓ ClassTfidfTransformer created
+2025-11-14 22:38:05,052 - INFO -   Creating BERTopic model...
+2025-11-14 22:38:05,052 - INFO -     BERTopic parameters: {'language': 'english', 'top_n_words': 18, 'n_gram_range': (1, 3), 'min_topic_size': 359, 'nr_topics': 99, 'low_memory': False, 'calculate_probabilities': True, 'verbose': True}
+2025-11-14 22:38:05,054 - INFO -     ✓ BERTopic model created
+2025-11-14 22:38:05,054 - INFO - 
+[Training] Fitting BERTopic model...
+2025-11-14 22:38:05,055 - INFO -   Dataset size: 9,999 sentences
+2025-11-14 22:38:05,056 - INFO -   Embeddings shape: (9999, 768)
+2025-11-14 22:38:05,056 - INFO -   Starting fit_transform...
+2025-11-14 22:38:05,067 - BERTopic - Dimensionality - Fitting the dimensionality reduction algorithm

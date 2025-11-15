@@ -1,0 +1,351 @@
+{
+  "validation_timestamp": "20250907_015246",
+  "dataset_info": {
+    "shape": [
+      80755,
+      28
+    ],
+    "memory_mb": 182.49699115753174,
+    "columns": [
+      "work_id",
+      "book_id_list_en",
+      "title",
+      "publication_year",
+      "language_codes_en",
+      "num_pages_median",
+      "description",
+      "popular_shelves",
+      "genres",
+      "author_id",
+      "author_name",
+      "author_average_rating",
+      "author_ratings_count",
+      "series_id",
+      "series_title",
+      "series_works_count",
+      "ratings_count_sum",
+      "text_reviews_count_sum",
+      "average_rating_weighted_mean",
+      "series_id_missing_flag",
+      "series_title_missing_flag",
+      "series_works_count_missing_flag",
+      "title_duplicate_flag",
+      "author_id_duplicate_flag",
+      "decade",
+      "book_length_category",
+      "rating_category",
+      "popularity_category"
+    ]
+  },
+  "pipeline_validation": {
+    "step1_3": {
+      "step": "1-3",
+      "description": "Initial Cleaning (Duplicate Removal, Missing Values, Data Types)",
+      "checks": {
+        "duplicate_removal": {
+          "total_records": 80755,
+          "duplicate_flags_present": true,
+          "duplicate_flags_values": {
+            "title_duplicate_flag": {
+              "total": 251,
+              "percentage": 0.3108166676985945
+            },
+            "author_id_duplicate_flag": {
+              "total": 69888,
+              "percentage": 86.54324809609312
+            }
+          }
+        },
+        "missing_value_treatment": {
+          "total_columns": 28,
+          "columns_with_missing": 3,
+          "missing_value_summary": {
+            "series_id": {
+              "missing_count": 26791,
+              "missing_percentage": 33.1756547582193
+            },
+            "series_title": {
+              "missing_count": 26793,
+              "missing_percentage": 33.178131385053554
+            },
+            "series_works_count": {
+              "missing_count": 26791,
+              "missing_percentage": 33.1756547582193
+            }
+          }
+        },
+        "data_type_validation": {
+          "total_columns": 28,
+          "optimized_data_types": 23,
+          "data_type_distribution": {
+            "int16": 6,
+            "int32": 5,
+            "float32": 5,
+            "category": 7
+          },
+          "optimization_status": {
+            "publication_year": {
+              "expected": "int16",
+              "actual": "int16",
+              "status": "\u2705 Optimized"
+            },
+            "work_id": {
+              "expected": "int32",
+              "actual": "int32",
+              "status": "\u2705 Optimized"
+            },
+            "genres": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            },
+            "author_name": {
+              "expected": "category",
+              "actual": "category",
+              "status": "\u2705 Optimized"
+            }
+          }
+        }
+      },
+      "overall_status": "success"
+    },
+    "step4": {
+      "step": "4",
+      "description": "Outlier Detection & Treatment",
+      "checks": {
+        "publication_year_treatment": {
+          "field_present": true,
+          "year_range": {
+            "min": 2000,
+            "max": 2017,
+            "target_min": 2000,
+            "target_max": 2017,
+            "within_bounds": "True"
+          },
+          "treatment_effectiveness": {
+            "books_before_2000": 0,
+            "books_after_2017": 0,
+            "total_out_of_bounds": 0,
+            "treatment_success": true
+          }
+        },
+        "conservative_treatment": {
+          "outlier_fields_present": 4,
+          "outlier_analysis_ready": true
+        },
+        "data_integrity": {
+          "total_records": 80755,
+          "expected_records": 80657,
+          "record_count_match": false,
+          "no_data_loss": true
+        }
+      },
+      "overall_status": "failed"
+    },
+    "step5": {
+      "step": "5",
+      "description": "Data Type Optimization & Persistence",
+      "checks": {
+        "data_type_optimization": {
+          "total_columns": 28,
+          "optimized_columns": 23,
+          "optimization_distribution": {
+            "int16": 6,
+            "int32": 5,
+            "float32": 5,
+            "category": 7
+          },
+          "specific_optimizations": {
+            "num_pages_median": {
+              "expected": "float32",
+              "actual": "float32",
+              "status": "\u2705 Optimized"
+            },
+            "author_average_rating": {
+              "expected": "float32",
+              "actual": "float32",
+              "status": "\u2705 Optimized"
+            },
+            "average_rating_weighted_mean": {
+              "expected": "float32",
+              "actual": "float32",
+              "status": "\u2705 Optimized"
+            }
+          }
+        },
+        "type_preservation": {
+          "categorical_preserved": 6,
+          "numerical_preserved": 6,
+          "preservation_status": {
+            "genres": "\u2705 Preserved",
+            "author_name": "\u2705 Preserved",
+            "series_title": "\u2705 Preserved",
+            "decade": "\u274c Not Preserved",
+            "book_length_category": "\u2705 Preserved",
+            "rating_category": "\u2705 Preserved",
+            "popularity_category": "\u2705 Preserved",
+            "work_id": "\u2705 Preserved",
+            "publication_year": "\u2705 Preserved",
+            "author_id": "\u2705 Preserved",
+            "author_ratings_count": "\u2705 Preserved",
+            "ratings_count_sum": "\u2705 Preserved",
+            "text_reviews_count_sum": "\u2705 Preserved"
+          }
+        },
+        "storage_efficiency": {
+          "current_memory_mb": 182.49699115753174,
+          "expected_memory_mb": 182.66,
+          "memory_efficiency": {
+            "memory_match": "True",
+            "memory_difference": -0.1630088424682583,
+            "efficiency_status": "\u2705 Efficient"
+          },
+          "storage_format": "parquet"
+        }
+      },
+      "overall_status": "failed"
+    }
+  },
+  "quality_score": {
+    "overall_score": 40.0,
+    "component_scores": {
+      "step1_3": 100.0,
+      "step4": 0.0,
+      "step5": 0.0
+    },
+    "quality_gates": {
+      "completeness": {
+        "threshold": 95.0,
+        "achieved": 100.0,
+        "passed": true
+      },
+      "consistency": {
+        "threshold": 90.0,
+        "achieved": 0.0,
+        "passed": false
+      },
+      "integrity": {
+        "threshold": 98.0,
+        "achieved": 0.0,
+        "passed": false
+      },
+      "optimization": {
+        "threshold": 95.0,
+        "achieved": 0.0,
+        "passed": false
+      },
+      "overall": {
+        "threshold": 90.0,
+        "achieved": 40.0,
+        "passed": false
+      }
+    },
+    "recommendations": [
+      "Improve consistency: Current 0.0%, Target 90.0%",
+      "Improve integrity: Current 0.0%, Target 98.0%",
+      "Improve optimization: Current 0.0%, Target 95.0%",
+      "Improve overall: Current 40.0%, Target 90.0%",
+      "\u26a0\ufe0f Pipeline quality needs significant improvements before production use"
+    ]
+  },
+  "final_certification": {
+    "certification_id": "DQ_CERT_20250907_015246",
+    "certification_date": "2025-09-07T01:52:48.653745",
+    "pipeline_version": "1.0",
+    "dataset_info": {
+      "name": "Romance Novel NLP Research Dataset",
+      "version": "Step 6 Final",
+      "shape": [
+        80755,
+        28
+      ],
+      "memory_mb": 182.49699115753174,
+      "columns": [
+        "work_id",
+        "book_id_list_en",
+        "title",
+        "publication_year",
+        "language_codes_en",
+        "num_pages_median",
+        "description",
+        "popular_shelves",
+        "genres",
+        "author_id",
+        "author_name",
+        "author_average_rating",
+        "author_ratings_count",
+        "series_id",
+        "series_title",
+        "series_works_count",
+        "ratings_count_sum",
+        "text_reviews_count_sum",
+        "average_rating_weighted_mean",
+        "series_id_missing_flag",
+        "series_title_missing_flag",
+        "series_works_count_missing_flag",
+        "title_duplicate_flag",
+        "author_id_duplicate_flag",
+        "decade",
+        "book_length_category",
+        "rating_category",
+        "popularity_category"
+      ]
+    },
+    "pipeline_summary": {
+      "total_steps": 6,
+      "completed_steps": 6,
+      "completion_percentage": 100.0,
+      "overall_status": "Complete"
+    },
+    "quality_certification": {
+      "overall_score": 40.0,
+      "quality_level": "Needs Improvement",
+      "certification_status": "Not Certified",
+      "quality_gates_passed": 1,
+      "total_quality_gates": 5
+    },
+    "step_validation_summary": {
+      "step1_3": {
+        "status": "success",
+        "description": "Initial Cleaning (Duplicate Removal, Missing Values, Data Types)",
+        "key_achievements": [
+          "Duplicate detection implemented",
+          "Data types optimized"
+        ]
+      },
+      "step4": {
+        "status": "failed",
+        "description": "Outlier Detection & Treatment",
+        "key_achievements": [
+          "Publication year anomalies treated",
+          "Outlier analysis documented"
+        ]
+      },
+      "step5": {
+        "status": "failed",
+        "description": "Data Type Optimization & Persistence",
+        "key_achievements": [
+          "Data types fully optimized",
+          "Storage efficiency achieved"
+        ]
+      }
+    },
+    "recommendations": [
+      "Improve consistency: Current 0.0%, Target 90.0%",
+      "Improve integrity: Current 0.0%, Target 98.0%",
+      "Improve optimization: Current 0.0%, Target 95.0%",
+      "Improve overall: Current 40.0%, Target 90.0%",
+      "\u26a0\ufe0f Pipeline quality needs significant improvements before production use"
+    ],
+    "next_steps": [
+      "Significant quality improvements required",
+      "Review and fix failed pipeline steps",
+      "Re-run complete pipeline after fixes"
+    ]
+  },
+  "execution_summary": {
+    "total_steps_validated": 3,
+    "successful_steps": 1,
+    "execution_time": "0:00:02.584192"
+  }
+}

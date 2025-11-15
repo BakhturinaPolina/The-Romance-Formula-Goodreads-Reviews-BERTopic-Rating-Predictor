@@ -49,6 +49,9 @@ This document defines the logical structure of the Goodreads metadata and review
 - **Location**: `archive/`
 - **Purpose**: Archived outdated files and development history
 - **Structure**: Organized by date and purpose
+- **Examples**:
+  - `notebooks_02_data_quality_YYYYMMDD/` - Archived Jupyter notebooks (duplicated Python script functionality)
+  - `outdated_for_github_prep_YYYYMMDD/` - Archived development files
 
 ## Source Code Structure
 
@@ -70,18 +73,21 @@ This document defines the logical structure of the Goodreads metadata and review
 **Purpose**: Data quality assurance pipeline and statistical audit
 
 - `data_quality/` - Complete 6-step data quality pipeline
-  - `pipeline_runner.py` - Main pipeline runner
-  - `step1_missing_values_cleaning.py` - Missing values cleaning
-  - `step2_duplicate_detection.py` - Duplicate detection
-  - `step3_data_type_validation.py` - Data type validation
-  - `step4_outlier_detection.py` - Outlier detection
-  - `step4_outlier_treatment.py` - Outlier treatment
-  - `step5_data_type_optimization.py` - Data type optimization
-  - `step6_final_quality_validation.py` - Final quality validation
+  - `pipeline_runner.py` - Main pipeline orchestrator for all 6 steps
+  - `step1_missing_values_cleaning.py` - Missing values detection and treatment (MissingValuesCleaner)
+  - `step2_duplicate_detection.py` - Duplicate detection and resolution (DuplicateDetector)
+  - `step3_data_type_validation.py` - Data type validation and conversion (DataTypeValidator)
+  - `step4_outlier_detection.py` - Outlier detection using statistical methods (OutlierDetectionReporter)
+  - `step4_outlier_treatment.py` - Outlier treatment strategies (OutlierTreatmentApplier)
+  - `step5_data_type_optimization.py` - Data type optimization for memory efficiency (DataTypeOptimizer)
+  - `step6_final_quality_validation.py` - Final quality validation and certification (FinalQualityValidator)
+  - `comprehensive_data_cleaner.py` - Comprehensive data cleaning tool (ComprehensiveDataCleaner)
 - `data_audit/` - Statistical analysis and data exploration
-  - `core/data_auditor.py` - Main audit script
-  - `parsing/list_parser.py` - List parsing utilities
-  - `notebooks/` - Interactive analysis notebooks
+  - `core/data_auditor.py` - Main audit script for statistical analysis (DataAuditor)
+  - `parsing/list_parser.py` - List parsing utilities for structured data extraction
+  - `comprehensive_data_analysis.py` - Comprehensive data analysis tool (ComprehensiveDataAnalyzer)
+- `utils/` - Utility functions
+  - `diff_bridge_runs.py` - Utility for comparing different pipeline runs
 
 ### Stage 03: Text Preprocessing (`src/03_text_preprocessing/`)
 **Purpose**: NLP text preprocessing and normalization
@@ -93,18 +99,42 @@ This document defines the logical structure of the Goodreads metadata and review
 ### Stage 04: Review Extraction (`src/04_review_extraction/`)
 **Purpose**: Review extraction and filtering
 
-- `extract_reviews.py` - Main extraction script
-- `monitor_extraction.py` - Real-time monitoring
-- `estimate_time.py` - Time estimation utility
-- `review_dataset.py` - Dataset review utility
+- `core/` - Main extraction logic
+  - `extract_reviews.py` - Main extraction script
+- `monitoring/` - Monitoring and time estimation
+  - `monitor_extraction.py` - Real-time monitoring
+  - `estimate_time.py` - Time estimation utility
+  - `log_parser.py` - Shared log parsing utilities
+- `scripts/` - Wrapper scripts for running and monitoring
+  - `run_extraction.sh` - Extraction wrapper (uses venv)
+  - `monitor.sh` - Monitoring wrapper (uses venv)
+  - `venv_setup.sh` - Shared venv setup (sourced by wrappers)
+- `utils/` - Utility scripts
+  - `review_dataset.py` - Dataset review utility
 
 ### Stage 05: Topic Modeling (`src/05_topic_modeling/`)
 **Purpose**: BERTopic analysis and optimization
 
 - `BERTopic_OCTIS/` - BERTopic with OCTIS integration
-- `bertopic_preparation/` - Input preparation for BERTopic
-- `data_loading.py` - Data loading utilities
-- `checks_coverage.py` - Coverage checking utilities
+  - `bertopic_plus_octis.py` - Main BERTopic+OCTIS optimization script
+  - `load_raw_sentences.py` - Load sentences for BERTopic
+  - `sample_test_dataset.py` - Create test datasets
+  - `optimizer.py` - OCTIS optimizer configuration
+  - `restart_script.py` - Resume interrupted runs
+  - `topic_npy_to_json.py` - Convert topic outputs to JSON
+  - `config_bertopic_reviews.yaml` - BERTopic configuration
+- `bertopic_preparation/` - Input preparation and wrapper scripts (all Python)
+  - `prepare_bertopic_input.py` - Main preparation script
+  - `venv_utils.py` - Virtual environment utilities (venv verification)
+  - `run_preparation.py` - Python wrapper for preparation (replaces shell script)
+  - `monitor_preparation.py` - Python monitoring script (replaces shell script)
+  - `check_status.py` - Python status check script (replaces shell script)
+  - `run_test.py` - Python test runner (replaces shell script)
+- `utils/` - Utility modules
+  - `data_loading.py` - Data loading utilities
+  - `checks_coverage.py` - Coverage checking utilities
+- `notebooks/` - Jupyter notebooks for exploration
+- `docs/` - Stage-specific documentation
 
 ### Stage 06: Shelf Normalization (`src/06_shelf_normalization/`)
 **Purpose**: Shelf tag normalization and canonicalization
@@ -151,7 +181,8 @@ goodreads-topic-modeling/
 ├── .cursor/                          # Cursor IDE configuration
 │   └── rules/                        # Project-specific rules
 ├── archive/                          # Archived development history
-│   └── outdated_for_github_prep_YYYYMMDD/
+│   ├── notebooks_02_data_quality_YYYYMMDD/  # Archived notebooks (duplicated functionality)
+│   └── outdated_for_github_prep_YYYYMMDD/    # Archived development files
 ├── data/                             # Data storage
 │   ├── raw/                          # Original Goodreads JSON files (read-only)
 │   ├── intermediate/                 # Temporary processing outputs
@@ -169,6 +200,11 @@ goodreads-topic-modeling/
 │   │   ├── README.md                  # Stage documentation
 │   │   └── README_SCIENTIFIC.md      # Scientific documentation
 │   ├── 02_data_quality/              # 6-step data quality pipeline + audit
+│   │   ├── data_quality/              # 6-step quality pipeline
+│   │   ├── data_audit/                # Statistical analysis and audit
+│   │   ├── utils/                      # Utility functions
+│   │   ├── README.md                   # Stage documentation
+│   │   └── README_SCIENTIFIC.md        # Scientific documentation
 │   ├── 03_text_preprocessing/        # NLP text preprocessing
 │   ├── 04_review_extraction/         # Review extraction and filtering
 │   ├── 05_topic_modeling/            # BERTopic analysis and optimization

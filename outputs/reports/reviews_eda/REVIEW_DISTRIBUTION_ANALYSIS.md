@@ -10,14 +10,23 @@ Phase 3 EDA examined the distribution of Goodreads review data across three roma
 - **Subplot indexing fix**: Corrected subplot positioning by implementing a `tier_positions` list to properly map tier visualizations across the 2×2 grid layouts.
 - **Memory management**: Replaced `plt.show()` calls with `plt.close()` after each figure save to prevent memory accumulation during batch visualization generation.
 
-## Generated Outputs
+## Key Visualizations
 
-- **review_count_distribution.png**: Histograms showing review count distributions overall and by tier, revealing substantial differences in review volume across tiers.
+The following visualizations provide the most informative evidence for tier-based patterns:
+
+![Ratings Distribution by Tier](ratings_distribution.png)
+*Rating distributions (1–5 stars) overall and by tier, demonstrating the expected quality gradient: trash (M = 3.35) → middle (M = 3.89) → top (M = 4.27).*
+
+![Review Count Distribution by Tier](review_count_distribution.png)
+*Review count distributions overall and by tier, revealing substantial differences in review volume: trash (M = 60.7/book) → middle (M = 240.1/book) → top (M = 184.2/book).*
+
+![Review Metrics Comparison](review_metrics_boxplots.png)
+*Side-by-side boxplots comparing review counts per book, character length, and token count across tiers, showing consistent median lengths (63–70 tokens) but substantial volume differences.*
+
+### Additional Outputs
+
 - **review_length_chars_distribution.png**: Character length distributions overall and by tier, showing similar median lengths (~338–375 chars) but different tail behaviors.
 - **review_length_tokens_distribution.png**: Token count distributions overall and by tier, with medians ranging from 63–70 tokens per review.
-- **ratings_distribution.png**: Rating distributions (1–5 stars) overall and by tier, demonstrating the expected quality gradient.
-- **review_metrics_boxplots.png**: Side-by-side boxplots comparing review counts per book, character length, and token count across tiers.
-- **top_words_by_tier.png**: Horizontal bar charts showing top 15 words by frequency for each tier, after updated stopword handling.
 - **summary_statistics.csv**: Tabular summary of key metrics (review counts, lengths, ratings) aggregated by tier.
 
 ## Key Quantitative Findings
@@ -36,17 +45,12 @@ These patterns validate the tier stratification and suggest that BERTopic modeli
 
 The similar median review lengths across tiers (63–70 tokens) indicate that length-based filtering can be applied uniformly, while the tier differences in total volume suggest that sampling strategies may be needed to balance representation if modeling across all tiers simultaneously.
 
-## Entities Recorded in MCP
+## Summary Statistics
 
-*Note: MCP server registration encountered technical issues during automated registration. The following entities should be manually registered or re-attempted:*
-
-- **Project**: "Romance Reviews Topic Modeling"
-- **Analysis Script**: Phase 3 EDA Notebook (eda_reviews.ipynb)
-- **Datasets**: Summary Statistics CSV (summary_statistics.csv)
-- **Visualizations**: 6 PNG files (review_count_distribution, review_length_chars_distribution, review_length_tokens_distribution, ratings_distribution, review_metrics_boxplots, top_words_by_tier)
-- **Findings**: 
-  - Trash tier statistics (121,343 reviews, mean 60.7/book, mean rating 3.35)
-  - Middle tier statistics (480,126 reviews, mean 240.1/book, mean rating 3.89)
-  - Top tier statistics (368,206 reviews, mean 184.2/book, mean rating 4.27)
-  - Pattern finding: Review volume and ratings increase from trash → middle → top
+| Tier | Books | Total Reviews | Mean Reviews/Book | Mean Rating |
+|------|-------|---------------|-------------------|-------------|
+| Trash | 1,999 | 121,343 | 60.7 | 3.35 |
+| Middle | 2,000 | 480,126 | 240.1 | 3.89 |
+| Top | 1,999 | 368,206 | 184.2 | 4.27 |
+| **Total** | **5,998** | **969,675** | **161.6** | **3.89** |
 

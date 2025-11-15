@@ -39,6 +39,10 @@ src/logs/
 *.jpg
 *.jpeg
 *.gif
+# But include visualization outputs in reports directories
+!outputs/reports/**/*.png
+!outputs/reports/**/*.jpg
+!outputs/reports/**/*.jpeg
 outputs/data_type_optimization/*.pickle
 
 # Exclude large pickle files
